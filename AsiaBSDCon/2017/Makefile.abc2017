@@ -1,0 +1,15 @@
+all: pdf fetch show
+
+ssh:
+	@vagrant ssh-config > ssh_config
+
+pdf: ssh
+	@ssh -F ssh_config root@default "cd ~pbuehler/AsiaBSDCon/2017 && make"
+
+fetch:
+	@scp -F ssh_config root@default:/home/pbuehler/AsiaBSDCon/2017/asiabsdcon2017-talk.pdf .
+	@scp -F ssh_config root@default:/home/pbuehler/AsiaBSDCon/2017/asiabsdcon2017-paper.pdf .
+	@scp -F ssh_config root@default:/home/pbuehler/AsiaBSDCon/2017/AsiaBSDCon*.roff .
+
+show:
+	@open ./asiabsdcon2017-talk.pdf

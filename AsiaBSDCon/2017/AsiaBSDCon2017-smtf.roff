@@ -1,0 +1,941 @@
+.\"
+.\" Copyright (c) 2017 Philipp Buehler <pbuehler@sysfive.com>
+.\"
+.\" Permission to use, copy, modify, and distribute this presentation for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE PRESENTATION IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+.\" WARRANTIES WITH REGARD TO THIS PRESENTATION INCLUDING ALL IMPLIED
+.\" WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL THE
+.\" AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+.\" DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA
+.\" OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+.\" TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+.\" PERFORMANCE OF THIS PRESENTATION.
+.\"
+.\" --------------------------------------------------------------------
+.\" All macro definition taken/inspired from Ingo Schwarze's talk
+.\" EuroBSDcon 2015 - "mandoc"
+.\" http://www.openbsd.org/papers/eurobsdcon2015-mandoc.roff
+.\" --------------------------------------------------------------------
+.\"
+.\" --- global gpresent configuration settings -------------------------
+.DEFCOLOR Navy 0 0 0.5
+.DEFCOLOR Navylight 0 0.2 0.8
+.TITLECOLOR Navy
+.SUBTITLEFORMAT C
+.SUBTITLECOLOR Navylight
+.FOOTERSIZE 2
+.\" We don't want a header line for the title page,
+.\" so we have to start it before setting up headers.
+.TITLE "OpenBSD"
+.\" === gpresent header setup ==========================================
+.\" --- define gpresent extension registers ----------------------------
+.nr gpe_page_tot 1
+.nr gpe_page_sec 0
+.af gpe_page_sec I
+.nr gpe_time_tsec 10*60+00*60
+.nr gpe_time_hour 10
+.nr gpe_time_min 02
+.af gpe_time_min 02
+.nr gpe_time_sec 0
+.af gpe_time_sec 02
+.
+.\" --- macro to start a new section -----------------------------------
+.de GPE_SECTION
+.ds gpe_title_sec \\$1
+.nr gpe_page_sec 0
+..
+.\" --- gpresent page header callback ----------------------------------
+.de HEADER
+.nr gpe_page_tot +1
+.nr gpe_page_sec +1
+.sp 0.5v
+.ds gpe_middle page \\n[gpe_page_tot]: \\*[gpe_title_sec] \\n[gpe_page_sec]
+.tl 'Philipp B\[u0075_0308]hler: splendid multi-tenancy firewall'\
+\\*[gpe_middle]'\
+Tokyo, March 11, 2017'
+.sp -0.5v
+.\" horizontal line below the page header
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+..
+.\" --- initialize the first section before completing the title page --
+.GPE_SECTION "Opening"
+.\" === define some gpresent extension macros ==========================
+.\" --- two-column mode (for images) -----------------------------------
+.\" 1st arg: width of first column
+.\" 2nd arg: move second column up by this amout (default 0.5v)
+.\" switch column with normal .MULN, end with normal .MULE
+.de GPE_MULB
+.nr gpe_colwr \\n(.l-\\$1-1n
+.ie \\n[.$]>1 .ds gpe_vsp \\$2
+.el .ds gpe_vsp 0.5v
+.sp -\\*[gpe_vsp]
+.MULB \\$1 1n \\n[gpe_colwr]u
+.sp \\*[gpe_vsp]
+..
+.\" --- emphasis -------------------------------------------------------
+.\" arg: text
+.de GPE_EM
+.COLOR red
+\\$1
+.COLOR P
+..
+.\" --- small text -----------------------------------------------------
+.\" arg: text
+.de GPE_SM
+.S -4
+.ce
+\\$1
+.S P
+..
+.\" --- small text with one emphasised word ----------------------------
+.\" 1st arg: text before emphasis
+.\" 2nd arg: emphasised text
+.\" 3rd arg: text after emphasis
+.de GPE_SMEM
+.GPE_SM "\\$1 \m[red]\\$2\m[] \\$3"
+..
+.\"
+.\" all macro and title fuzzing done - real work below
+.\"
+.\" --- title page -----------------------------------------------------
+.sp -1v
+.SUBTITLE "pf+rdomains create splendid multi-tenancy firewalls"
+.SUBTITLE "AsiaBSDCon, Tokyo, March 11, 2017"
+.SUBTITLE "Philipp B\[u0075_0308]hler <pbuehler@sysfive.com>"
+.sp 2
+.GPE_SM "Trivia:"
+.sp
+.MULB 10c 1n 10c
+.ad l
+Technical lead at sysfive.com GmbH
+.br
+Hacking computers since 1983
+.br
+OpenBSD user since 2.7 (2000)
+.br
+Developer (pf) 2002-2005
+.br
+.PSPIC images/logo-print.eps
+.MULN
+.ad l
+10 people \(em we're hiring
+.br
+Apple ][e
+.br
+on i386, amd64, sparc64, macppc
+.br
+slacked too much
+.br
+.PSPIC images/puffy-logo.eps
+.MULE
+.\" === gpresent footer setup ==========================================
+.\" We dont want a footer line for the title page,
+.\" so we have to set it up after completing the title page.
+.SK
+.\" --- macros to start a new page -------------------------------------
+.\" arg: time for this page in seconds
+.de GPE_TIME
+.nr gpe_time_tsec +\\$1
+.nr gpe_time_hour \\n[gpe_time_tsec]/3600
+.nr gpe_time_min \\n[gpe_time_tsec]%3600/60
+.nr gpe_time_sec \\n[gpe_time_tsec]%60
+.ds gpe_source AsiaBSDCon 2017
+..
+.\" --- gpresent page footer callback ----------------------------------
+.de FOOTER
+.ps 18
+.vs 20
+.sp -2v
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+.tl '\s-6\\n[gpe_time_hour]:\\n[gpe_time_min]:\s-2\\n[gpe_time_sec]\
+ \s+8''\\m[Navylight]\\*[gpe_source]\ \ \\m[]'
+.ps
+.vs
+..
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Contents"
+.BL
+.LI
+Opening
+.LI
+Ze Problem
+.BL
+.LI
+one and more tenants complexity
+.LI
+traditional approaches
+.LE
+.LI
+Introduce rdomains
+.BL
+.LI
+interface based
+.LI
+tools aware or not
+.LI
+pair vs. pf.conf
+.LE
+.LI
+Gory details
+.BL
+.LI
+(persistent) configuration
+.LI
+pair / pf.conf
+.LI
+ntpd(8), relayd(8)
+.LI
+pitfalls / debugging
+.LE
+.LI
+Test+Automation
+.BL
+.LI
+packer / vagrant,  ansible
+.LE
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "sysfive.com network"
+.PSPIC images/ssfn-network-overview.eps 16c
+.S -9
+my dia(1) skills are sub par, giving up..
+.S P
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.GPE_SECTION "Ze Problem"
+.SK
+.TITLE "complex network"
+.SUBTITLE "basic tenant"
+Network segregation is a must and ends up in numbers if done deeply.
+.VL 2c 0c 1
+.LI "Management \(em"
+IPMI/KVM, bootstrapping (PXE), monitoring, backup
+.LI "Services \(em"
+(rev)proxy, email, ntp, DNS
+.LI "Application \(em"
+devel, test/stage, main, DR
+.LI "Datastorage \(em"
+RDBMs, NoSQL, LDAP, redis, ..
+.LI "Others/3rd party \(em"
+payment services, weather widget, "all the funkyness"
+.LE
+.sp 1v
+one single real tenant firewall in numbers
+.sp 1v
+.VERBON 0 12
+$ ifconfig | egrep -c '^[a-z]'
+      41
+
+$ pfctl -sr | wc -l
+     267
+
+$ pfctl -a 'relayd/*' -sr | wc -l
+      36
+.VERBOFF
+.GPE_TIME 180
+.\" ---- NEXT PAGE
+.SK
+.TITLE "complex network"
+.SUBTITLE "minimum tenant at ours"
+.PSPIC "images/fw-tenant1.eps" 
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "traditional approaches"
+.BL
+.LI "'handcruft'"
+.BL
+.LI
+overview
+.LI
+ordering (pf.conf)
+.LI
+ikwid \(em I know what I did - you do not
+.LI
+testing
+.LI
+panic
+.LE
+.LI "templates"
+.BL
+.LI
+double the above
+.LI
+exceptions / divergent config
+.LE
+.LI "multiple fw"
+.BL
+.LI
+what-is-where
+.LI
+IPv4 scarcity
+.LI
+rackspace (dah, VMs...)
+.LI
+time to launch physically
+.LE
+.LE
+.GPE_TIME 180
+.\" ---- NEXT PAGE
+.SK
+.TITLE "overall problems to be addressed"
+In general:
+.BL
+.LI
+growth
+.LI
+change
+.LI
+pf.conf ordering matters much
+.LI
+quick-fix, leads to
+.LI
+long debug
+.LI
+tenants might buy others, bringing:
+.LI
+IP address conflicts (overlap locally and/or VPN)
+.LE
+.sp 1v
+Sidenote: rdomains(4) might also be very useful when you cannot control (esp. IP-address-ranges) connected networks;
+not scope of this talk.
+.GPE_TIME 90
+.\" ---- NEXT PAGE
+.GPE_SECTION "Introduction"
+.SK
+.TITLE "rdomains \(em many in one"
+.GPE_MULB 10c
+.PSPIC images/fw-tenant123.eps
+.MULN
+.PSPIC images/fw-rdomain123.eps
+.MULE
+.VL 2c 0c 1
+.LI "composition:"
+multiple interfaces create one rdomain
+.LI "multi routing:"
+each tenant haves its own routing table (and more)
+.LI "tools aware:"
+direct invocation by passing rdomain IDs
+.LI "daemons:"
+several instances started in different rdomains
+.LI "pair(4):"
+mesh all the things (connect rdomains)
+.LI "pf.conf(5):"
+includes, anchors, ..
+.LI "limits:"
+not again... but not many
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "aware tools"
+The following network tools can be invoked with an argument to operate on the given rdomain
+.BVL 1c
+.LI "netstat(1)"
+-T <tableid>: show information for given rdomain
+.LI "route(8)"
+-T <tableid>: show/operate for given rdomain
+.br
+exec: start a process in rdomain (next page)
+.LI "arp(8) / ndp(8)"
+-V <tableid>: limit to given rdomain
+.LI "ping(8)"
+-V <tableid>: ping from rdomain
+.LI "traceroute(8)"
+-V <tableid>: trace a route from rdomain
+.LI "nc(1)"
+-V <tableid>: bind socket in given rdomain
+.LI "ps(1)"
+-o rtable: adds ID of rtable/rdomain the process runs within
+.LI "pkill(1)/pgrep(1)"
+-T <tableid>: limit search/results to given rdomain
+.LI "tcpbench(1)"
+-V <tableid>: run benchmark within given rdomain
+.LI "telnet(1)"
+-V <tableid>: use given rdomain
+.LI "ftp-proxy(8)"
+somewhat via pf(4) tagging \(em really? ftp?
+.LI "bgpd(8)/ospfd(8)/ripd(8)/eigrpd(8)/ldpd(8)"
+rtable/rdomain keywords \(em out of scope
+.LI "authpf(8)"
+limited support
+.LI "relayd(8)"
+(details pages)
+.LI "rcctl(8)/rc.d(8)"
+(details pages)
+.LI "ntpd(8)"
+(details pages)
+.LI "ifconfig(8)/hostname.if(5)"
+(details pages)
+.LE
+.GPE_TIME 150
+.\" ---- NEXT PAGE
+.SK
+.TITLE "not aware tools"
+.SUBTITLE "route exec"
+Any other tool or daemon can be started (multiple times) within a given rdomain via route(8).
+.sp 2v
+\f(CWroute -T 23 exec iked -ddvvf /etc/iked.conf.23\fP
+.br
+.br
+\f(CWroute -T 42 exec iked -ddvvf /etc/iked.conf.42\fP
+.sp 2v
+Pitfalls:
+daemons operating on shared/global information can still mess up each other, e.g. ntpd(8).
+.Pp
+Remote control (sockets), PID-files etc. must be configurable or running multiple instances
+can be a pain.
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "limits"
+.BL
+.LI
+maximum of 256 routing domains (sys/socket.h: RT_TABLEID_MAX)
+.LI
+any carp(4) devices must be in the same rdomain as its 'carpdev' \(em remedy shown later
+.LI
+some daemons not yet fully aware/usable, but should so:
+.BL
+.LI
+authpf(8) \(em unable to choose different configuration paths; fixable
+.LI
+iked(8) \(em no option for choosing socketname; fixable
+.LI
+relayd(8) \(em can handle in 'routers', not yet for 'relays'; fix in progress
+.LI
+3rd party / ports \(em unchecked, base requirement is multi-instance capability
+.LE
+.LE
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "pair(4)"
+.PSPIC images/pair.eps
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "pf.conf syntax"
+.SUBTITLE "on / rtable"
+.sp 1v
+.VERBON 0 12
+pass in on rdomain 21 from $tenant-app to $tenant-email
+#
+pass out from $backup to <tenant1> rtable 21
+.VERBOFF
+.sp 0.5v
+.SUBTITLE "anchors"
+.sp 1v
+.VERBON 0 12
+anchor "tenant1.21" on rdomain 21 {
+    block
+    pass out proto tcp from any to any port { 80 443 }
+}
+
+anchor "tenant2.41" on rdomain 41 {
+    block
+    match out to any nat-to $ext-41-ip rtable 0 tag TENANT_41
+    pass out tagged TENANT_41
+}
+.VERBOFF
+.sp 0.5v
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.GPE_SECTION "Gory Details"
+.SK
+.TITLE "hostname.if"
+.SUBTITLE "physical(4)/vlan(4)/carp(4)/pair(4)"
+Creating rdomains is done by assigning 'rdomain N' to an interface, naturally this can be done in hostname.if(5).
+.sp 0.2v
+Hint: put 'rdomain'
+.GPE_EM before
+any address configuration (inet/inet6).
+.sp 1v
+.VERBON 0 12
+/etc/hostname.em0:
+rdomain 0
+inet 10.40.40.254/24
+
+/etc/hostname.vlan41:
+description "gw-vlan-41"
+vlan 41 vlandev em2
+rdomain 41
+group "rdom41"
+inet 10.40.41.1/24
+
+/etc/hostname.carp1
+description "gw-carp-1"
+rdomain 0
+vhid 1
+pass onetwomany
+carpdev em0
+inet 10.60.5.1/24
+
+/etc/hostname.pair21
+description "gw-pair-21"
+rdomain 21
+inet 10.200.21.2/30
+patch pair0
+!/sbin/route -T 21 -n add default 10.200.21.1
+.VERBOFF
+.sp 0.5v
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "pair(4) (I)"
+With pair(4) and route(8) one can interconnect rdomains. Being virtualized ethernet it needs two endpoints that are
+then patched to each other:
+.sp 1v
+.VERBON 0 12
+$ doas ifconfig pair0 rdomain 0 10.200.21.1/30 up
+$ doas ifconfig pair21 rdomain 21 10.200.21.2/30 up
+$ doas ifconfig pair0 patch pair21
+.VERBOFF
+.sp 0.5v
+The pair(4) devices can be added to a bridge(4), too. STP dragons around.
+.sp 0.5v
+To persist the above setup:
+.sp 0.5v
+.VERBON 0 12
+/etc/hostname.pair0:
+description "gw-pair-0"
+rdomain 0
+inet 10.200.21.1/30
+
+/etc/hostname.pair21:
+description "gw-pair-21"
+rdomain 21
+inet 10.200.21.2/30
+patch pair0
+!/sbin/route -T 21 -qn add default 10.200.21.1
+.VERBOFF
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "pair(4) (II)"
+finalized setup would look like this:
+.sp 1v
+.VERBON 0 12
+pair0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+        lladdr fe:e1:ba:d0:4a:8a
+        description: gw-pair-0
+        index 7 priority 0 llprio 3
+        patch: pair21
+        groups: pair
+        media: Ethernet autoselect
+        status: active
+        inet 10.200.21.1 netmask 0xfffffffc broadcast 10.200.21.3
+pair21: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> rdomain 21 mtu 1500
+        lladdr fe:e1:ba:d1:ca:a3
+        description: gw-pair-21
+        index 8 priority 0 llprio 3
+        patch: pair0
+        groups: pair
+        media: Ethernet autoselect
+        status: active
+        inet 10.200.21.2 netmask 0xfffffffc broadcast 10.200.21.3
+
+Destination        Gateway            Flags   Refs      Use   Mtu  Prio Iface
+default            10.200.21.1        UGS        0        1     -     8 pair21
+10.20.21/24        10.20.21.1         UC         0        0     -     4 vlan21
+10.20.21.1         08:00:27:5b:02:b2  UHLl       0        0     -     1 vlan21
+10.20.21.255       10.20.21.1         UHb        0        0     -     1 vlan21
+10.200.21.0/30     10.200.21.2        UC         1        0     -     4 pair21
+10.200.21.1        link#8             UHLc       1        1     -     4 pair21
+10.200.21.2        fe:e1:ba:d1:ca:a3  UHLl       0        0     -     1 pair21
+10.200.21.3        10.200.21.2        UHb        0        0     -     1 pair21
+.VERBOFF
+.sp 0.5v
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "rcctl(8) / rc.d(8)"
+For automated startup, rc.d(8) has 'daemonname_rtable=<N>' support (default to 0).
+.br
+Consequently this can be configured using rcctl(8):
+.sp 1v
+.VERBON 0 12
+$ doas rcctl set httpd status on
+$ doas rcctl set httpd rtable 21
+
+$ doas rcctl get httpd
+httpd_class=daemon
+httpd_flags=
+httpd_rtable=21
+httpd_timeout=30
+httpd_user=root
+
+$ doas rcctl start httpd
+httpd(ok)
+
+$ ps auxo rtable | grep http # note last column
+www      46042  0.0  0.7   744  1740 ??  Sp     4:43PM    0:00.00 httpd: server (h     21
+[...]
+.VERBOFF
+.sp 0.5v
+The daemon was started like a manual 'route -T 21 exec httpd'.
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "ntpd(8)"
+.BL
+.LI
+run only one ntpd(8) or the clock will go very funky \(em VERY
+.LI
+\'server(s)\' go to rdomain 0 (or whichever it uses to reach them)
+.LI
+\'listen\' can be repeated for every rdomain needed, flagged with \'rtable N\'
+.LE
+.sp 1v
+.VERBON 22
+server de.pool.ntp.org
+listen 127.0.0.1
+listen 127.0.0.1 rtable 69
+listen 10.20.21.1 rtable 21
+listen 10.40.41.1 rtable 41
+.VERBOFF
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "pf.conf(5) (I)"
+.SUBTITLE "before / after"
+all-in-one:
+.VERBON 22
+match out on $if_ext inet proto { icmp udp tcp } \\
+  from <net_tenant1> to !<rfc1918> nat-to $nat_tenant1
+
+match out on $if_ext inet proto tcp from any \\
+  to !<rfc1918> port 25 nat-to $nat_tenant1_mail
+
+match out on $if_ext inet proto { icmp udp tcp } \\
+  from <net_tenant2> to !<rfc1918> nat-to $nat_tenant2
+.VERBOFF
+rdomains:
+.VERBON 22
+anchor "tenant1" on rdomain 21 {
+
+  match out on $if_ext inet proto tcp from any \\
+    to !<rfc1918> port 25 nat-to $nat_tenant1_mail
+
+  match out on $if_ext inet proto { icmp udp tcp } \\
+    from <net_tenant1> to !<rfc1918> nat-to $nat_tenant1
+}
+
+anchor "tenant2" on rdomain 41 {
+
+  match out on $if_ext inet proto { icmp udp tcp } \\
+   from <net_tenant2> to !<rfc1918> nat-to $nat_tenant2
+}
+.VERBOFF
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "pf.conf(5) (II)"
+.SUBTITLE "before / after"
+.\" ---- NEXT PAGE
+all-in-one /etc/pf.conf:
+.VERBON 22
+set skip on lo0 enc0 enc1
+set optimization aggressive
+
+block in from $tenant1 to $tenant2 # watch out XXX!
+
+pass from $tenant1 to any nat-to $tenant1_public
+
+match out from $tenant2 to any nat-to $tenant2_public #on request call 3am
+
+match out from any to any nat-to (egress)
+.VERBOFF
+rdomains with (anchored) includes /etc/pf.conf:
+.VERBON 22
+include "/etc/pf/globals.conf"
+include "/etc/pf/management.conf"
+anchor "tenant1" on rdomain 21 {
+  include "/etc/pf/tenant1.conf"
+}
+anchor "tenant2" on rdomain 41 {
+  include "/etc/pf/tenant2.conf"
+}
+# EOF
+.VERBOFF
+
+
+.SK
+.TITLE "Pitfalls (I)"
+.BL
+.LI
+route lookup: if there's none, nothing will happen (even with pf.conf), some sane default if not using pair(4):
+.sp 1v
+.VERBON 22
+/etc/hostname.vlan21:
+up
+rdomain 21
+!/sbin/route -T21 -qn add -net 127 127.0.0.1 -reject
+!/sbin/route -T21 -qn add default 127.0.0.1 -blackhole
+.VERBOFF
+.sp 0.5v
+.LI
+rdomains(4): rdomains/rtable is not removable so look out for 'remains' when playing (adding/removing/..) around
+.LI
+ifconfig(8): when adding (changing) an rdomain, the inet or inet6 configuration will be removed
+.LI
+bridge(4): when adding pair(4) it's "easy" to create a loop, use 'stp' on the pair members
+.sp 0.5v
+.VERBON 22
+$ doas ifconfig bridge0 add pair0 add pair21 stp pair0 stp pair21 up
+.VERBOFF
+.LI
+ping(8), traceroute(8): careful with 'bind-address' esp. when overlapping IP-networks around
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Pitfalls (II)"
+.LI
+iked(8): no choosable socket (but ikectl(8) can..)
+.LI
+authpf(8): tricky to use different config files
+.LI
+isakmpd(8), iked(8): needs one enc(4) per rdomain(4) or no IPsec packets will flow
+.LI
+carp(4): by its nature, it must be in the same rdomain as its parent 'carpdev'. 
+As a remedy virtual interfaces that can be inserted for abstraction: vlan(4) or
+vether(4)+bridge(4) as below:
+.LE
+.sp 0.5v
+.VERBON 22
+$ doas ifconfig vether51 rdomain 51 10.51.1.2 up
+$ doas ifconfig vether52 rdomain 52 10.52.1.2 up
+$ doas ifconfig bridge0 add em1 add vether51 add vether52 \\
+       stp em1 stp vether51 stp vether52 up
+$ doas ifconfig carp51 rdomain 51 carpdev vether51 10.51.1.1 up
+$ doas ifconfig carp52 rdomain 52 carpdev vether52 10.52.1.1 up
+.VERBOFF
+Output: https://gist.github.com/double-p/d3a20fded7e8ced30735705e1dfea5c4
+.sp 0.5v
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "relayd(8)
+.BL
+.LI
+Currently: Limited capability of doing rdomains(4):
+.BL
+.LI
+no choosable anchorname \(em be very careful in redirect "naming"
+.LI
+no choosable socket \(em relayctl(8) will work on the last started instance
+.LI
+\'routers' \(em can insert routes in given rtable
+.LI
+\'redirects' \(em only uses 'on rdomain' in which relayd(8) was started.
+.LE
+.LI
+Future?: work in progress effort:
+.BL
+.LI
+-s : choose a socketname \(em must be a config option for relayd(8)
+.LI
+-a : choose an anchorname instead of 'relayd/*' \(em also config option
+.LI
+rtable in 'redirect' : lookup up destination in choosable rtable; any 'check'
+would still be in the rdomain that relayd was started with
+.LE
+.LE
+.S -6
+Diffs on http://github.com/double-p/smtf/tree/master/patches
+.S P
+.VERBON 22
+$ cat /etc/relayd.conf
+table <local> { 127.0.0.21 }
+redirect "foo" { listen on 127.0.0.1 port http
+forward to <local> port 8000 check icmp rtable 21 }
+
+$ doas route -T 21 exec relayd -a rdr21 -s /var/run/relayd21.sock
+
+$ doas pfctl -a 'rdr21/*' -sr
+anchor "foo" all {
+ pass in quick on rdomain 21 inet proto tcp from any to 127.0.0.21 port = 80 flags
+ S/SA keep state (tcp.established 600) rtable 21 rdr-to <foo> port 8000 round-robin
+}
+.VERBOFF
+.sp 0.5v
+.GPE_TIME 120
+.GPE_SECTION "Test+Automation"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Automation Toolbox"
+To create reproducible and consistent environments for debugging, development, testing some additional
+software can complement the OpenBSD bolts.
+.BL
+.LI
+Vagrant: start 'baseimages' in distinct VMs based on VirtualBox, VMware,..
+and configure base ("physical") networks and other resources. Even
+multiple VMs from a single, not too complex, configuration file can be defined and operated.
+.LI
+packer: using a JSON configuratio file create a 'baseimage' from an ISO; to be used from Vagrant
+.LI
+ansible: based on variable files (YAML) and templates (Jinja2) the needed
+configuration can be created, written and activated in the VMs
+.LE
+
+
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Testbed layout"
+.PSPIC images/vagrant.eps
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "packer"
+Toolkit to create "vagrant" base boxes (and others) based on installNN.iso.
+Workflow from the configuration on github looks like:
+.BL
+.LI
+create a temporary VBox-VM
+.LI
+boot install60.iso
+.LI
+write out install.conf (keyboard emulation)
+.LI
+autoinstall(8) from that
+.LI
+add sudo and python (used by vagrant / ansible)
+.LI
+shutdown and create a box-file that can be used with Vagrant.
+.LE
+.sp 1
+Sidenote: do not forget to adapt iso_url and iso_checksum when updating to current/snapshot/6.1
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Vagrant"
+A descriptive, repeateable toolkit to create VMs based on VirtualBox, VMware and many more.
+.sp 1
+Most notable bits in the provided config for customization:
+.VERBON 22
+# must match the imported packer image (Packer/README.md)
+config.vm.box = "obsd60"
+
+# vm.network in same prefixes are "cable connected" automatically
+v.vm.network :private_network, ip: "1.2.3.4"
+
+# if networking goes totally wrong, have a VirtualBox-GUI-console ready
+vb.gui = true;
+
+# run the script on the top to change the automatically added routing
+v.vm.provision "shell", inline: $inlprv, args: "10.40.40.254"
+.VERBOFF
+.sp 5
+.S -6
+(Someone in this room might add vmd(8) to vagrant the other day).
+.S P
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "ansible"
+A python based framework enabling to provision nodes of almost any kind.
+.Pp
+The 'smtf' repo bits are able to do the following work:
+.BL
+.LI
+vagrant-pb.yml \(em
+create Vagrantfile and matching ansible 'inventory' file
+.LI
+rdomain-pb.yml \(em
+provision /etc/hostname.if for all needed devices; adapt sysctl; "PS1"
+.sp 2v
+.LE
+Basis for the above are several files:
+.BL
+.LI
+group_vars \(em
+network-definition, carp-key, if-family
+.LI
+host_vars \(em
+interface config (no change needed, deviates from group_vars)
+.LI
+roles/vagrant/templates \(em
+Vagrantfile and ansible inventory
+.LI
+roles/all/templates \(em
+hostname.if, ksh-profile
+.LI
+roles/all/tasks/main.yml \(em
+sysctl.conf and activation
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.GPE_SECTION "K-THX-BYE"
+.SK
+.TITLE "Closing wrapup"
+.BL
+.LI
+Complex setups are difficult to operate without fallouts
+.LI
+Three times the above if it's 3 in the morning
+.LI
+rdomains keep tenants seperated without need for a ruleset
+.LI
+rulesets can be seperated by includes and/or anchors
+.LI
+seperated setups are easier to operate, even from "junior" staff
+.LI
+Scared? Test in virtualized environment to remove breakage
+.LI
+Testing creates confidence in your setup
+.LI
+Automation + provisioning saves the day (and weekend)
+.LI
+Check back for further development of 'smtf' on github
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Input + Thanks"
+.GPE_TIME 60
+.S -4
+.BVL 1c
+.LI "Peter Hessler"
+for the talks, experiences and help in rdomains
+.LI "Ingo Schwarze"
+for helping out with roff/gpresent to create this doc
+.LI "OpenBSD developers"
+for adding this and OpenBSD itself
+.LI "sysfive.com GmbH"
+for giving enough working hours to get this done
+.LE
+.S +2
+.GPE_TIME
+.SK
+.sp -0.2v
+.\" ---- NEXT PAGE
+.TITLE "Some more to learn from - and foundations for this talk"
+.sp -0.7v
+.S -4
+.BL
+.LI "manpages (kid you not)" :
+pf.conf(5), route(1), rdomain(4), pair(4), ..
+.LI https://www.youtube.com/watch?v=BizrC8Zr-YY :
+ Peter Hessler on rdomains (BSDCan2015)
+.LI http://www.openbsd.org/papers :
+ All OpenBSD presentations, including the above talks
+.LI http://github.com/double-p/smtf :
+This talk and paper, relayd patches and automation environment
+.LI https://www.youtube.com/watch?v=ufeEP_hzFN0
+ Reyk Floeter on vxlan/cloud networks
+.LI https://www.youtube.com/watch?v=mN5E2EYJnrw
+ David Gwynne on pf/pfsync
+.LE
+.S P
+.sp -1v
+.GPE_TIME 10
