@@ -1,0 +1,200 @@
+.\"
+.\" Copyright (c) 2019 Philipp Buehler <pbuehler@sysfive.com>
+.\"
+.\" Permission to use, copy, modify, and distribute this presentation for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE PRESENTATION IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+.\" WARRANTIES WITH REGARD TO THIS PRESENTATION INCLUDING ALL IMPLIED
+.\" WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL THE
+.\" AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+.\" DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA
+.\" OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+.\" TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+.\" PERFORMANCE OF THIS PRESENTATION.
+.\"
+.\" --------------------------------------------------------------------
+.\" All macro definition taken/inspired from Ingo Schwarze's talk
+.\" EuroBSDcon 2015 - "mandoc"
+.\" http://www.openbsd.org/papers/eurobsdcon2015-mandoc.roff
+.\" --------------------------------------------------------------------
+.\"
+.\" --- global gpresent configuration settings -------------------------
+.DEFCOLOR Navy 0 0 0.5
+.DEFCOLOR Navylight 0 0.2 0.8
+.TITLECOLOR Navy
+.SUBTITLEFORMAT C
+.SUBTITLECOLOR Navylight
+.FOOTERSIZE 2
+.\" We don't want a header line for the title page,
+.\" so we have to start it before setting up headers.
+.TITLE "OpenBSD: add VMM to 'packer'"
+.\" === gpresent header setup ==========================================
+.\" --- define gpresent extension registers ----------------------------
+.nr gpe_page_tot 1
+.nr gpe_page_sec 0
+.af gpe_page_sec I
+.nr gpe_time_tsec 14*60+45*60
+.nr gpe_time_hour 14
+.nr gpe_time_min 45
+.af gpe_time_min 45
+.nr gpe_time_sec 0
+.af gpe_time_sec 02
+.
+.\" --- macro to start a new section -----------------------------------
+.de GPE_SECTION
+.ds gpe_title_sec \\$1
+.nr gpe_page_sec 0
+..
+.\" --- gpresent page header callback ----------------------------------
+.de HEADER
+.nr gpe_page_tot +1
+.nr gpe_page_sec +1
+.sp 0.5v
+.ds gpe_middle page \\n[gpe_page_tot]: \\*[gpe_title_sec] \\n[gpe_page_sec]
+.tl 'Philipp B\[u0075_0308]hler: OpenBSD VMM packer'\
+\\*[gpe_middle]'\
+Ottawa, May 18th, 2019'
+.sp -0.5v
+.\" horizontal line below the page header
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+..
+.\" --- initialize the first section before completing the title page --
+.GPE_SECTION "Opening"
+.\" === define some gpresent extension macros ==========================
+.\" --- two-column mode (for images) -----------------------------------
+.\" 1st arg: width of first column
+.\" 2nd arg: move second column up by this amout (default 0.5v)
+.\" switch column with normal .MULN, end with normal .MULE
+.de GPE_MULB
+.nr gpe_colwr \\n(.l-\\$1-1n
+.ie \\n[.$]>1 .ds gpe_vsp \\$2
+.el .ds gpe_vsp 0.5v
+.sp -\\*[gpe_vsp]
+.MULB \\$1 1n \\n[gpe_colwr]u
+.sp \\*[gpe_vsp]
+..
+.\" --- emphasis -------------------------------------------------------
+.\" arg: text
+.de GPE_EM
+.COLOR red
+\\$1
+.COLOR P
+..
+.\" --- small text -----------------------------------------------------
+.\" arg: text
+.de GPE_SM
+.S -4
+.ce
+\\$1
+.S P
+..
+.\" --- small text with one emphasised word ----------------------------
+.\" 1st arg: text before emphasis
+.\" 2nd arg: emphasised text
+.\" 3rd arg: text after emphasis
+.de GPE_SMEM
+.GPE_SM "\\$1 \m[red]\\$2\m[] \\$3"
+..
+.\"
+.\" all macro and title fuzzing done - real work below
+.\"
+.\" --- title page -----------------------------------------------------
+.sp -1v
+.SUBTITLE "The red pill taken to develop a Go 'plugin' for packer.io to be able to create VM images on OpenBSD for VMM and many other virtualizers."
+.SUBTITLE "Philipp B\[u0075_0308]hler <pb@sysfive.com> @pb_double"
+.GPE_SM "sysfive.com portfolio"
+.MULB 11c 1n 11c
+.BL
+.LI
+Continous system and application operation
+.LI
+Collaborations with Providers, Developers, Services and QA
+.LI
+Hybrid cloud provisioning
+.LI
+cost efficient scaling on commodity HW
+.LI
+scale out to AWS/RS/GCE
+.LI
+Incident, problem, disaster response
+.LE
+.PSPIC ../../images/sysfive-logo.eps
+.MULN
+.BL
+.LI
+Service availability independent of solution scenario
+.LI
+migrate from or to private/public cloud or own HW
+.LI
+robust, scalable technology portfolio
+.LI
+continuous improvements in security and server
+architecture
+.LI
+coherent provisioning across platforms (dev/stage/live)
+.LI
+vendor/provider independence, OSS focus
+.LE
+.MULE
+
+.SK
+.\" --- macros to start a new page -------------------------------------
+.\" arg: time for this page in seconds
+.de GPE_TIME
+.nr gpe_time_tsec +\\$1
+.nr gpe_time_hour \\n[gpe_time_tsec]/3600
+.nr gpe_time_min \\n[gpe_time_tsec]%3600/60
+.nr gpe_time_sec \\n[gpe_time_tsec]%60
+.ds gpe_source BSDCan 2019
+..
+.\" --- gpresent page footer callback ----------------------------------
+.de FOOTER
+.ps 18
+.vs 20
+.sp -2v
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+.tl '\s-6\\n[gpe_time_hour]:\\n[gpe_time_min]:\s-2\\n[gpe_time_sec]\
+ \s+8''sysfive.com @\\m[Navylight]\\*[gpe_source]\ \ \\m[]'
+.ps
+.vs
+..
+.GPE_SECTION "Overview"
+.\" ---- NEXT PAGE
+.SK
+.GPE_TIME 100
+
+
+.\" ---- NEXT PAGE
+.GPE_SECTION "K-THX-BYE"
+.SK
+.TITLE "Ohai + Links + Thanks"
+.BL
+.LI
+Code/Slides - https://v.gd/packobsd
+.LI
+Thanks to Claudio for the idea of vmctl -B and fixing my go "args"
+.LI
+Thanks to grubernaut for go.mod and various fixes
+.LI
+Any help/pull request very welcome (e.g. "port")
+.LI
+Kickoff - Glarus, Switzerland / https://hack4glarus.ch
+.LE
+.sp 1v
+.GPE_EM Questions?
+.sp 2v
+.PSPIC ../../images/sysfive-logo.eps
+.SK
+.sp 2v
+.TITLE "BEER after the closing session and **auction**"
+.TITLE "DO NOT MISS - and see you at the Red Lion after it"
+.MULB 11c 1n 11c
+.PSPIC ./images/qrcode.eps
+.MULN
+.PSPIC ../../images/puflogv400X260.eps
+.MULE
+Code/Slides - https://v.gd/packobsd
