@@ -1,0 +1,797 @@
+.\"
+.\" Copyright (c) 2018 Philipp Buehler <pbuehler@sysfive.com>
+.\"
+.\" Permission to use, copy, modify, and distribute this presentation for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE PRESENTATION IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+.\" WARRANTIES WITH REGARD TO THIS PRESENTATION INCLUDING ALL IMPLIED
+.\" WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL THE
+.\" AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+.\" DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA
+.\" OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+.\" TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+.\" PERFORMANCE OF THIS PRESENTATION.
+.\"
+.\" --------------------------------------------------------------------
+.\" All macro definition taken/inspired from Ingo Schwarze's talk
+.\" EuroBSDcon 2015 - "mandoc"
+.\" http://www.openbsd.org/papers/eurobsdcon2015-mandoc.roff
+.\" --------------------------------------------------------------------
+.\"
+.\" --- global gpresent configuration settings -------------------------
+.DEFCOLOR Navy 0 0 0.5
+.DEFCOLOR Navylight 0 0.2 0.8
+.TITLECOLOR Navy
+.SUBTITLEFORMAT C
+.SUBTITLECOLOR Navylight
+.FOOTERSIZE 2
+.\" We don't want a header line for the title page,
+.\" so we have to start it before setting up headers.
+.TITLE "Puffalanche - OpenBSD by the busloads"
+.\" === gpresent header setup ==========================================
+.\" --- define gpresent extension registers ----------------------------
+.nr gpe_page_tot 1
+.nr gpe_page_sec 0
+.af gpe_page_sec I
+.nr gpe_time_tsec 16*60+00*60
+.nr gpe_time_hour 16
+.nr gpe_time_min 02
+.af gpe_time_min 02
+.nr gpe_time_sec 0
+.af gpe_time_sec 02
+.
+.\" --- macro to start a new section -----------------------------------
+.de GPE_SECTION
+.ds gpe_title_sec \\$1
+.nr gpe_page_sec 0
+..
+.\" --- gpresent page header callback ----------------------------------
+.de HEADER
+.nr gpe_page_tot +1
+.nr gpe_page_sec +1
+.sp 0.5v
+.ds gpe_middle page \\n[gpe_page_tot]: \\*[gpe_title_sec] \\n[gpe_page_sec]
+.tl 'Philipp B\[u0075_0308]hler: Puffalanche'\
+\\*[gpe_middle]'\
+Ottawa, June 9th, 2018'
+.sp -0.5v
+.\" horizontal line below the page header
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+..
+.\" --- initialize the first section before completing the title page --
+.GPE_SECTION "Opening"
+.\" === define some gpresent extension macros ==========================
+.\" --- two-column mode (for images) -----------------------------------
+.\" 1st arg: width of first column
+.\" 2nd arg: move second column up by this amout (default 0.5v)
+.\" switch column with normal .MULN, end with normal .MULE
+.de GPE_MULB
+.nr gpe_colwr \\n(.l-\\$1-1n
+.ie \\n[.$]>1 .ds gpe_vsp \\$2
+.el .ds gpe_vsp 0.5v
+.sp -\\*[gpe_vsp]
+.MULB \\$1 1n \\n[gpe_colwr]u
+.sp \\*[gpe_vsp]
+..
+.\" --- emphasis -------------------------------------------------------
+.\" arg: text
+.de GPE_EM
+.COLOR red
+\\$1
+.COLOR P
+..
+.\" --- small text -----------------------------------------------------
+.\" arg: text
+.de GPE_SM
+.S -4
+.ce
+\\$1
+.S P
+..
+.\" --- small text with one emphasised word ----------------------------
+.\" 1st arg: text before emphasis
+.\" 2nd arg: emphasised text
+.\" 3rd arg: text after emphasis
+.de GPE_SMEM
+.GPE_SM "\\$1 \m[red]\\$2\m[] \\$3"
+..
+.\"
+.\" all macro and title fuzzing done - real work below
+.\"
+.\" --- title page -----------------------------------------------------
+.sp -1v
+.SUBTITLE "OpenBSD and Vagrant: make autoinstall(8) by the busloads easy"
+.SUBTITLE "Philipp B\[u0075_0308]hler <pb@sysfive.com> @pb_double"
+.sp 1
+.GPE_SM "sysfive.com portfolio"
+.MULB 11c 1n 11c
+.BL
+.LI
+Continous system and application operation
+.LI
+Collaborations with Providers, Developers, Services and QA
+.LI
+Hybrid cloud provisioning
+.LI
+cost efficient scaling on commodity HW
+.LI
+scale out to AWS/RS/GCE
+.LI
+Incident, problem, disaster response
+.LE
+.PSPIC ../../images/sysfive-logo.eps
+.MULN
+.BL
+.LI
+Service availability independent of solution scenario
+.LI
+migrate from or to private/public cloud or own HW
+.LI
+robust, scalable technology portfolio
+.LI
+continuous improvements in security and server
+architecture
+.LI
+coherent provisioning across platforms (dev/stage/live)
+.LI
+vendor/provider independence, OSS focus
+.LI
+ ... and we're hiring.
+.LE
+.MULE
+
+.SK
+.\" --- macros to start a new page -------------------------------------
+.\" arg: time for this page in seconds
+.de GPE_TIME
+.nr gpe_time_tsec +\\$1
+.nr gpe_time_hour \\n[gpe_time_tsec]/3600
+.nr gpe_time_min \\n[gpe_time_tsec]%3600/60
+.nr gpe_time_sec \\n[gpe_time_tsec]%60
+.ds gpe_source BSDCan 2018
+..
+.\" --- gpresent page footer callback ----------------------------------
+.de FOOTER
+.ps 18
+.vs 20
+.sp -2v
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+.tl '\s-6\\n[gpe_time_hour]:\\n[gpe_time_min]:\s-2\\n[gpe_time_sec]\
+ \s+8''sysfive.com @\\m[Navylight]\\*[gpe_source]\ \ \\m[]'
+.ps
+.vs
+..
+.GPE_SECTION "Overview"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Solving what?"
+.SP 4v
+.BL
+.LI
+Run multiple OpenBSD VMs on OpenBSD - w/o dealing with vm.conf(5)
+.LI
+make inter/intra-networking "just work" - no bridge(8) "hassle"
+.LI
+develop and TEST autoinstall at 30,000ft (or -50)
+.LI
+create reproducable installs - even "me so unique" ones
+.LI
+and also retrospective (live --> test)
+.LI
+use the same configuration (Vagrantfile) on OpenBSD/OSX/Linux to get
+the same resulting VM package/network/setup
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Puffy boxed on OpenBSD (Dev#1)"
+.MULB 12c 1n 8c
+.ad l
+.PSPIC images/openbsd_host_only.eps
+.MULN
+.ad l
+.BL
+.LI
+Bootstrap-VM: might be based on manual install -> better do it in `packer'
+.LI
+vPuffy1+2: autoinstall from Bootstrap-VM directly
+.LI
+vPuffy2a: autoinstall via dhcrelay on vPuffy2
+.LE
+.MULE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Puffy boxed on Linux/OSX/.. (Dev#2-n)"
+.MULB 12c 1n 8c
+.ad l
+.PSPIC images/multi-host-os.eps
+.MULN
+.ad l
+Just run the SAME "infrastructure" on
+.BL
+.LI
+OSX (Virtualbox/VMware)
+.LI
+Linux (Virtualbox/libvirt)
+.LI
+Cloud (AWS/GCE/..)
+.LI
+basically everything that Vagrant supports
+.LE
+.MULE
+.SP 2v
+Infrastructure going on a trainride or being airborne.
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Puffy BREAKOUT to physical."
+.MULB 12c 1n 8c
+.ad l
+.PSPIC images/breakout_to_reality.eps
+.MULN
+.ad l
+.BL
+.LI
+Not impressed so far? Let's go physical..
+.LI
+Run the very SAME "infrastructure" on REAL puffymachines
+.LI
+Develop + Test virtualized, use results for:
+.LI
+Confidence in rollouts
+.LI
+debug problems on Laptop, roll-out solution to Realpuffy
+.LE
+.MULE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "What did I need to work on? (ongoing)"
+.BL
+.LI
+OpenBSD: VMM PXE enabled BIOS (hi Mike)
+.LI
+Vagrant "Core" (plugin-loader) (+port)
+.LI
+OpenBSD's VMM as a Vagrant provider-plugin (+gem port)
+.LI
+[Ruby development tools - only for plugin development (BUILD.md in repo)]
+.LI
+integrated vether(8)/bridge(8)/dhcpd(8) setup (VM to VM)
+.LI
+deeper knowhow on autoinstall(8) features
+.LI
+[installer enhancements (pre-install.sh / softraid(4))]
+.LE
+.sp 2v
+Groundwork is done, but open points:
+.BL
+.LI
+Better automation in network lookup (no magic numbers/assumptions).
+.LI
+VM-to-VM isolated networking (not via Host, bad for PXE)
+.LI
+Gem of vagrant-openbsd (gemspec done)
+.LI
+ports(7) of Vagrant and vagrant-openbsd. First one "complicated" for me,
+second should be a breeze after having a Gem on rubygems.org
+.LI
+"synced folders" (NFS)
+.LI
+suspend/resume/"package"
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "What's already around?"
+.BL
+.LI
+non-published PXE BIOS
+.LI
+bundle(1) Vagrant 2.1 (but likely works with 1.5+)
+.LI
+Vagrant provider-plugin: 0.3.0
+.BL
+.LI
+box support (disk or [PXE-BIOS])
+.LI
+host OS detection by vagrant
+.LI
+VM lifecycle "import/up/halt/destroy"
+.LI
+Host-to-Guest networking + SSH
+.LE
+.LI
+autoinstall concepts:
+.BL
+.LI
+PXE/DHCP/TFTP response steering
+.LI
+install.conf steering
+.LI
+disklabel templates
+.LI
+multiple set sources
+.LI
+siteNN.tgz
+.LI
+siteNN-hostname.tgz
+.LI
+install.site
+.LE
+.LE
+.GPE_TIME 120
+
+.\" ---- NEXT PAGE
+.GPE_SECTION "Details: Vagrant"
+.SK
+.TITLE "Vagrant - Architecture"
+.SP 2v
+Naming - what's in the bento?
+.SP 1v
+.BVL 1c
+.LI "Core"
+plugin loader "framework" + utils
+.LI "host"
+capabilities (Linux, OSX, Free/OpenBSD, ..) 
+.LI "box"
+Disk/BIOS image + metadata packed as tar.gz
+.LI "guest"
+capabilities (Linux, Free/OpenBSD, ..)
+.LI "provider"
+capabilities (vbox/VMM/bhyve/...) where the main show goes
+.LI "communicators"
+ssh/winssh/winrm to let Vagrant configure the guest
+.LI "provisioner"
+shell/ansible/chef/puppet/... run after the first 'up' of the VM
+.LE
+.GPE_TIME 120
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Plugins"
+.SP 1v
+All plugins come along this layout:
+.SP 3v
+e.g. Provider
+.BL
+.LI
+lazy loader - overloading classes
+.LI
+Action (abstraction classes, workflow)
+.LI
+Driver (host integration, here mainly vmctl)
+.LI
+Templates (ERB) (vm.conf)
+.LE
+.GPE_TIME 120
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Networking capabilities"
+.SP 4v
+.BL
+.LI
+port-forward: open arbitrary ports (default 127.0.0.1) on the host and ssh-forward it into the VM
+.LI
+bridged network: reach out from VM to The Internet (Host might need to NAT)
+.LI
+"private" network: VM to VM communication on isolated network (bridge(8) rdomain(4)?)
+.LE
+.GPE_TIME 120
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Provisioner - post-postinstall"
+.SP 3v
+Almost any automation stack can be included into a Vagrant based VM
+.BL
+.LI
+(inline) shell scripts
+.LI
+ansible
+.LI
+Chef
+.LI
+Puppet
+.LI
+Salt
+.LI
+you-name-it, likely there's a plugin
+.LE
+.GPE_TIME 60
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "pf(4) integration"
+.SP 2v
+Still undecided, leave it to the user to adapt some pf.conf(5) or depend
+on an `anchor' in it like relayd(8), authpf(8).
+.br
+.br
+Leaning to anchor, which will make the experience likely better but requires
+more work in the plugin.
+.br
+.br
+Minimum pf.conf(5) needed for bridged networking (VM to The Internet) on Host:
+.SP 1v
+.VERBON 0 12
+pass out on $ext_if from 100.64.0.0/10 to any nat-to ($ext_if)
+
+
+pass in proto { tcp udp } from from 100.64.0.0/10 to any port 53 rdr-to 127.0.0.1
+
+# and run unbound(1) or thelike. fix vmd-dhcpd?
+# ..dont forget net.inet.ip.forwarding=1
+.VERBOFF
+
+.GPE_TIME 60
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Anatomy of an UP session"
+.VERBON 0 12
+$ uname -a ; bundle exec vagrant status ; bundle exec vagrant up ; \\
+ bundle exec vagrant ssh -c "uname -a"
+OpenBSD ssfnhv011.ham3.rootnexus.net 6.2 GENERIC.MP#134 amd64
+Current machine states:
+vagrobsd                  not_created (openbsd)
+Bringing machine 'vagrobsd' up with 'openbsd' provider...
+==> vagrobsd: Verifying VMM present and CPU capable...
+==> vagrobsd: Importing an OpenBSD instance
+    vagrobsd: Cloning virtual hard drive...
+    vagrobsd: Successfully imported a VM image
+    vagrobsd: Creating vmctl configuration
+==> vagrobsd: Starting the machine...
+==> vagrobsd: Waiting for the machine to report its IP address...
+    vagrobsd: IP: 100.64.2.3
+==> vagrobsd: Waiting for machine to boot. This may take a few minutes...
+    vagrobsd: SSH address: 100.64.2.3:22
+    vagrobsd: SSH username: root
+    vagrobsd: SSH auth method: password
+    vagrobsd: Inserting generated public key within guest...
+    vagrobsd: Removing insecure key from the guest if it's present...
+    vagrobsd: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> vagrobsd: Machine booted and ready!
+OpenBSD openbsd62.example.com 6.2 GENERIC#132 amd64
+Connection to 100.64.2.3 closed.
+
+$ cat Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.box = "vagrobsd"
+  config.ssh.shell = "ksh -l"
+  config.ssh.sudo_command = "doas -n %c"
+  config.vm.define "vagrobsd" do |v|
+    v.vm.hostname = "openbsd-vagrant"
+  end
+end
+.VERBOFF
+.GPE_TIME 120
+.GPE_SECTION "Details: autoinstall"
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "autoinstall(8)"
+.TITLE "Overview / Concept"
+.BL
+.LI
+two shell scripts, common and MD (~3500 lines)
+.LI
+install or upgrade
+.LI
+simple answerfile (in ramdisk or download)
+.LI
+answers consumed as they match, might be given several times
+.LI
+https + signify
+.LE
+.GPE_TIME 120
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Anatomy of an installation"
+.BL
+.LI
+bsd.rd, init and to /etc/rc
+.LI
+dot.profile basic setup and launch installer
+.LI
+choosing autoinstall if netboot (after 5s)
+.LI
+sets mode and installsets
+.LI
+configure network
+.LI
+fetch official mirror list
+.LI
+fetch answerfile
+.LI
+disk config
+.LI
+fetch+install sets
+.LI
+system configuration, user setup
+.LI
+relink kernel
+.LI
+install bootblocks
+.LI
+custom post-install
+.LI
+/etc/rc.firsttime after reboot (sys{patch,merge}, fw_update)
+.LE
+
+.GPE_TIME 180
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Disks (amd64)"
+.BL
+.LI
+fetch a disklabel(8) template
+.LI
+OR calculate a root disk layout
+.LI
+no softraid support YET - quirk: install twice
+.LE
+
+.GPE_TIME 100
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Network"
+.SP 3v
+.BL
+.LI
+DHCP (inet4) or SLAAC (inet6)
+.LI
+static configuration ("nope")
+.LI
+can make use of http[s]_proxy
+.LI
+ftplist.cgi (handling of mirrors)
+.LE
+
+.GPE_TIME 120
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Debugging"
+.SP 3v
+.BL
+.LI
+bails to shell if errors occur
+.LI
+/tmp/ai/ai.log # what happened with which values
+.LI
+/tmp/ai/ai.conf # answerfile as provided (tag it!)
+.LI
+/tmp/i/$MODE.resp # logged answers
+.LI
+/tmp/i/httplist,httpsec,wlanlist
+.LI
+/tmp/i/cgiinfo # mirror information
+.LI
+from shell: install -af $answerfile
+.LE
+
+.GPE_TIME 120
+.GPE_SECTION "Configuration Reference"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "base system settings"
+Generally order doesn't matter - unless one uses same question multiple times, like installing from more than one source.
+.SP 2v
+.VERBON 0 12
+System hostname = myhost
+Choose your keyboard layout = us
+Start sshd(8) by default = yes
+Do you expect to run the X Window System = no
+Do you want the X Window System to be started by xenodm = no
+Change the default console to = com0
+Terminal type = vt220
+speed should com0 use = 115200
+What timezone are you in = Europe/Berlin
+.VERBOFF
+.GPE_TIME 180
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Sets location and Disk"
+It's possible to repeat the question/answer tuples with differing
+values. So it's possible to install the base OpenBSD from official
+mirrors, and subsequently pull siteNN.tgz from a different/local
+server.
+.br
+.SP 1v
+.VERBON 0 12
+Location of sets = h # http(s)
+Set name(s)? = -x* +site*
+.VERBOFF
+.SP 2v
+Can be used multiple times, but (A)utolayout only for the rootdisk
+.SP 1v
+.VERBON 0 12
+disk do you wish to initialize = sd0
+Which disk is the root disk = sd0
+Use (A)uto layout, (E)dit auto layout, or create (C)ustom layout = A
+URL to autopartitioning template for disklabel = https://10.1.1.100/disklabeltemplate
+.VERBOFF
+.GPE_TIME 180
+
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "User"
+.SP 3v
+.VERBON 0 12
+Password for root account = usekeyonly
+Allow root ssh login = prohibit-password
+Setup a user = toor
+Password for user toor = ************* # 13 asterisks
+Full name for user toor = Mr Toor
+Public ssh key for user toor = ssh-rsa 909239234239490721349...=
+Public ssh key for root account = ssh-rsa 23674573423948902384...==
+.VERBOFF
+.GPE_TIME 60
+
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "installtime networking"
+.SP 3v
+.VERBON 0 12
+Time appears wrong. Set to = yes # off > 120s from HTTP
+
+network interface should be used for the initial DHCP request = ix0
+#defaults to netboot device
+.VERBOFF
+.SP 0.5v
+.VERBON 0 12
+HTTP proxy URL? = none
+HTTP Server? = [http[s]://]10.1.1.100 # also goes to installurl(5)
+Unable to connect using https. Use http instead = no
+Server directory? = pub/OpenBSD/6.2/amd64
+.VERBOFF
+.GPE_TIME 120
+
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "runtime networking"
+.SP 2v
+DNS wont be asked when DHCP is used. Really?
+.SP 0.5v
+.VERBON 0 12
+DNS domain name = example.com
+DNS nameservers = 1.1.1.1
+
+network interface do you wish to configure = (phy0|vlan0) # hostname.if(5)
+
+Symbolic (host) name for $_if = virtahost # only if > 1
+
+IPv4 address for (em0|ix0|..) = (dhcp|10.1.1.1|10.2.2.2/24)
+Netmask for for (em0|ix0|..) = 255.255.255.0 # if no CIDR above
+Default IPv4 route? = 10.1.1.254 # static configuration if no dhcp, mygate(5)
+
+IPv6 address for (em0|ix0|..) = (autoconf|fd8e:c35e:4631:0::1/64)
+IPv6 prefix length for (em0|ix0|..) = 64 # if no prefix above
+
+# vlan
+Which interface:tag should $_if be on = em0 # any physical if, $_if like vlan0
+.VERBOFF
+.SP 0.5v
+Wireless
+.SP 0.5v
+.VERBON 0 12
+Access point? = any # 80211 setup, ESSID
+Security protocol? = (O|W|P) # 80211 setup, answer means: Open/WEP/WPA-PSK
+
+WEP key? = 13_characters # 80211 setup, see ifconfig(8) /nwkey
+WPA passphrase? = longpassphrase # 80211 setup, see ifconfig(8) /wpakey
+.VERBOFF
+
+.GPE_TIME 180
+
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Checksum handling"
+.SP 4v
+These will happen for customized/additional sets like siteNN.tgz
+.SP 1v
+.VERBON 0 12
+Checksum test for $_f failed. Continue anyway = no
+Unverified sets ... Continue without verification = no
+.VERBOFF
+.SP 1v
+$_f will be siteNN.tgz. For now there's no way to properly signify(1) this (?).
+.GPE_TIME 120
+
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Site packages / scripts"
+Installer will offer those for selection if present (index.txt!)
+and matches the hostname. Contents will be just be unpacked like
+.SP 0.5v
+.VERBON 0 12
+tar zxpf siteNN.tgz -C /mnt
+.VERBOFF
+.SP 1v
+install.site can be any arbitrary shell script that will be run
+chrooted in /mnt.
+.br
+.GPE_EM "Do not forget to set +x on it before tarring it up."
+.SP 1v
+.BL
+.LI
+siteNN.tgz : every host might select this
+.LI
+siteNN-hostname.tgz : would only be selectable when hostname matches
+.LI
+install.site / upgrade.site : be ran last before reboot
+.LE
+.GPE_TIME 120
+
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Decision making"
+.SP 2v
+.BVL 1c
+.LI "tftp filename 'name'"
+installer will choose install or upgrade depending on the returned
+filename: auto_install or auto_upgrade.
+.LI "tftp filename download"
+installer will tftp download 'auto_install' which shall be a symlink
+to the desired bsd.rd. Note that tftpd(8) can deliver different files
+based on IP address (-i, since 6.3).
+.LI "tftp next-server"
+installer will tftp download from this server (optional)
+.LI "XXX-install.conf"
+installer will download MAC_Addr-install.conf or hostname-install.conf
+or install.conf (same for update)
+.LI "install.conf: 'HTTP Server'"
+as previous, other server(s) can be used for sets downloads
+.LE
+.SP 0.5v
+Some more fine grained DHCP options listed in autoinstall(8) manpage.
+.GPE_TIME 120
+
+
+.\" ---- NEXT PAGE
+.GPE_SECTION "K-THX-BYE"
+.SK
+.TITLE "Ohai + Links + Thanks"
+.BL
+.LI
+Code/Slides - http://itm.im/vagrobsd
+.LI
+Revisit for EuroBSDCon Bucharest the latest (Tutorial!?)
+.LI
+Any help/pull request very welcome (e.g. NFS)
+.LI
+Vagrant plugins - https://github.com/hashicorp/vagrant/wiki/Available-Vagrant-Plugins
+.LI
+Kickoff - Glarus, Switzerland / https://ungleich.ch
+.LE
+.sp 1v
+.GPE_EM Questions?
+.sp 2v
+.PSPIC ../../images/sysfive-logo.eps
+.SK
+.sp 2v
+.TITLE "BEER after the closing session and auction"
+.TITLE "DO NOT MISS - and see you at the Red Lion after it"
+.MULB 11c 1n 11c
+.PSPIC ../../images/itm-vagrobsd.eps
+.MULN
+.PSPIC ../../images/puffy-logo.eps
+.MULE
+Code/Slides - http://itm.im/vagrobsd
