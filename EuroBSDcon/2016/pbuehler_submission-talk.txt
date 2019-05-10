@@ -1,0 +1,30 @@
+OpenBSD: pf+rdomains create splendid multi-tenancy firewalls
+======
+
+Abstract
+-----
+This talk presents a working OpenBSD environment establishing a multi-tenant
+firewall with pf(4), rdomain/pair(4) and relayd(8) as work horses only.
+
+The environment shows how to provision, operate, isolate and manage all the
+components needed - and what isn't. It'll reveal how even complex setups can
+be developed, tested and provisioned in a straightforward way.
+
+Besides detailing on the OpenBSD bolts, there will be quick walkthrough how
+to create testing setups easily using Vagrant in preparation for live usage.
+
+For easy re-enacting all configuration of OpenBSD and Vagrant being used will
+be available online.
+
+Speaker
+-----
+Philipp uses Unix since mid 1990s and OpenBSD since 2000. Born and working in
+Germany mainly in Unix/Linux/BSD areas including ISP services and networking.
+Been an OpenBSD developer from 2002 to 2005, trying to cleanup and test pf(4).
+Co-founder of sysfive.com GmbH having the technical lead in designing and
+operating FOSS-based business plattforms.
+Returning to EuroBSDcon after a co-authored talk with Henning in 2002!
+
+Travel
+-----
+Company will pay the flights, use the saved money for travel grants!

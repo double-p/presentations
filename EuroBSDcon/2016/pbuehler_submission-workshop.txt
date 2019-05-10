@@ -1,0 +1,31 @@
+OpenBSD: Building a test-environment for multi-tenancy firewalls (full-day workshop)
+======
+
+Abstract
+-----
+This workshop will be thorough walkthrough on creating a test-environment
+for a multi-tenant OpenBSD firewall based on Vagrant VMs.
+
+We will create a base image using packer and multiply that via Vagrant,
+including the needed networking to isolate the setup. Following is an
+introduction to pf(4) and rdomain(4) and how this is used to create the
+multi-tenant firewall. Furthermore it'll be shown how to operate, manage
+and extend this for further tenants. Since operations also need measurement
+and reporting, there will be some outlook on how to accomplish this.
+
+All configuration of all components being used will be available online. 
+
+Please bring a laptop with Vagrant/1.7.2+, 10GB free disk and 2GB free RAM.
+
+Speaker
+-----
+Philipp uses Unix since mid 1990s and OpenBSD since 2000. Born and working in
+Germany mainly in Unix/Linux/BSD areas including ISP services and networking.
+Been an OpenBSD developer from 2002 to 2005, trying to cleanup and test pf(4).
+Co-founder of sysfive.com GmbH having the technical lead in designing and
+operating FOSS-based business plattforms.
+Returning to EuroBSDcon after a co-authored talk with Henning in 2002!
+
+Travel
+-----
+Company will pay the flights, use the saved money for travel grants!
