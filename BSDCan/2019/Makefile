@@ -16,7 +16,7 @@ pdf:
 
 fetch:
 	@scp -F ssh_config \
-		root@openbsd-presenter:/home/${USER}/presentations/${EVENT}/${TIME}/${TALK}.pdf .
+		root@openbsd-presenter:/home/${USER}/presentations/${EVENT}/${TIME}/${TALK}.{roff,pdf} .
 
 show:
 	@open -n ./${TALK}.pdf
