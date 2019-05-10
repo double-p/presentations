@@ -1,0 +1,14 @@
+all: pdf fetch show
+
+ssh:
+	@vagrant ssh-config > ssh_config
+
+pdf: ssh
+	@ssh -F ssh_config root@default "cd ~pbuehler/BSDCan/2017 && make"
+
+fetch: ssh
+	@scp -F ssh_config root@default:/home/pbuehler/BSDCan/2017/bsdcan2017-talk.pdf .
+	@scp -F ssh_config root@default:/home/pbuehler/BSDCan/2017/BSDCan*.roff .
+
+show:
+	@open ./bsdcan2017-talk.pdf
