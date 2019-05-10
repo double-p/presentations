@@ -1,0 +1,555 @@
+.\"
+.\" Copyright (c) 2017 Philipp Buehler <pbuehler@sysfive.com>
+.\"
+.\" Permission to use, copy, modify, and distribute this presentation for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE PRESENTATION IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+.\" WARRANTIES WITH REGARD TO THIS PRESENTATION INCLUDING ALL IMPLIED
+.\" WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL THE
+.\" AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+.\" DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA
+.\" OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+.\" TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+.\" PERFORMANCE OF THIS PRESENTATION.
+.\"
+.\" --------------------------------------------------------------------
+.\" All macro definition taken/inspired from Ingo Schwarze's talk
+.\" EuroBSDcon 2015 - "mandoc"
+.\" http://www.openbsd.org/papers/eurobsdcon2015-mandoc.roff
+.\" --------------------------------------------------------------------
+.\"
+.\" --- global gpresent configuration settings -------------------------
+.DEFCOLOR Navy 0 0 0.5
+.DEFCOLOR Navylight 0 0.2 0.8
+.TITLECOLOR Navy
+.SUBTITLEFORMAT C
+.SUBTITLECOLOR Navylight
+.FOOTERSIZE 2
+.\" We don't want a header line for the title page,
+.\" so we have to start it before setting up headers.
+.TITLE "OpenBSD"
+.\" === gpresent header setup ==========================================
+.\" --- define gpresent extension registers ----------------------------
+.nr gpe_page_tot 1
+.nr gpe_page_sec 0
+.af gpe_page_sec I
+.nr gpe_time_tsec 16*60+45*60
+.nr gpe_time_hour 16
+.nr gpe_time_min 02
+.af gpe_time_min 02
+.nr gpe_time_sec 0
+.af gpe_time_sec 02
+.
+.\" --- macro to start a new section -----------------------------------
+.de GPE_SECTION
+.ds gpe_title_sec \\$1
+.nr gpe_page_sec 0
+..
+.\" --- gpresent page header callback ----------------------------------
+.de HEADER
+.nr gpe_page_tot +1
+.nr gpe_page_sec +1
+.sp 0.5v
+.ds gpe_middle page \\n[gpe_page_tot]: \\*[gpe_title_sec] \\n[gpe_page_sec]
+.tl 'Philipp B\[u0075_0308]hler: firewalls - back, now, then'\
+\\*[gpe_middle]'\
+Mauritius -- September 10, 2017'
+.sp -0.5v
+.\" horizontal line below the page header
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+..
+.\" --- initialize the first section before completing the title page --
+.GPE_SECTION "Opening"
+.\" === define some gpresent extension macros ==========================
+.\" --- two-column mode (for images) -----------------------------------
+.\" 1st arg: width of first column
+.\" 2nd arg: move second column up by this amout (default 0.5v)
+.\" switch column with normal .MULN, end with normal .MULE
+.de GPE_MULB
+.nr gpe_colwr \\n(.l-\\$1-1n
+.ie \\n[.$]>1 .ds gpe_vsp \\$2
+.el .ds gpe_vsp 0.5v
+.sp -\\*[gpe_vsp]
+.MULB \\$1 1n \\n[gpe_colwr]u
+.sp \\*[gpe_vsp]
+..
+.\" --- emphasis -------------------------------------------------------
+.\" arg: text
+.de GPE_EM
+.COLOR red
+\\$1
+.COLOR P
+..
+.\" --- small text -----------------------------------------------------
+.\" arg: text
+.de GPE_SM
+.S -4
+.ce
+\\$1
+.S P
+..
+.\" --- small text with one emphasised word ----------------------------
+.\" 1st arg: text before emphasis
+.\" 2nd arg: emphasised text
+.\" 3rd arg: text after emphasis
+.de GPE_SMEM
+.GPE_SM "\\$1 \m[red]\\$2\m[] \\$3"
+..
+.\"
+.\" all macro and title fuzzing done - real work below
+.\"
+.\" --- title page -----------------------------------------------------
+.sp -1v
+.SUBTITLE "firewalls: back, now, then"
+.SUBTITLE "Bagatelle - Mauritius, September 10, 2017"
+.SUBTITLE "Philipp B\[u0075_0308]hler <pbuehler@sysfive.com>"
+.sp 2
+.GPE_SM "Trivia:"
+.sp
+.MULB 10c 1n 10c
+.ad l
+Technical lead at sysfive.com GmbH
+.br
+Hacking computers since 1983
+.br
+OpenBSD user since 2.7 (2000)
+.br
+Developer (pf) 2002-2005
+.br
+.PSPIC images/logo-print.eps
+.MULN
+.ad l
+12 people at two locations
+.br
+Apple ][e
+.br
+on i386, amd64, sparc64, macppc
+.br
+slacked too much
+.br
+.PSPIC images/puffy-logo.eps
+.MULE
+.\" === gpresent footer setup ==========================================
+.\" We dont want a footer line for the title page,
+.\" so we have to set it up after completing the title page.
+.SK
+.\" --- macros to start a new page -------------------------------------
+.\" arg: time for this page in seconds
+.de GPE_TIME
+.nr gpe_time_tsec +\\$1
+.nr gpe_time_hour \\n[gpe_time_tsec]/3600
+.nr gpe_time_min \\n[gpe_time_tsec]%3600/60
+.nr gpe_time_sec \\n[gpe_time_tsec]%60
+.ds gpe_source Mauritius 2017
+..
+.\" --- gpresent page footer callback ----------------------------------
+.de FOOTER
+.ps 18
+.vs 20
+.sp -2v
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+.tl '\s-6\\n[gpe_time_hour]:\\n[gpe_time_min]:\s-2\\n[gpe_time_sec]\
+ \s+8''\\m[Navylight]\\*[gpe_source]\ \ \\m[]'
+.ps
+.vs
+..
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Contents"
+.S -1
+.BL
+.LI
+My Company
+.LI
+History/Roots
+.LI
+Categories
+.BL
+.LI
+Bridge (L2)
+.LI
+packetfilter (L3+L4)
+.LI
+"application" (L5-L7)
+.LE
+.LI
+Problems to solve
+.BL
+.LI
+Networkstack shortcomings
+.LI
+uncontrollable services
+.LI
+Address Management
+.LI
+Crypto
+.LI
+Queueing
+.LE
+.LI
+Implementations
+.BL
+.LI
+Layer 2: arp settings, netfilter (br_module), VLAN
+.LI
+Layer 3+4: pf, npf, ipfw, ipfilter, netfilter/iptables
+.LI
+Applayer: relayd, asorted proxies, "deep packet inspection"
+.LE
+.LE
+.S P
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "sysfive.com network"
+.PSPIC images/ssfn-network-overview.eps 16c
+.S -9
+my dia(1) skills are sub par, giving up..
+.S P
+.GPE_SECTION "History"
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "On the road to today.."
+.BL
+.LI
+TCP/IP: 1983 (ARPANET "flag day", Jan 1st), router segregation
+.LI
+Gatekeeper: 1987 (predecessor of SEAL), rather a service proxy than a "filter"
+.LI
+first filter: 1989 as a stateless packet filter (DEC -> SEAL, AltaVista FW) - "inspired" by the Morris Worm (likely)
+.LI
+statefulness: 1990 AT&T - prone to DoS attacks
+.LI
+pb enters the networks: 1992
+.LI
+App-Layer: 1994 (FWTK, Gauntlet)
+.LI
+"NGFW": IDS, IPS, WAF, User-Management
+.LE
+.sp 5v
+.S -6
+Further reading:
+http://www.cs.unm.edu/~treport/tr/02-12/firewall.pdf
+.br
+from 2002 but a treasure trove of other references to also be read to understand more of the history, shortcomings back then (which still might be around...)
+.S P
+.GPE_TIME 60
+.GPE_SECTION "Problems to solve"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "frags on the wall / flags out of order"
+Fragmentation usually happens due to different MTUs while packets travel
+across the network. Yet, this "feature" can also be used to construct
+a flow of packets trying to undermine filtering.
+.br
+Firewalls can "collect" the fragemented packets and reassemble them to
+a digestable packet flow before sending them to the next host (or router).
+.br
+.S -5
+Further reading:
+https://en.wikipedia.org/wiki/IP_fragmentation_attack
+.S P 
+.sp 1v
+Of course any generic network stack bug in implementations run "behind"
+the firewall might be protected ("ping of death" and others) - but what
+if the stack is vulnerable on a "generic" level and needs to serve something?
+.sp 1v
+Some attacks try to undermine the state flow of TCP connections to pass
+packets through (rather DoS by bandwidth) or try to crash the remote state
+engine (kermit? XXX)
+
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Services out of control"
+Typically a network administrator has no direct control over which services
+could possibly started and exposed on the network. To limit the exposure
+a firewall is usually in place to block access from the outside.
+.br
+Less often access from the inner network to the public (or other controlled
+segments) faces restrictions. Rethink this along examples like:
+.BL
+.LI
+softether and thelike ("VPN over everything")
+.LI
+corkscrew and thelike ("ssh tainted as TLS")
+.LI
+ssh -R (works almost everywhere, very difficult feature to block!)
+.LE
+.sp 1v
+Which all basically "tunnel" the firewall and potentially allowing access
+from the outside to inner perimeter which would be usually blocked.
+.sp 1v
+ALWAYS cross-check ("audit") your configuration/policy against what your
+INTENTION was. Slipping (e.g. "just" wrong NAT) is easily introduced (and
+might go unnoticed for too long)  -  but also catastrophic havoc
+is at YOUR fingertips any minute. Nothing wrong with self-confidence, but
+review/audit is good practice, esp. when doing large or "exotic" things.
+.sp 1v
+And do not filter ICMP blindly (PMTUD!) - a source of "legit" frags or
+would block you from 'DF' packets.
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Address Management / Crypto / Queues"
+.BL
+.LI
+NAT - defacto standard today; not really adding 'security'
+.LI
+NAT - "loadbalance" outgoing connections (countermeasure to "clever" rate limits)
+.LI
+NAT - could be the only way to overcome IP prefix collisions (VPN..)
+.LI
+VRF - rdomains; virtualize routers (firewalls), handle overlapping IP setups
+.LI
+CARP/VRRP - high available addresses
+.LI
+VPN - openvpn
+.LI
+VPN - IPsec
+.LI
+Queue - restrict usable bandwidth per service/user/...
+.LE
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "a word on IPS"
+.BL
+.LI
+snort, hogwash, suricata, ....
+.LI
+latent to false positive, actively hindering legit traffic
+.LI
+pattern management is painful (who audits >30k patterns at yours?)
+.LI
+can add severe latency
+.LI
+how about putting it back to IDS -- aside of the hot path (Monitorport)
+.LE
+
+.GPE_TIME 60
+.GPE_SECTION "Implementations"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Layer 2 - ARP/MAC / VLAN"
+Basics
+.BL
+.LI
+static arp entries (arp -s)
+.LI
+netfilter "bridge module"
+.LI
+who is doing this anyway?
+.LE
+VLAN
+.BL
+.LI
+just 12 bits in the ethernet header
+.LI
+useful for logical separation
+.LI
+be cautious about your switch config (and physical access to ports / WiFi )
+.LE
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Layer 3+4 (and above) - Implementations"
+Layer 3 is typically IPv4 or IPv6 (still IPX, AppleTalk, .. anyone?).
+Layer 4 carries "protocols" like TCP, UDP, ICMP and their parameters.
+.br
+The following systems carry different implementations - with OpenBSD's pf(4)
+spreading out :-).
+.BL
+.LI
+OpenBSD: pf
+.LI
+FreeBSD: pf, ipfw, ipfilter
+.LI
+NetBSD: npf, pf, ipfilter 
+.LI
+Linux: netfilter (iptables), firewalld, ipchains
+.LI
+Solaris: ipfilter, pf
+.LI
+Mac OSX: pf
+.LE
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Implementation Overview"
+.GPE_TIME 60
+By design, pf(4) wont ever look at anything below or above Layer 3 and 4. For inspection
+and support of upper layers see relayd(8), ftp-proxy(8) and tftp-proxy(4).
+
+As a contrast, netfilter will try to look "deep" into packets to gather application
+information it needs to support e.g. ftp. Ever thought that parsing arbitrary, unlimited
+data in the kernel is a good idea?
+
+pf, npf and ipfilter use syntax based configuration file with a parser ensuring validity.
+netfilter has only "helpers" and depending on the Linux-Distribution that can differ
+dramatically:
+.br
+CentOS6: /etc/sysconfig/iptables,
+.br
+Debian/Ubuntu: /etc/iptables-save XXX?, Arch, ...
+.br
+CentOS7: 6 + firewalld
+
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Implementation: OpenBSD pf(4)"
+.BL
+.LI
+First implementation 2001 with OpenBSD 3.0
+.LI
+Overcoming license issues with ipfilter
+.LI
+Full stateful support of IPv4 + IPv6
+.LI
+/etc/protocols supported: UDP, TCP, ICMP/ICMP6, ESP/AH, many more
+.LI
+Syntax based configuration file pf.conf(5)
+.LI
+Rulesets are nestable (anchors) and loaded atomically ("table swap")
+.LI
+handling fragmentation to pass on "sane" packets
+.LI
+builtin ruleset optimizer
+.LI
+packet queueing and detailed statistics builtin
+.LI
+Interaction with other programs like relayd via /dev/pf socket
+.LI
+pf states can be synced to other hosts
+.LI
+authpf for user-authenticated (ssh) rulesets (awesome!)
+.LI
+NOT YET - almost holding breath - MP capable (unlock of whole network stack including pf any minute)
+.LE
+.S -5
+Further reading.
+https://www.openbsd.org/faq/pf/index.html
+.S P
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Implementation: NetBSD npf(4)"
+.BL
+.LI
+MP support
+.LI
+modularized
+.LI
+builtin "ALG" (application level gateway) to handle upper layer protocols
+.LI
+IPv6 yet?
+.LE
+.sp 5v
+.S -5
+Further reading:
+http://www.feyrer.de/NetBSD/bx/blosxom.cgi/nb_20100914_0805.html
+.br
+http://www.netbsd.org/ xxx
+.S P
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Implementation: FreeBSD ipfw(4)"
+I have no idea... it can do some very funky stuff, but never looked at it.
+.br
+Is FLC still alive? Been used to create ipfw (and others) rulesets
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Implementation: Linux netfilter/iptables"
+.BL
+.LI
+3rd (or so) rewrite/reimplementation of a packet filter on steroids
+.LI
+modularized (mainly for different layer options)
+.LI
+operating on "chains" (historical it was named 'ipchains' in first place)
+.LI
+configuration only by commandline options - every platform(family) having built
+an eco-system around this for "easy management" (yup).
+.LI
+addresses all layers with possible information "flow" between the layers -e.g. ftp command channel 'inspection' 
+to open up needed data ports automatically (keyword: "related")
+.LI
+ip6tables, iptables6(?), /* no comment */
+.LE
+.sp 2v
+.S -3
+Word of caution: be very aware of what you're doing. netfilter can outsmart you in nanoseconds!
+.S P
+.GPE_TIME 60
+.GPE_SECTION "other things.."
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Virtualization"
+.BL
+.LI
+on which level? Stack - VM - ALG/proxy?
+.LI
+rdomains! there's a great talk out there ;-)
+.LI
+the "host" has to have filtering, too - d'uh.
+.LI
+VM performance (SRVIO or bust..)
+.LE
+.GPE_TIME 60
+.GPE_SECTION "Future"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "What's coming next"
+.BL
+.LI
+IPv6: everybody (esp. commercial) still sleeping for anything "above basic filtering"
+.LI
+IPv6: likely that there are still a PLETHORA of bugs in these implementations (frags, NAT64, ..)
+.LI
+TLSv1.3 and beyond
+.LI
+But, in the unlikely event ;), that one is designing a new protocol: think about firewalls, do not
+use: dynamic ports like FTP, JMX, H.323.. horrible, horrible, BAD!
+.br
+Do not implement "backchannels"/"callbacks" (read: do not try to open new TCP/IP connections from server side - have very good reasoning inventing something more complicated than HTTP or so on the network level)
+.LI
+More likely: Writing a new proxy or network daemon for whatever. Be VERY cautious, take a look at GOOD examples
+on how to minimize attack surface or containing information passing (relayd, bgpd, postfix, qmail, haproxy, nginx).
+.br
+Examples of horror: ISC-BIND (even today), Apache HTTPD, Squid, ipchains/early iptables (really), <long list>
+.br
+Throw any analyzer that you can get hold off on it (valgrind, fuzzers, ...) - somebody else WILL do it, be the first.
+.br
+Let "the community" have a look, do not hide - esp. not by "obfuscating" code ("magic numbers") and so on.
+.LI
+Distributed, automated configuration management (several approaches out there, including fails)
+.LI
+Personally busy enough with TODAY's problems - no time to dream up future problems^Wsolutions :-)
+.LI
+Who knows what - ideas from you?
+.LE
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "K-Thx-Bye"
+.BL
+.LI
+Further questions?
+.LI
+Thanks again, for having me here.
+.LI
+No questions?
+.LI
+Sorry, could not bring GroffTheBSDGoat - maybe next time when I am the keeper again.
+.LI
+Food + Beer now?
+.LE
+.GPE_TIME 60

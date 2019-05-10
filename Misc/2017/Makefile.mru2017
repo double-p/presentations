@@ -1,0 +1,14 @@
+all: pdf fetch show
+
+ssh:
+	@vagrant ssh-config > ssh_config
+
+pdf: ssh
+	@ssh -F ssh_config root@default "cd ~pbuehler/MRU/2017 && make"
+
+fetch: ssh
+	@scp -F ssh_config root@default:/home/pbuehler/MRU/2017/mru2017-talk.pdf .
+	@scp -F ssh_config root@default:/home/pbuehler/MRU/2017/MRU*.roff .
+
+show:
+	@open ./mru2017-talk.pdf
