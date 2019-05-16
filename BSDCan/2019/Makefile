@@ -3,8 +3,8 @@ EVENT=BSDCan
 TIME=2019
 TALK=packer-openbsd
 
-all: ssh pdf fetch show
-quick: pdf fetch show
+all: pdf fetch show
+full: ssh pdf fetch show
 
 ssh:
 	@vagrant ssh-config > ssh_config
