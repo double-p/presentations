@@ -43,6 +43,8 @@
 .af gpe_time_sec 02
 .
 .\" --- macro to start a new section -----------------------------------
+.\" use this like: .GPE_SECTION\n.\" - NEXT PAGE\n.SK\n.TITLE
+.\" to start a new section upper title, new page with new title prop'y
 .de GPE_SECTION
 .ds gpe_title_sec \\$1
 .nr gpe_page_sec 0
@@ -162,39 +164,77 @@ vendor/provider independence, OSS focus
 .ps
 .vs
 ..
+.\" ---- MAIN
 .GPE_SECTION "Overview"
 .\" ---- NEXT PAGE
 .SK
+some placeholder
+.GPE_TIME 100
+
+
+.GPE_SECTION "Introduction"
+.\" ---- NEXT PAGE
+.SK
+some placeholder
+.GPE_TIME 100
+
+
+.GPE_SECTION "Plugin development"
+.\" ---- NEXT PAGE
+.SK
+some placeholder
 .GPE_TIME 100
 
 
 .\" ---- NEXT PAGE
+.SK
+some placeholder
+.GPE_TIME 100
+
+
+.GPE_SECTION "Status / Outlook"
+.\" ---- NEXT PAGE
+.SK
+some placeholder
+.GPE_TIME 100
+
+
 .GPE_SECTION "K-THX-BYE"
+.\" ---- NEXT PAGE
 .SK
 .TITLE "Ohai + Links + Thanks"
 .BL
 .LI
 Code/Slides - https://v.gd/packobsd
 .LI
-Thanks to Claudio for the idea of vmctl -B and fixing my go "args"
-.LI
-Thanks to grubernaut for go.mod and various fixes
-.LI
-Any help/pull request very welcome (e.g. "port")
-.LI
 Kickoff - Glarus, Switzerland / https://hack4glarus.ch
+.LI
+Thanks to Claudio for the idea of vmctl -B
+.LI
+Thanks to grubernaut for go.mod and workflow
+.LI
+Any help/pull request very welcome (e.g. multi-disk)
 .LE
 .sp 1v
 .GPE_EM Questions?
 .sp 2v
 .PSPIC ../../images/sysfive-logo.eps
+.GPE_TIME 60
 .SK
 .sp 2v
 .TITLE "BEER after the closing session and **auction**"
-.TITLE "DO NOT MISS - and see you at the Red Lion after it"
+.TITLE "DO NOT MISS - and see you at the SENS after it"
 .MULB 11c 1n 11c
 .PSPIC ./images/qrcode.eps
 .MULN
 .PSPIC ../../images/puflogv400X260.eps
 .MULE
 Code/Slides - https://v.gd/packobsd
+.GPE_TIME 30
+.GPE_SECTION "Attic"
+.\" ---- NEXT PAGE
+.SK
+some placeholder
+.GPE_TIME 100
+
+
