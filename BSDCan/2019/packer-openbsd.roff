@@ -180,7 +180,7 @@ reproducibility
 .LI
 cross-host / virtualizer (OSX,OpenBSD / VirtualBox,VMM,AMI)
 .LE
-.GPE_TIME 60
+.GPE_TIME 90
 .SK
 .TITLE
 .TITLE "Solutions / Approaches"
@@ -225,7 +225,7 @@ everything else is a plugin (but linked into one binary)
 .LI
 configuration in JSON (+ optional variables)
 .LE
-.GPE_TIME 100
+.GPE_TIME 180
 .\" ---- NEXT PAGE
 .SK
 .TITLE
@@ -287,7 +287,35 @@ need to be run as root. The plugin does so automatically.
 .GPE_EM "Caveat:"
  needs 'nopass' for now (no tty), 'persist' typically timeouts too early. 
 .LE
-.GPE_TIME 120
+.GPE_TIME 180
+
+.SK
+.TITLE
+.TITLE "OpenBSD dependencies / configuration""
+.SP 1v
+.BL
+.LI
+/etc/pf.conf:
+.SP 0.5v
+.VERBON 12 0
+pass in quick proto { udp tcp } from 100.64.0.0/10 to any port domain \\
+                 rdr-to $dns_server port domain
+pass out quick on $ext_if from 100.64.0.0/10 to any nat-to $ext_if
+.VERBOFF
+.LI
+/etc/sysctl.conf
+.SP 0.5v
+.VERBON 12 0
+net.inet.ip.forwarding=1
+.VERBOFF
+.LI
+vmd(8)
+.SP 0.5v
+.VERBON 12 0
+rcctl enable vmd
+rcctl start vmd
+.VERBOFF
+.LE
 .\" ---- NEXT PAGE
 .SK
 .TITLE
@@ -295,6 +323,7 @@ need to be run as root. The plugin does so automatically.
 .SP 2v
 .GPE_EM "Questions so far?"
 .GPE_TIME 60
+
 .GPE_SECTION "Plugin development"
 .\" ---- NEXT PAGE
 .SK
@@ -317,7 +346,7 @@ diskspace: 1.5G go-dependencies + generated images/diskfiles
 .LI
 /builder/packer-builder-openbsd-vmm - work cellar
 .LE
-.GPE_TIME 100
+.GPE_TIME 120
 .\" ---- NEXT PAGE
 .SK
 .TITLE "Plugin development"
@@ -404,6 +433,7 @@ for the URL and the plugin provides this (e.g. http://100.64.1.2:8230/packer-aut
 https://asciinema.org/a/246654
 .SP 2v
 asciinema play ~/devel/presenter/presentations/BSDCan/2019/demo-packer.cast
+.GPE_TIME 360
 .\" ---- NEXT PAGE
 .SK
 .TITLE "Data structures / ``API''"
@@ -418,8 +448,60 @@ Ctx - Jake
 .GPE_SECTION "Status / Outlook"
 .\" ---- NEXT PAGE
 .SK
-some placeholder
-.GPE_TIME 100
+.TITLE "Status"
+.SP
+.BL
+.LI
+VMM: everything on deck (full/real PXE would be add-on)
+.LI
+plugin: all architectural integration (config/builder/driver)
+.LI
+plugin_steps: create disk/VM/boot/provide auto_install infra
+.LE
+.GPE_TIME 90
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Outlook"
+.SP
+.SUBTITLE "Fixme / Finish"
+.BL
+.LI
+GetTapIpAddr
+.LI
+qcow2
+.LI
+.SUBTITLE "Needables"
+.BL
+.LI
+plugin: provide/check dependencies (vmd running, pf.conf)
+.LI
+plugin: make it a ports-pkg
+.LI
+plugin: support fiddlings (like variables for boot_command, basically there)
+.LI
+plugin: config item 'disklabel'
+.LI
+plugin: multiple disks
+.LI
+plugin: "complex" networking?
+.LI
+plugin: adapt to upcoming VMM features
+.LE
+.GPE_TIME 180
+.\" ---- NEXT PAGE
+.SK
+.SUBTITLE "Integration (Puffalanche)"
+.BL
+.LI
+make 'vagrant' a port and use it as a vbox post-processor
+.LI
+ Cloudify the clones (cloud-init,context,..)
+.LI
+ "Ecosystem" - cloud at puffy fingertips (hi mischa, sorry)
+.LI
+ Disk resizing (maybe not needed with images-a-la-carte..)
+.LE
+.GPE_TIME 180
 
 
 .GPE_SECTION "K-THX-BYE"
@@ -434,7 +516,8 @@ Kickoff - Glarus, Switzerland / https://hack4glarus.ch
 .LI
 Thanks to Claudio for the idea of vmctl -B
 .LI
-Thanks to grubernaut for go.mod and workflow
+Thanks to grubernaut for go.mod, workflow, review
+and configurables
 .LI
 Any help/pull request very welcome (e.g. multi-disk)
 .LE
