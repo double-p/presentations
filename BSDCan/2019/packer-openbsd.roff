@@ -164,16 +164,15 @@ vendor/provider independence, OSS focus
 .ps
 .vs
 ..
-.\" ---- MAIN
 .GPE_SECTION "Overview"
 .\" ---- NEXT PAGE
 .SK
 .TITLE
-.TITLE "Ze problem"
+.TITLE "Ze problems I tackle"
 .SP 4v
 .BL
 .LI
-VM providers need bootble stuff
+VM guest keeper need bootable stuff
 .LI
 "infrastructure to go"
 .LI
@@ -202,21 +201,107 @@ packer (o'rly)
 .GPE_SECTION "Introduction"
 .\" ---- NEXT PAGE
 .SK
-some placeholder
+.TITLE "What's packer anyway?"
+.SP 2v
+.VERBON 0 14
+Packer is an open source tool for creating *identical* machine images
+for multiple platforms from a *single source* configuration.
+Packer is lightweight, runs on every major operating system,
+and is highly performant, creating machine images for multiple
+platforms *in parallel*.
+
+Packer does not replace configuration management like Chef or Puppet.
+In fact, when building images, Packer is able to use tools like Chef
+or Puppet to install software onto the image.
+.VERBOFF
+.SP 4v
+.BL
+.LI
+written in golang
+.LI
+small core providing communications (rpc)
+.LI
+everything else is a plugin (but linked into one binary)
+.LI
+configuration in JSON (+ optional variables)
+.LE
 .GPE_TIME 100
+.\" ---- NEXT PAGE
+.SK
+.TITLE
+.TITLE "forms in the sandbox / Terminology"
+.SP 2v
+.BVL 1c
+.LI "Artifacts"
+Outcome of a "Build", e.g. AMI, .vmdk, .box
+.LI "Builds"
+The actual running task producing above artifacts; parallelized
+.LI "Builders"
+Code to steer the VM host, handle disk images, etc (see below)
+.LI "Provisioners (optional)"
+Additional treatment, installation goes here and range from
+simple inline shell scripts to full-blown ansible, Chef, ..
+.LI "Post-processors"
+Treat the Artifacts after creation, e.g. compress, upload AWS, ..
+.LI "Templates"
+The JSON files defining all of the above (and some) - NOT a VM "template"
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE
+.TITLE "Builders + Post-Provisioning"
+.SP 1v
+By default the following ``builder'' engines are supported. Where needed
+the accompaning ``post-processor'' is typically available, too (e.g. EC2/AMI upload):
+.SP
+Alicloud ECS, Amazon EC2, Azure, CloudStack, DigitalOcean, Docker, File, Google Cloud, Hetzner Cloud, HyperOne, Hyper-V, Linode, LXC, LXD, NAVER Cloud, Null, 1&1, OpenStack, Oracle, Parallels, ProfitBricks, QEMU, Scaleway, Tencent Cloud, Triton, Vagrant, VirtualBox, VMware, Yandex.Cloud.
+.SP 1v
+Further ``builders'' can be found in the wild and are just added as a
+single go binary in certain paths (e.g. ~/.packer.d/plugins/)
+.SP 2v
+By default additional provisioning support for the following tools:
+.SP
+Ansible, Breakpoint, Chef, Converge, File, InSpec, PowerShell, Puppet, Salt Masterless, Shell.
+.GPE_TIME 120
 
-
+.\" ---- NEXT PAGE
+.SK
+.TITLE
+.TITLE "OpenBSD VMM"
+.SP 1v
+.BVL 1c
+.LI "vmm(4)"
+virtual machine monitor (VMM) providing the required resources for the VMs (CPU, Disk, Net)
+and handles the necessary memory mapping (isolation).
+.LI "vmd(8)"
+userland daemon to interact with vmm(4) to create actual VMs and handle their lifecycle through
+.LI "vmctl(8)"
+administrative tool to create, start/stop, etc VMs. In this scope also the main 'interface'
+for the packer builder plugin.
+.LI "vm.conf(5)"
+configuration file for vmd(8), persist VM/network configurations.
+.LI "doas(1)"
+While most tasks the ``builder'' can (and should!) run as unprivileged user, some commands
+need to be run as root. The plugin does so automatically.
+.GPE_EM "Caveat:"
+ needs 'nopass' for now (no tty), 'persist' typically timeouts too early. 
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE
+.TITLE "Enough Introduction.."
+.SP 2v
+.GPE_EM "Questions so far?"
+.GPE_TIME 60
+.\" ---- MAIN
 .GPE_SECTION "Plugin development"
 .\" ---- NEXT PAGE
 .SK
 some placeholder
 .GPE_TIME 100
 
-
-.\" ---- NEXT PAGE
-.SK
-some placeholder
-.GPE_TIME 100
 
 
 .GPE_SECTION "Status / Outlook"
