@@ -295,14 +295,110 @@ need to be run as root. The plugin does so automatically.
 .SP 2v
 .GPE_EM "Questions so far?"
 .GPE_TIME 60
-.\" ---- MAIN
+ ---- DRAFT_ONLY_BELOW
 .GPE_SECTION "Plugin development"
 .\" ---- NEXT PAGE
 .SK
-some placeholder
+.TITLE "Plugin development"
+.SUBTITLE "tools + space"
+.SP 2v
+.BL
+.LI
+pkg_add: golang, packer, git
+.LI
+$VISUAL / $EDITOR
+.LI
+diskspace: 1.5G go-dependencies + generated images/diskfiles
+.LE
+.SUBTITLE "directory layout"
+.SP 2v
+.BL
+.LI
+/ - Makefile, main.go, go.mod
+.LI
+/builder/packer-builder-openbsd-vmm - work cellar
+.LE
 .GPE_TIME 100
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Plugin development"
+.SUBTITLE "what is doing what"
+.SP 2v
+.BVL 1c
+.LI "Makefile"
+Targets: build, install, vmb, fmt, vet, test, clean, uninstall
+.LI "main.go"
+.BL
+.LI
+"import" builder
+.LI
+initialize builder as a "server" plugin
+.LI
+register builder (rpc configuration)
+.LI
+"daemonize", spinning mode, ..
+.LE
+.SK
+.LI "config.go"
+holds the configuration read from template (JSON)
+.LI "builder.go"
+.BL
+.LI
+new - instantiate driver with global vars/logs
+.LI
+prepare - populate configuration
+.LI
+run - tokenize build into "steps", hand over "artifact" information
+.LI
+cancel - clean up the mess if SIGABRT
+.LE
+.LI "driver.go"
+Interact via vmctl(8) to create disks, start/stop the VM.
+Gather additional information like tap(4) IP address.
+.GPE_EM "Fixme:"
+Right now this just "fake news" and the plugin always
+returns a fixed address which would only match VM 1.
+.BR
+Also interface with the VM (serial console) to "type"
+so called boot_command.
+.LI "step_*.go"
+The various ``steps'' needed to create an artficat (next page)
+.LE
+.GPE_TIME 240
+.\" ---- NEXT PAGE
+.SK
+.SUBTITLE "``Stepping the build''"
+.SP 2v
+.BVL 1c
+.LI "step_outdir.go"
+create a temporary directory that will hold the artifaces and
+cleanup after build is done.
+.LI "step_create_disks.go"
+create the empty disk that will be installed on (via vmctl, no doas).
+.GPE_EM "Fixme:" 
+support qcow2
+.LI "step_launch_vm.go"
+Start a VM (via "driver") with above created disk and the configured
+options (name, memory, kernel).
+.GPE_EM "Fixme:"
+diskPath should come from configuration (but I need an absolute path?)
+.GPE_EM "Fixme:"
+shutdown the VM if there are errors (right now I don't, because debug)
+.LI "step_bootcmd.go"
+.BL
+.LI
+Get configuration of the built-in httpd
+.LI
+gather the configured boot_command, enrich with above data
+.LI
+"type" the command via the connected serial console. Basically
+the httpd cannot run on 80/tcp, so auto_install will fail-ask
+for the URL and the plugin provides this (e.g. http://100.64.1.2:8230/packer-auto_install.conf)
+.LE
+.LE
 
 
+.GPE_TIME 240
 
 .GPE_SECTION "Status / Outlook"
 .\" ---- NEXT PAGE
