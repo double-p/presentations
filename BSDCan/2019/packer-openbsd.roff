@@ -295,7 +295,6 @@ need to be run as root. The plugin does so automatically.
 .SP 2v
 .GPE_EM "Questions so far?"
 .GPE_TIME 60
- ---- DRAFT_ONLY_BELOW
 .GPE_SECTION "Plugin development"
 .\" ---- NEXT PAGE
 .SK
@@ -358,7 +357,7 @@ Gather additional information like tap(4) IP address.
 .GPE_EM "Fixme:"
 Right now this just "fake news" and the plugin always
 returns a fixed address which would only match VM 1.
-.BR
+.SP
 Also interface with the VM (serial console) to "type"
 so called boot_command.
 .LI "step_*.go"
@@ -396,10 +395,26 @@ the httpd cannot run on 80/tcp, so auto_install will fail-ask
 for the URL and the plugin provides this (e.g. http://100.64.1.2:8230/packer-auto_install.conf)
 .LE
 .LE
-
-
 .GPE_TIME 240
 
+.\" ---- NEXT PAGE
+.SK
+.TITLE "* DEMO TIME*"
+.SP 2v
+https://asciinema.org/a/246654
+.SP 2v
+asciinema play ~/devel/presenter/presentations/BSDCan/2019/demo-packer.cast
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Data structures / ``API''"
+.BL
+.LI
+Ui - Jake
+.LI
+Ctx - Jake
+.LE
+.GPE_TIME 100
+ ---- DRAFT_ONLY_BELOW
 .GPE_SECTION "Status / Outlook"
 .\" ---- NEXT PAGE
 .SK
