@@ -235,7 +235,7 @@ configuration in JSON (+ optional variables)
 .LI "Artifacts"
 Outcome of a "Build", e.g. AMI, .vmdk, .box
 .LI "Builds"
-The actual running task producing above artifacts; parallelized
+The actual running task producing above artifacts
 .LI "Builders"
 Code to steer the VM host, handle disk images, etc (see below)
 .LI "Provisioners (optional)"
@@ -275,7 +275,7 @@ Ansible, Breakpoint, Chef, Converge, File, InSpec, PowerShell, Puppet, Salt Mast
 virtual machine monitor (VMM) providing the required resources for the VMs (CPU, Disk, Net)
 and handles the necessary memory mapping (isolation).
 .LI "vmd(8)"
-userland daemon to interact with vmm(4) to create actual VMs and handle their lifecycle through
+userland daemon to interact with vmm(4) to create actual VMs and handle their lifecycle through:
 .LI "vmctl(8)"
 administrative tool to create, start/stop, etc VMs. In this scope also the main 'interface'
 for the packer builder plugin.
@@ -291,7 +291,7 @@ need to be run as root. The plugin does so automatically.
 
 .SK
 .TITLE
-.TITLE "OpenBSD dependencies / configuration""
+.TITLE "OpenBSD dependencies / configuration"
 .SP 1v
 .BL
 .LI
@@ -368,7 +368,7 @@ register builder (rpc configuration)
 .LE
 .SK
 .LI "config.go"
-holds the configuration read from template (JSON)
+holds the configuration struct read from template (JSON)
 .LI "builder.go"
 .BL
 .LI
@@ -388,7 +388,8 @@ Right now this just "fake news" and the plugin always
 returns a fixed address which would only match VM 1.
 .SP
 Also interface with the VM (serial console) to "type"
-so called boot_command.
+so called boot_command. Additionally catching all the output
+into a logfile (linefeed).
 .LI "step_*.go"
 The various ``steps'' needed to create an artficat (next page)
 .LE
@@ -399,8 +400,7 @@ The various ``steps'' needed to create an artficat (next page)
 .SP 2v
 .BVL 1c
 .LI "step_outdir.go"
-create a temporary directory that will hold the artifaces and
-cleanup after build is done.
+create a directory that will hold the artifacts
 .LI "step_create_disks.go"
 create the empty disk that will be installed on (via vmctl, no doas).
 .LI "step_launch_vm.go"
@@ -554,16 +554,16 @@ Code/Slides - https://v.gd/packobsd
 .TITLE "Golang"
 .SP 2v
 .BL
- .LI
- GOPATH (disk sizes/isolation)
- .LI
- go.mod/go.sum
- .LI
- go vet
- .LI
- go fmt
- .LI
- // interface{}
+.LI
+GOPATH (disk sizes/isolation)
+.LI
+go.mod/go.sum
+.LI
+go vet
+.LI
+go fmt
+.LI
+// interface{}
 .LE
 .GPE_TIME 100
 
