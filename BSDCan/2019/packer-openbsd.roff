@@ -403,8 +403,6 @@ create a temporary directory that will hold the artifaces and
 cleanup after build is done.
 .LI "step_create_disks.go"
 create the empty disk that will be installed on (via vmctl, no doas).
-.GPE_EM "Fixme:" 
-support qcow2
 .LI "step_launch_vm.go"
 Start a VM (via "driver") with above created disk and the configured
 options (name, memory, kernel).
@@ -479,7 +477,7 @@ plugin_steps: create disk/VM/boot/provide auto_install infra
 .LI
 GetTapIpAddr
 .LI
-qcow2
+qcow2 - DONE!
 .LI
 observe VM going down instead fixed waiting time
 .LE
@@ -529,8 +527,8 @@ Kickoff - Glarus, Switzerland / https://hack4glarus.ch
 .LI
 Thanks to Claudio for the idea of vmctl -B
 .LI
-Thanks to grubernaut for go.mod, workflow, review
-and configurables
+Thanks to grubernaut for go.mod, review, ISO+QCOW2 support
+and other spurious fixes
 .LI
 Any help/pull request very welcome (e.g. multi-disk)
 .LE
