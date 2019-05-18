@@ -430,20 +430,33 @@ for the URL and the plugin provides this (e.g. http://100.64.1.2:8230/packer-aut
 .SK
 .TITLE "* DEMO TIME*"
 .SP 2v
-https://asciinema.org/a/246654
-.SP 2v
+.VERBON 12 0
+{
+  "builders": [
+    {
+      "type": "openbsd-vmm",
+      "name": "packer-obsd64-vmm-amd64",
+      "vm_name": "myvm",
+      "disk_size": "1500M",
+      "disk_format": "raw",
+      "output_directory": "images",
+      "http_directory": "./docroot",
+      "iso_image": "~/Downloads/install65.iso",
+      "bios": "/bsd.rd",
+      "boot_wait": "5s",
+      "boot_command": [
+        "A<enter>",
+        "http://{{ .HTTPIP }}:{{ .HTTPPort }}/packer-auto_install.conf<enter>"
+      ],
+      "ssh_username": "root"
+    }
+  ]
+}
+.VERBOFF
+https://asciinema.org/a/247058
+.SP 0.5v
 asciinema play ~/devel/presenter/presentations/BSDCan/2019/demo-packer.cast
 .GPE_TIME 360
-.\" ---- NEXT PAGE
-.SK
-.TITLE "Data structures / ``API''"
-.BL
-.LI
-Ui - Jake
-.LI
-Ctx - Jake
-.LE
-.GPE_TIME 100
 .GPE_SECTION "Status / Outlook"
 .\" ---- NEXT PAGE
 .SK
