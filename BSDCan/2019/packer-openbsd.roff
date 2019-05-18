@@ -409,9 +409,8 @@ support qcow2
 Start a VM (via "driver") with above created disk and the configured
 options (name, memory, kernel).
 .GPE_EM "Fixme:"
-diskPath should come from configuration (but I need an absolute path?)
-.GPE_EM "Fixme:"
-shutdown the VM if there are errors (right now I don't, because debug)
+shutdown the VM if there are errors (right now I don't, because debug
+and auto_install(8) already stops the VM)
 .LI "step_bootcmd.go"
 .BL
 .LI
@@ -554,8 +553,20 @@ Code/Slides - https://v.gd/packobsd
 .GPE_SECTION "Attic"
 .\" ---- NEXT PAGE
 .SK
- ---- DRAFT_ONLY_BELOW
-GOLANG things
+.TITLE "Golang"
+.SP 2v
+.BL
+ .LI
+ GOPATH (disk sizes/isolation)
+ .LI
+ go.mod/go.sum
+ .LI
+ go vet
+ .LI
+ go fmt
+ .LI
+ // interface{}
+.LE
 .GPE_TIME 100
 
 
