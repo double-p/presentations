@@ -1,0 +1,15 @@
+TALK=undefined
+
+all: pdf
+
+img:
+	@make -f ../../Makefile -C . img
+
+pdf:
+	@echo "input: ${TALK}.roff"
+	@echo "generate ps,pps"
+	@groff -mm -mpresent ${TALK}.roff > ${TALK}.pps 2>/dev/null
+	@presentps -l ${TALK}.pps > ${TALK}.ps  2>/dev/null
+	@echo "generate pdf, cleanup"
+	@ps2pdf ${TALK}.ps >/dev/null 2>&1
+	@rm -f ${TALK}.ps ${TALK}.pps
