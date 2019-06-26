@@ -290,6 +290,104 @@ need to be run as root. The plugin does so automatically.
 .LE
 .GPE_TIME 180
 .\" ---- NEXT PAGE
+.GPE_SECTION "Details: Vagrant"
+.SK
+.TITLE "Vagrant - Architecture"
+.SP 2v
+Naming - what's in the bento?
+.SP 1v
+.BVL 1c
+.LI "Core"
+plugin loader "framework" + utils
+.LI "host"
+capabilities (Linux, OSX, Free/OpenBSD, ..)
+.LI "box"
+Disk/BIOS image + metadata packed as tar.gz
+.LI "guest"
+capabilities (Linux, Free/OpenBSD, ..)
+.LI "provider"
+capabilities (vbox/VMM/bhyve/...) where the main show goes
+.LI "communicators"
+ssh/winssh/winrm to let Vagrant configure the guest
+.LI "provisioner"
+shell/ansible/chef/puppet/... run after the first 'up' of the VM
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Networking capabilities"
+.SP 4v
+.BL
+.LI
+port-forward: open arbitrary ports (default 127.0.0.1) on the host and ssh-forward it into the VM
+.LI
+bridged network: reach out from VM to The Internet (Host might need to NAT)
+.LI
+"private" network: VM to VM communication on isolated network (bridge(8) rdomain(4)?)
+.LE
+.GPE_TIME 120
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Provisioner - post-postinstall"
+.SP 3v
+Almost any automation stack can be included into a Vagrant based VM
+.BL
+.LI
+(inline) shell scripts
+.LI
+ansible
+.LI
+Chef
+.LI
+Puppet
+.LI
+Salt
+.LI
+you-name-it, likely there's a plugin
+.LE
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Anatomy of an UP session"
+.VERBON 0 12
+$ uname -a ; bundle exec vagrant status ; bundle exec vagrant up ; \\
+ bundle exec vagrant ssh -c "uname -a"
+OpenBSD ssfnhv011.ham3.rootnexus.net 6.2 GENERIC.MP#134 amd64
+Current machine states:
+vagrobsd                  not_created (openbsd)
+Bringing machine 'vagrobsd' up with 'openbsd' provider...
+==> vagrobsd: Verifying VMM present and CPU capable...
+==> vagrobsd: Importing an OpenBSD instance
+    vagrobsd: Cloning virtual hard drive...
+    vagrobsd: Successfully imported a VM image
+    vagrobsd: Creating vmctl configuration
+==> vagrobsd: Starting the machine...
+==> vagrobsd: Waiting for the machine to report its IP address...
+    vagrobsd: IP: 100.64.2.3
+==> vagrobsd: Waiting for machine to boot. This may take a few minutes...
+    vagrobsd: SSH address: 100.64.2.3:22
+    vagrobsd: SSH username: root
+    vagrobsd: SSH auth method: password
+    vagrobsd: Inserting generated public key within guest...
+    vagrobsd: Removing insecure key from the guest if it's present...
+    vagrobsd: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> vagrobsd: Machine booted and ready!
+OpenBSD openbsd62.example.com 6.2 GENERIC#132 amd64
+Connection to 100.64.2.3 closed.
+
+$ cat Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.box = "vagrobsd"
+  config.ssh.shell = "ksh -l"
+  config.ssh.sudo_command = "doas -n %c"
+  config.vm.define "vagrobsd" do |v|
+    v.vm.hostname = "openbsd-vagrant"
+  end
+end
+.VERBOFF
+.GPE_TIME 120
+.\" ---- NEXT PAGE
 .SK
 .TITLE "What's packer anyway?"
 .SP 2v
@@ -384,15 +482,7 @@ rcctl start vmd
 .LE
 .\" ---- NEXT PAGE
 .SK
-.TITLE
-.TITLE "Enough Introduction.."
-.SP 2v
-.GPE_EM "Questions so far?"
-.GPE_TIME 60
-
-.\" ---- NEXT PAGE
-.SK
-.TITLE "* DEMO TIME*"
+.TITLE "packer *DEMO TIME*"
 .SP 2v
 .VERBON 12 0
 {
@@ -424,23 +514,51 @@ asciinema play ~/devel/presenter/presentations/BSDCan/2019/demo-packer.cast
 .GPE_SECTION "Status / Outlook"
 .\" ---- NEXT PAGE
 .SK
-.TITLE "Status"
-.SP
+.TITLE "What's already around?"
+.SUBTITLE "vagrant"
 .BL
 .LI
-VMM: everything on deck (full/real PXE would be add-on)
+fake netboot (vmctl -B)
+.LI
+bundle(1) Vagrant 2.1 (but likely works with 1.5+)
+.LI
+Vagrant provider-plugin: 0.3.0
+.BL
+.LI
+box support (disk or [PXE-BIOS])
+.LI
+host OS detection by vagrant
+.LI
+VM lifecycle "import/up/halt/destroy"
+.LI
+Host-to-Guest networking + SSH
+.LE
+.SUBTITLE "packer"
+.BL
 .LI
 plugin: all architectural integration (config/builder/driver)
 .LI
 plugin_steps: create disk/VM/boot/provide auto_install infra
 .LE
-.SP
-.SUBTITLE "Fixme / Finish"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "What's still to be done?
+.SUBTITLE "vagrant"
+.BL
+.LI
+Networking VM-to-VM
+.LI
+vagrant-binary (Go)
+.LI
+ports(7)
+.LE
+.SUBTITLE "packer"
 .BL
 .LI
 GetTapIpAddr
+.LI
+ports(7)
 .LE
-
 
 .GPE_SECTION "K-THX-BYE"
 .\" ---- NEXT PAGE
@@ -448,7 +566,7 @@ GetTapIpAddr
 .TITLE "Ohai + Links + Thanks"
 .BL
 .LI
-Code/Slides - https://v.gd/packobsd
+Code/Slides - https://github.com/double-p
 .LI
 Kickoff - Glarus, Switzerland / https://hack4glarus.ch
 .LI
