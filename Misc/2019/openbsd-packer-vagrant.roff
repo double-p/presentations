@@ -172,13 +172,18 @@ vendor/provider independence, OSS focus
 .SP 4v
 .BL
 .LI
-VM guest keeper need bootable stuff
+Run multiple OpenBSD VMs on OpenBSD - w/o dealing with vm.conf(5)
 .LI
-"infrastructure to go"
+make inter/intra-networking "just work" - no bridge(8) "hassle"
 .LI
-reproducibility
+develop and TEST autoinstall at 30,000ft (or -50) "infrastructure to go"
 .LI
-cross-host / virtualizer (OSX,OpenBSD / VirtualBox,VMM,AMI)
+create reproducable installs - even "me so unique" ones
+.LI
+and also retrospective (live --> test)
+.LI
+use the same configuration (Vagrantfile) on OpenBSD/OSX/Linux to get
+the same resulting VM package/network/setup
 .LE
 .GPE_TIME 90
 .SK
@@ -187,16 +192,78 @@ cross-host / virtualizer (OSX,OpenBSD / VirtualBox,VMM,AMI)
 .SP 4v
 .BL
 .LI
-my-imager.sh
+my-imager.sh ; my-deploy.sh
 .LI
 github | sh
 .LI
 my-cold-hands ("VM guy is AWOL")
 .LI
-packer (o'rly)
+vagrant / packer (o'rly)
 .LE
 .GPE_TIME 120
-
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Puffy boxed on OpenBSD (Dev#1)"
+.MULB 12c 1n 8c
+.ad l
+.PSPIC images/openbsd_host_only.eps
+.MULN
+.ad l
+.BL
+.LI
+Bootstrap-VM: might be based on manual install -> better do it in `packer'
+.LI
+vPuffy1+2: autoinstall from Bootstrap-VM directly
+.LI
+vPuffy2a: autoinstall via dhcrelay on vPuffy2
+.LE
+.MULE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Puffy boxed on Linux/OSX/.. (Dev#2-n)"
+.MULB 12c 1n 8c
+.ad l
+.PSPIC images/multi-host-os.eps
+.MULN
+.ad l
+Just run the SAME "infrastructure" on
+.BL
+.LI
+OSX (Virtualbox/VMware)
+.LI
+Linux (Virtualbox/libvirt)
+.LI
+Cloud (AWS/GCE/..)
+.LI
+basically everything that Vagrant supports
+.LE
+.MULE
+.SP 2v
+Infrastructure going on a trainride or being airborne.
+.GPE_TIME 60
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Puffy BREAKOUT to physical."
+.MULB 12c 1n 8c
+.ad l
+.PSPIC images/breakout_to_reality.eps
+.MULN
+.ad l
+.BL
+.LI
+Not impressed so far? Let's go physical..
+.LI
+Run the very SAME "infrastructure" on REAL puffymachines
+.LI
+Develop + Test virtualized, use results for:
+.LI
+Confidence in rollouts
+.LI
+debug problems on Laptop, roll-out solution to Realpuffy
+.LE
+.MULE
+.GPE_TIME 120
 
 .GPE_SECTION "Introduction"
 .\" ---- NEXT PAGE
@@ -222,34 +289,6 @@ need to be run as root. The plugin does so automatically.
  needs 'nopass' for now (no tty), 'persist' typically timeouts too early. 
 .LE
 .GPE_TIME 180
-
-.SK
-.TITLE
-.TITLE "OpenBSD dependencies / configuration"
-.SP 1v
-.BL
-.LI
-/etc/pf.conf:
-.SP 0.5v
-.VERBON 12 0
-pass in quick proto { udp tcp } from 100.64.0.0/10 to any port domain \\
-                 rdr-to $dns_server port domain
-pass out quick on $ext_if from 100.64.0.0/10 to any nat-to $ext_if
-.VERBOFF
-.LI
-/etc/sysctl.conf
-.SP 0.5v
-.VERBON 12 0
-net.inet.ip.forwarding=1
-.VERBOFF
-.LI
-vmd(8)
-.SP 0.5v
-.VERBON 12 0
-rcctl enable vmd
-rcctl start vmd
-.VERBOFF
-.LE
 .\" ---- NEXT PAGE
 .SK
 .TITLE "What's packer anyway?"
@@ -315,6 +354,34 @@ By default additional provisioning support for the following tools:
 .SP
 Ansible, Breakpoint, Chef, Converge, File, InSpec, PowerShell, Puppet, Salt Masterless, Shell.
 .GPE_TIME 120
+
+.SK
+.TITLE
+.TITLE "OpenBSD dependencies / configuration"
+.SP 1v
+.BL
+.LI
+/etc/pf.conf:
+.SP 0.5v
+.VERBON 12 0
+pass in quick proto { udp tcp } from 100.64.0.0/10 to any port domain \\
+                 rdr-to $dns_server port domain
+pass out quick on $ext_if from 100.64.0.0/10 to any nat-to $ext_if
+.VERBOFF
+.LI
+/etc/sysctl.conf
+.SP 0.5v
+.VERBON 12 0
+net.inet.ip.forwarding=1
+.VERBOFF
+.LI
+vmd(8)
+.SP 0.5v
+.VERBON 12 0
+rcctl enable vmd
+rcctl start vmd
+.VERBOFF
+.LE
 .\" ---- NEXT PAGE
 .SK
 .TITLE
