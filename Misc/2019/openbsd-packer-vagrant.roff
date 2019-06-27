@@ -106,7 +106,7 @@ Warsaw, June 27th, 2019'
 .\" --- title page -----------------------------------------------------
 .sp -1v
 .SUBTITLE "puffy clouds?"
-.SUBTITLE "Philipp B\[u0075_0308]hler <pb@sysfive.com> @pb_double"
+.SUBTITLE "Philipp B\[u0075_0308]hler <pb@sysfive.com> @pb_double double_p"
 .GPE_SM "sysfive.com portfolio"
 .MULB 11c 1n 11c
 .BL
@@ -119,7 +119,7 @@ Hybrid cloud provisioning
 .LI
 cost efficient scaling on commodity HW
 .LI
-scale out to AWS/RS/GCE
+scale out to AWS/GCE/Azure
 .LI
 Incident, problem, disaster response
 .LE
@@ -150,7 +150,7 @@ vendor/provider independence, OSS focus
 .nr gpe_time_hour \\n[gpe_time_tsec]/3600
 .nr gpe_time_min \\n[gpe_time_tsec]%3600/60
 .nr gpe_time_sec \\n[gpe_time_tsec]%60
-.ds gpe_source BSDCan 2019
+.ds gpe_source BSD-PL 06/2019
 ..
 .\" --- gpresent page footer callback ----------------------------------
 .de FOOTER
@@ -168,17 +168,17 @@ vendor/provider independence, OSS focus
 .\" ---- NEXT PAGE
 .SK
 .TITLE
-.TITLE "Ze problems I tackle"
+.TITLE "Ze problems I tackle with this setup"
 .SP 4v
 .BL
 .LI
 Run multiple OpenBSD VMs on OpenBSD - w/o dealing with vm.conf(5)
 .LI
-make inter/intra-networking "just work" - no bridge(8) "hassle"
+create reproducable installs - even "me so unique" ones
 .LI
 develop and TEST autoinstall at 30,000ft (or -50) "infrastructure to go"
 .LI
-create reproducable installs - even "me so unique" ones
+make inter/intra-networking "just work" - no bridge(8) "hassle"
 .LI
 and also retrospective (live --> test)
 .LI
@@ -198,6 +198,8 @@ github | sh
 .LI
 my-cold-hands ("VM guy is AWOL")
 .LI
+wrong tool for the job (ansible-install-bsd.rd)
+.LI
 vagrant / packer (o'rly)
 .LE
 .GPE_TIME 120
@@ -211,11 +213,13 @@ vagrant / packer (o'rly)
 .ad l
 .BL
 .LI
-Bootstrap-VM: might be based on manual install -> better do it in `packer'
+Bootstrap-VM: based on manual install or even better do it in `packer'
 .LI
 vPuffy1+2: autoinstall from Bootstrap-VM directly
 .LI
 vPuffy2a: autoinstall via dhcrelay on vPuffy2
+.LI
+of course those cloud also be tailored images already ("vagrant box")
 .LE
 .MULE
 .GPE_TIME 120
@@ -236,11 +240,12 @@ Linux (Virtualbox/libvirt)
 .LI
 Cloud (AWS/GCE/..)
 .LI
-basically everything that Vagrant supports
+basically everything that Vagrant supports (and that's a lot)
 .LE
 .MULE
 .SP 2v
-Infrastructure going on a trainride or being airborne.
+`Infrastructure' going on a trainride or being airborne -
+not only as code (review) - but real testing
 .GPE_TIME 60
 .\" ---- NEXT PAGE
 .SK
@@ -252,20 +257,20 @@ Infrastructure going on a trainride or being airborne.
 .ad l
 .BL
 .LI
-Not impressed so far? Let's go physical..
+Not impressed so far? Let's go `physical'..
 .LI
 Run the very SAME "infrastructure" on REAL puffymachines
 .LI
 Develop + Test virtualized, use results for:
 .LI
-Confidence in rollouts
+Confidence in rollouts to baremetal
 .LI
 debug problems on Laptop, roll-out solution to Realpuffy
 .LE
 .MULE
 .GPE_TIME 120
 
-.GPE_SECTION "Introduction"
+.GPE_SECTION "Building blocks"
 .\" ---- NEXT PAGE
 .SK
 .TITLE
@@ -290,32 +295,38 @@ need to be run as root. The plugin does so automatically.
 .LE
 .GPE_TIME 180
 .\" ---- NEXT PAGE
-.GPE_SECTION "Details: Vagrant"
 .SK
 .TITLE "Vagrant - Architecture"
+Vagrant is a collection of ruby-gems wrapped by a go-binary CLI.
+Mainly it wraps e.g. VBox or VMWare commands into a abstract
+"ascii" configuration file.
+Also establishes a communication channel between host and guest
+and other networking gems as avaible.
 .SP 2v
 Naming - what's in the bento?
 .SP 1v
 .BVL 1c
 .LI "Core"
 plugin loader "framework" + utils
+.LI "Vagrantfile"
+A single ruby-DSL configuration file (but there's magic)
 .LI "host"
 capabilities (Linux, OSX, Free/OpenBSD, ..)
 .LI "box"
-Disk/BIOS image + metadata packed as tar.gz
+Disk/BIOS image + metadata packed as tar.gz "under the hood"
 .LI "guest"
 capabilities (Linux, Free/OpenBSD, ..)
 .LI "provider"
-capabilities (vbox/VMM/bhyve/...) where the main show goes
+capabilities (vbox/VMM/bhyve/...) - where the main show goes
 .LI "communicators"
 ssh/winssh/winrm to let Vagrant configure the guest
 .LI "provisioner"
-shell/ansible/chef/puppet/... run after the first 'up' of the VM
+shell/ansible/Chef/puppet/... run at the first 'up' of the VM
 .LE
 .GPE_TIME 120
 .\" ---- NEXT PAGE
 .SK
-.TITLE "Networking capabilities"
+.TITLE "Vagrant networking capabilities"
 .SP 4v
 .BL
 .LI
@@ -329,7 +340,7 @@ bridged network: reach out from VM to The Internet (Host might need to NAT)
 
 .\" ---- NEXT PAGE
 .SK
-.TITLE "Provisioner - post-postinstall"
+.TITLE "Vagrant Provisioner - post-postinstall"
 .SP 3v
 Almost any automation stack can be included into a Vagrant based VM
 .BL
@@ -349,7 +360,7 @@ you-name-it, likely there's a plugin
 .GPE_TIME 60
 .\" ---- NEXT PAGE
 .SK
-.TITLE "Anatomy of an UP session"
+.TITLE "Anatomy of an `vagrant up' session"
 .VERBON 0 12
 $ uname -a ; bundle exec vagrant status ; bundle exec vagrant up ; \\
  bundle exec vagrant ssh -c "uname -a"
@@ -389,6 +400,23 @@ end
 .GPE_TIME 120
 .\" ---- NEXT PAGE
 .SK
+.TITLE "Drawbacks?"
+.BL
+.LI
+run a full auto-install from a kinda prepared local network
+infrastructure or internet every time a VM boots the first time
+.LI
+new "box" imaging possible - but only on target platform
+.LI
+multi-disk rather a pain to share (as a box)
+.LI
+bottom-line: to flexible to be really reproducible and
+efficient
+.LE
+.SP
+Now what? packer time!
+.\" ---- NEXT PAGE
+.SK
 .TITLE "What's packer anyway?"
 .SP 2v
 .VERBON 0 14
@@ -417,7 +445,7 @@ configuration in JSON (+ optional variables)
 .\" ---- NEXT PAGE
 .SK
 .TITLE
-.TITLE "forms in the sandbox / Terminology"
+.TITLE "packer: forms in the sandbox / Terminology"
 .SP 2v
 .BVL 1c
 .LI "Artifacts"
@@ -438,7 +466,7 @@ The JSON files defining all of the above (and some) - NOT a VM "template"
 .\" ---- NEXT PAGE
 .SK
 .TITLE
-.TITLE "Builders + Post-Provisioning"
+.TITLE Packer: "Builders + Post-Provisioning"
 .SP 1v
 By default the following ``builder'' engines are supported. Where needed
 the accompaning ``post-processor'' is typically available, too (e.g. EC2/AMI upload):
@@ -462,6 +490,7 @@ Ansible, Breakpoint, Chef, Converge, File, InSpec, PowerShell, Puppet, Salt Mast
 /etc/pf.conf:
 .SP 0.5v
 .VERBON 12 0
+# 100.64.0.0/10 default for vmd(8)'s DHCP server
 pass in quick proto { udp tcp } from 100.64.0.0/10 to any port domain \\
                  rdr-to $dns_server port domain
 pass out quick on $ext_if from 100.64.0.0/10 to any nat-to $ext_if
@@ -525,7 +554,7 @@ bundle(1) Vagrant 2.1 (but likely works with 1.5+)
 Vagrant provider-plugin: 0.3.0
 .BL
 .LI
-box support (disk or [PXE-BIOS])
+box support for disk install
 .LI
 host OS detection by vagrant
 .LI
