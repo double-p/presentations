@@ -1,0 +1,570 @@
+.\"
+.\" Copyright (c) 2019 Philipp Buehler <pbuehler@sysfive.com>
+.\"
+.\" Permission to use, copy, modify, and distribute this presentation for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE PRESENTATION IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+.\" WARRANTIES WITH REGARD TO THIS PRESENTATION INCLUDING ALL IMPLIED
+.\" WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL THE
+.\" AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+.\" DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA
+.\" OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+.\" TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+.\" PERFORMANCE OF THIS PRESENTATION.
+.\"
+.\" --------------------------------------------------------------------
+.\" All macro definition taken/inspired from Ingo Schwarze's talk
+.\" EuroBSDcon 2015 - "mandoc"
+.\" http://www.openbsd.org/papers/eurobsdcon2015-mandoc.roff
+.\" --------------------------------------------------------------------
+.\"
+.\" --- global gpresent configuration settings -------------------------
+.DEFCOLOR Navy 0 0 0.5
+.DEFCOLOR Navylight 0 0.2 0.8
+.TITLECOLOR Navy
+.SUBTITLEFORMAT C
+.SUBTITLECOLOR Navylight
+.FOOTERSIZE 2
+.\" We don't want a header line for the title page,
+.\" so we have to start it before setting up headers.
+.TITLE "OpenBSD: add VMM to 'packer'"
+.\" === gpresent header setup ==========================================
+.\" --- define gpresent extension registers ----------------------------
+.nr gpe_page_tot 1
+.nr gpe_page_sec 0
+.af gpe_page_sec I
+.nr gpe_time_tsec 14*60+45*60
+.nr gpe_time_hour 14
+.nr gpe_time_min 45
+.af gpe_time_min 45
+.nr gpe_time_sec 0
+.af gpe_time_sec 02
+.
+.\" --- macro to start a new section -----------------------------------
+.\" use this like: .GPE_SECTION\n.\" - NEXT PAGE\n.SK\n.TITLE
+.\" to start a new section upper title, new page with new title prop'y
+.de GPE_SECTION
+.ds gpe_title_sec \\$1
+.nr gpe_page_sec 0
+..
+.\" --- gpresent page header callback ----------------------------------
+.de HEADER
+.nr gpe_page_tot +1
+.nr gpe_page_sec +1
+.sp 0.5v
+.ds gpe_middle page \\n[gpe_page_tot]: \\*[gpe_title_sec] \\n[gpe_page_sec]
+.tl 'Philipp B\[u0075_0308]hler: OpenBSD VMM packer'\
+\\*[gpe_middle]'\
+Lillehammer, September 22nd, 2019'
+.sp -0.5v
+.\" horizontal line below the page header
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+..
+.\" --- initialize the first section before completing the title page --
+.GPE_SECTION "Opening"
+.\" === define some gpresent extension macros ==========================
+.\" --- two-column mode (for images) -----------------------------------
+.\" 1st arg: width of first column
+.\" 2nd arg: move second column up by this amout (default 0.5v)
+.\" switch column with normal .MULN, end with normal .MULE
+.de GPE_MULB
+.nr gpe_colwr \\n(.l-\\$1-1n
+.ie \\n[.$]>1 .ds gpe_vsp \\$2
+.el .ds gpe_vsp 0.5v
+.sp -\\*[gpe_vsp]
+.MULB \\$1 1n \\n[gpe_colwr]u
+.sp \\*[gpe_vsp]
+..
+.\" --- emphasis -------------------------------------------------------
+.\" arg: text
+.de GPE_EM
+.COLOR red
+\\$1
+.COLOR P
+..
+.\" --- small text -----------------------------------------------------
+.\" arg: text
+.de GPE_SM
+.S -4
+.ce
+\\$1
+.S P
+..
+.\" --- small text with one emphasised word ----------------------------
+.\" 1st arg: text before emphasis
+.\" 2nd arg: emphasised text
+.\" 3rd arg: text after emphasis
+.de GPE_SMEM
+.GPE_SM "\\$1 \m[red]\\$2\m[] \\$3"
+..
+.\"
+.\" all macro and title fuzzing done - real work below
+.\"
+.\" --- title page -----------------------------------------------------
+.sp -1v
+.SUBTITLE "The red pill taken to develop a Go 'plugin' for packer.io to be able to create VM images on OpenBSD for VMM and many other virtualizers."
+.SUBTITLE "Philipp B\[u0075_0308]hler <pb@sysfive.com> @pb_double"
+.GPE_SM "sysfive.com portfolio"
+.MULB 11c 1n 11c
+.BL
+.LI
+Continous system and application operation
+.LI
+Collaborations with Providers, Developers, Services and QA
+.LI
+Hybrid cloud provisioning
+.LI
+cost efficient scaling on commodity HW
+.LI
+scale out to AWS/RS/GCE
+.LI
+Incident, problem, disaster response
+.LE
+.PSPIC ../../images/sysfive-logo.eps
+.MULN
+.BL
+.LI
+Service availability independent of solution scenario
+.LI
+migrate from or to private/public cloud or own HW
+.LI
+robust, scalable technology portfolio
+.LI
+continuous improvements in security and server
+architecture
+.LI
+coherent provisioning across platforms (dev/stage/live)
+.LI
+vendor/provider independence, OSS focus
+.LE
+.MULE
+
+.SK
+.\" --- macros to start a new page -------------------------------------
+.\" arg: time for this page in seconds
+.de GPE_TIME
+.nr gpe_time_tsec +\\$1
+.nr gpe_time_hour \\n[gpe_time_tsec]/3600
+.nr gpe_time_min \\n[gpe_time_tsec]%3600/60
+.nr gpe_time_sec \\n[gpe_time_tsec]%60
+.ds gpe_source EuroBSDcon 2019
+..
+.\" --- gpresent page footer callback ----------------------------------
+.de FOOTER
+.ps 18
+.vs 20
+.sp -2v
+\l'\\n(.lu'\h'-\\n(.lu'
+.br
+.tl '\s-6\\n[gpe_time_hour]:\\n[gpe_time_min]:\s-2\\n[gpe_time_sec]\
+ \s+8''sysfive.com @\\m[Navylight]\\*[gpe_source]\ \ \\m[]'
+.ps
+.vs
+..
+.GPE_SECTION "Overview"
+.\" ---- NEXT PAGE
+.SK
+.TITLE
+.TITLE "Ze problems I tackle"
+.SP 4v
+.BL
+.LI
+VM guest keeper need bootable stuff
+.LI
+"infrastructure to go"
+.LI
+reproducibility
+.LI
+cross-host / virtualizer (OSX,OpenBSD / VirtualBox,VMM,AMI)
+.LE
+.GPE_TIME 90
+.SK
+.TITLE
+.TITLE "Solutions / Approaches"
+.SP 4v
+.BL
+.LI
+my-imager.sh
+.LI
+github | sh
+.LI
+my-cold-hands ("VM guy is AWOL")
+.LI
+packer (o'rly)
+.LE
+.GPE_TIME 120
+
+
+.GPE_SECTION "Introduction"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "What's packer anyway?"
+.SP 2v
+.VERBON 0 14
+Packer is an open source tool for creating *identical* machine images
+for multiple platforms from a *single source* configuration.
+Packer is lightweight, runs on every major operating system,
+and is highly performant, creating machine images for multiple
+platforms *in parallel*.
+
+Packer does not replace configuration management like Chef or Puppet.
+In fact, when building images, Packer is able to use tools like Chef
+or Puppet to install software onto the image.
+.VERBOFF
+.SP 4v
+.BL
+.LI
+written in golang
+.LI
+small core providing communications (rpc)
+.LI
+everything else is a plugin (but linked into one binary)
+.LI
+configuration in JSON (+ optional variables)
+.LE
+.GPE_TIME 180
+.\" ---- NEXT PAGE
+.SK
+.TITLE
+.TITLE "forms in the sandbox / Terminology"
+.SP 2v
+.BVL 1c
+.LI "Artifacts"
+Outcome of a "Build", e.g. AMI, .vmdk, .box
+.LI "Builds"
+The actual running task producing above artifacts
+.LI "Builders"
+Code to steer the VM host, handle disk images, etc (see below)
+.LI "Provisioners (optional)"
+Additional treatment, installation goes here and range from
+simple inline shell scripts to full-blown ansible, Chef, ..
+.LI "Post-processors"
+Treat the Artifacts after creation, e.g. compress, upload AWS, ..
+.LI "Templates"
+The JSON files defining all of the above (and some) - NOT a VM "template"
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE
+.TITLE "Builders + Post-Provisioning"
+.SP 1v
+By default the following ``builder'' engines are supported. Where needed
+the accompaning ``post-processor'' is typically available, too (e.g. EC2/AMI upload):
+.SP
+Alicloud ECS, Amazon EC2, Azure, CloudStack, DigitalOcean, Docker, File, Google Cloud, Hetzner Cloud, HyperOne, Hyper-V, Linode, LXC, LXD, NAVER Cloud, Null, 1&1, OpenStack, Oracle, Parallels, ProfitBricks, QEMU, Scaleway, Tencent Cloud, Triton, Vagrant, VirtualBox, VMware, Yandex.Cloud.
+.SP 1v
+Further ``builders'' can be found in the wild and are just added as a
+single go binary in certain paths (e.g. ~/.packer.d/plugins/)
+.SP 2v
+By default additional provisioning support for the following tools:
+.SP
+Ansible, Breakpoint, Chef, Converge, File, InSpec, PowerShell, Puppet, Salt Masterless, Shell.
+.GPE_TIME 120
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE
+.TITLE "OpenBSD VMM"
+.SP 1v
+.BVL 1c
+.LI "vmm(4)"
+virtual machine monitor (VMM) providing the required resources for the VMs (CPU, Disk, Net)
+and handles the necessary memory mapping (isolation).
+.LI "vmd(8)"
+userland daemon to interact with vmm(4) to create actual VMs and handle their lifecycle through:
+.LI "vmctl(8)"
+administrative tool to create, start/stop, etc VMs. In this scope also the main 'interface'
+for the packer builder plugin.
+.LI "vm.conf(5)"
+configuration file for vmd(8), persist VM/network configurations.
+.LI "doas(1)"
+While most tasks the ``builder'' can (and should!) run as unprivileged user, some commands
+need to be run as root. The plugin does so automatically.
+.GPE_EM "Caveat:"
+ needs 'nopass' for now (no tty), 'persist' typically timeouts too early. 
+.LE
+.GPE_TIME 180
+
+.SK
+.TITLE
+.TITLE "OpenBSD dependencies / configuration"
+.SP 1v
+.BL
+.LI
+/etc/pf.conf:
+.SP 0.5v
+.VERBON 12 0
+pass in quick proto { udp tcp } from 100.64.0.0/10 to any port domain \\
+                 rdr-to $dns_server port domain
+pass out quick on $ext_if from 100.64.0.0/10 to any nat-to $ext_if
+.VERBOFF
+.LI
+/etc/sysctl.conf
+.SP 0.5v
+.VERBON 12 0
+net.inet.ip.forwarding=1
+.VERBOFF
+.LI
+vmd(8)
+.SP 0.5v
+.VERBON 12 0
+rcctl enable vmd
+rcctl start vmd
+.VERBOFF
+.LE
+.\" ---- NEXT PAGE
+.SK
+.TITLE
+.TITLE "Enough Introduction.."
+.SP 2v
+.GPE_EM "Questions so far?"
+.GPE_TIME 60
+
+.GPE_SECTION "Plugin development"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Plugin development"
+.SUBTITLE "tools + space"
+.SP 2v
+.BL
+.LI
+pkg_add: golang, packer, git
+.LI
+$VISUAL / $EDITOR
+.LI
+diskspace: 1.5G go-dependencies + generated images/diskfiles
+.LE
+.SUBTITLE "directory layout"
+.SP 2v
+.BL
+.LI
+/ - Makefile, main.go, go.mod
+.LI
+/builder/packer-builder-openbsd-vmm - work cellar
+.LE
+.GPE_TIME 120
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Plugin development"
+.SUBTITLE "what is doing what"
+.SP 2v
+.BVL 1c
+.LI "Makefile"
+Targets: build, install, vmb, fmt, vet, test, clean, uninstall
+.LI "main.go"
+.BL
+.LI
+"import" builder
+.LI
+initialize builder as a "server" plugin
+.LI
+register builder (rpc configuration)
+.LI
+"daemonize", spinning mode, ..
+.LE
+.SK
+.LI "config.go"
+holds the configuration struct read from template (JSON)
+.LI "builder.go"
+.BL
+.LI
+new - instantiate driver with global vars/logs
+.LI
+prepare - populate configuration
+.LI
+run - tokenize build into "steps", hand over "artifact" information
+.LI
+cancel - clean up the mess if SIGABRT
+.LE
+.LI "driver.go"
+Interact via vmctl(8) to create disks, start/stop the VM.
+Gather additional information like tap(4) IP address.
+.GPE_EM "Fixme:"
+Right now this just "fake news" and the plugin always
+returns a fixed address which would only match VM 1.
+.SP
+Also interface with the VM (serial console) to "type"
+so called boot_command. Additionally catching all the output
+into a logfile (linefeed).
+.LI "step_*.go"
+The various ``steps'' needed to create an artficat (next page)
+.LE
+.GPE_TIME 240
+.\" ---- NEXT PAGE
+.SK
+.SUBTITLE "``Stepping the build''"
+.SP 2v
+.BVL 1c
+.LI "step_outdir.go"
+create a directory that will hold the artifacts
+.LI "step_create_disks.go"
+create the empty disk that will be installed on (via vmctl, no doas).
+.LI "step_launch_vm.go"
+Start a VM (via "driver") with above created disk and the configured
+options (name, memory, kernel).
+.GPE_EM "Fixme:"
+shutdown the VM if there are errors (right now I don't, because debug
+and auto_install(8) already stops the VM)
+.LI "step_bootcmd.go"
+.BL
+.LI
+Get configuration of the built-in httpd
+.LI
+gather the configured boot_command, enrich with above data
+.LI
+"type" the command via the connected serial console. Basically
+the httpd cannot run on 80/tcp, so auto_install will fail-ask
+for the URL and the plugin provides this (e.g. http://100.64.1.2:8230/packer-auto_install.conf)
+.LE
+.LE
+.GPE_TIME 240
+
+.\" ---- NEXT PAGE
+.SK
+.TITLE "* DEMO TIME*"
+.SP 2v
+.VERBON 12 0
+{
+  "builders": [
+    {
+      "type": "openbsd-vmm",
+      "name": "packer-obsd64-vmm-amd64",
+      "vm_name": "myvm",
+      "disk_size": "1500M",
+      "disk_format": "raw",
+      "output_directory": "images",
+      "http_directory": "./docroot",
+      "iso_image": "~/Downloads/install65.iso",
+      "bios": "/bsd.rd",
+      "boot_wait": "5s",
+      "boot_command": [
+        "A<enter>",
+        "http://{{ .HTTPIP }}:{{ .HTTPPort }}/packer-auto_install.conf<enter>"
+      ],
+      "ssh_username": "root"
+    }
+  ]
+}
+.VERBOFF
+https://asciinema.org/a/247058
+.SP 0.5v
+asciinema play ~/devel/presenter/presentations/BSDCan/2019/demo-packer.cast
+.GPE_TIME 360
+.GPE_SECTION "Status / Outlook"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Status"
+.SP
+.BL
+.LI
+VMM: everything on deck (full/real PXE would be add-on)
+.LI
+plugin: all architectural integration (config/builder/driver)
+.LI
+plugin_steps: create disk/VM/boot/provide auto_install infra
+.LE
+.GPE_TIME 90
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Outlook"
+.SP
+.SUBTITLE "Fixme / Finish"
+.BL
+.LI
+GetTapIpAddr
+.LI
+qcow2 - DONE!
+.LI
+observe VM going down instead fixed waiting time
+.LE
+.SUBTITLE "Needables"
+.BL
+.LI
+plugin: provide/check dependencies (vmd running, pf.conf)
+.LI
+plugin: make it a ports-pkg
+.LI
+plugin: support fiddlings (like variables for boot_command, basically there)
+.LI
+plugin: config item 'disklabel'
+.LI
+plugin: multiple disks
+.LI
+plugin: "complex" networking?
+.LI
+plugin: adapt to upcoming VMM features
+.LE
+.GPE_TIME 180
+.\" ---- NEXT PAGE
+.SK
+.SUBTITLE "Integration (Puffalanche)"
+.BL
+.LI
+make 'vagrant' a port and use it as a vbox post-processor
+.LI
+ Cloudify the clones (cloud-init,context,..)
+.LI
+ "Ecosystem" - cloud at puffy fingertips (hi mischa, sorry)
+.LI
+ Disk resizing (maybe not needed with images-a-la-carte..)
+.LE
+.GPE_TIME 180
+
+
+.GPE_SECTION "K-THX-BYE"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Ohai + Links + Thanks"
+.BL
+.LI
+Code/Slides - https://v.gd/packobsd
+.LI
+Kickoff - Glarus, Switzerland / https://hack4glarus.ch
+.LI
+Thanks to Claudio for the idea of vmctl -B
+.LI
+Thanks to grubernaut for go.mod, review, ISO+QCOW2 support
+and other spurious fixes
+.LI
+Any help/pull request very welcome (e.g. multi-disk)
+.LE
+.sp 1v
+.GPE_EM Questions?
+.sp 2v
+.PSPIC ../../images/sysfive-logo.eps
+.GPE_TIME 60
+.SK
+.sp 2v
+.TITLE "BEER after the closing session and **auction**"
+.TITLE "DO NOT MISS - and see you at the SENS after it"
+.MULB 11c 1n 11c
+.PSPIC ./images/qrcode.eps
+.MULN
+.PSPIC ../../images/puflogv400X260.eps
+.MULE
+Code/Slides - https://v.gd/packobsd
+.GPE_TIME 30
+.GPE_SECTION "Attic"
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Golang"
+.SP 2v
+.BL
+.LI
+GOPATH (disk sizes/isolation)
+.LI
+go.mod/go.sum
+.LI
+go vet
+.LI
+go fmt
+.LI
+// interface{}
+.LE
+.GPE_TIME 100
+
+
