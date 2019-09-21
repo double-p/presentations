@@ -32,14 +32,17 @@
 .TITLE "OpenBSD: add VMM to 'packer'"
 .\" === gpresent header setup ==========================================
 .\" --- define gpresent extension registers ----------------------------
+.\" - actual numbers
 .nr gpe_page_tot 1
 .nr gpe_page_sec 0
-.af gpe_page_sec I
-.nr gpe_time_tsec 14*60+45*60
-.nr gpe_time_hour 14
-.nr gpe_time_min 45
-.af gpe_time_min 45
+.\" --9*60+30*60 means 9:30 in seconds since midnight: ((9*60)+30)*60
+.nr gpe_time_tsec 9*60+30*60
+.nr gpe_time_hour 9
+.nr gpe_time_min 30
 .nr gpe_time_sec 0
+.\" - formatting options, 02: two digits, leading zero if need be
+.af gpe_page_sec I
+.af gpe_time_min 02
 .af gpe_time_sec 02
 .
 .\" --- macro to start a new section -----------------------------------
@@ -57,7 +60,7 @@
 .ds gpe_middle page \\n[gpe_page_tot]: \\*[gpe_title_sec] \\n[gpe_page_sec]
 .tl 'Philipp B\[u0075_0308]hler: OpenBSD VMM packer'\
 \\*[gpe_middle]'\
-Lillehammer, September 22nd, 2019'
+Lillehammer -- September 22nd, 2019'
 .sp -0.5v
 .\" horizontal line below the page header
 \l'\\n(.lu'\h'-\\n(.lu'
@@ -119,7 +122,7 @@ Hybrid cloud provisioning
 .LI
 cost efficient scaling on commodity HW
 .LI
-scale out to AWS/RS/GCE
+scale out to AWS/GCE/Azure/..
 .LI
 Incident, problem, disaster response
 .LE
@@ -172,13 +175,13 @@ vendor/provider independence, OSS focus
 .SP 4v
 .BL
 .LI
-VM guest keeper need bootable stuff
+VM guest keepers need bootable stuff
 .LI
 "infrastructure to go"
 .LI
 reproducibility
 .LI
-cross-host / virtualizer (OSX,OpenBSD / VirtualBox,VMM,AMI)
+cross-host / virtualizer (OSX, OpenBSD, AWS / VirtualBox, VMM, AMI)
 .LE
 .GPE_TIME 90
 .SK
@@ -189,9 +192,11 @@ cross-host / virtualizer (OSX,OpenBSD / VirtualBox,VMM,AMI)
 .LI
 my-imager.sh
 .LI
-github | sh
+curl github | sh
 .LI
 my-cold-hands ("VM guy is AWOL")
+.LI
+deploy.pl ;-)
 .LI
 packer (o'rly)
 .LE
@@ -223,7 +228,7 @@ small core providing communications (rpc)
 .LI
 everything else is a plugin (but linked into one binary)
 .LI
-configuration in JSON (+ optional variables)
+configuration in one JSON file (+optional variables)
 .LE
 .GPE_TIME 180
 .\" ---- NEXT PAGE
@@ -322,6 +327,7 @@ rcctl start vmd
 .TITLE "Enough Introduction.."
 .SP 2v
 .GPE_EM "Questions so far?"
+Keep 'em until the end, way too big a stage here
 .GPE_TIME 60
 
 .GPE_SECTION "Plugin development"
@@ -384,8 +390,9 @@ cancel - clean up the mess if SIGABRT
 Interact via vmctl(8) to create disks, start/stop the VM.
 Gather additional information like tap(4) IP address.
 .GPE_EM "Fixme:"
-Right now this just "fake news" and the plugin always
-returns a fixed address which would only match VM 1.
+Get information of ``ifconfig tap'' to find the IP address.
+Currently there's some assumption about how VM-Id and tapN
+correlate (or not). awk->golang or ioctl needed.
 .SP
 Also interface with the VM (serial console) to "type"
 so called boot_command. Additionally catching all the output
@@ -403,6 +410,9 @@ The various ``steps'' needed to create an artficat (next page)
 create a directory that will hold the artifacts
 .LI "step_create_disks.go"
 create the empty disk that will be installed on (via vmctl, no doas).
+.LI "step_get_vm_params.go"
+Put information about the VM into the 'state bag', to be consumed
+by following steps.
 .LI "step_launch_vm.go"
 Start a VM (via "driver") with above created disk and the configured
 options (name, memory, kernel).
@@ -412,7 +422,7 @@ and auto_install(8) already stops the VM)
 .LI "step_bootcmd.go"
 .BL
 .LI
-Get configuration of the built-in httpd
+Get configuration (IP/port) from the built-in httpd
 .LI
 gather the configured boot_command, enrich with above data
 .LI
@@ -450,9 +460,9 @@ for the URL and the plugin provides this (e.g. http://100.64.1.2:8230/packer-aut
   ]
 }
 .VERBOFF
-https://asciinema.org/a/247058
+https://asciinema.org/a/246654
 .SP 0.5v
-asciinema play ~/devel/presenter/presentations/BSDCan/2019/demo-packer.cast
+asciinema play ~/devel/presenter/presentations/h4g/2019/tl-demo.cast
 .GPE_TIME 360
 .GPE_SECTION "Status / Outlook"
 .\" ---- NEXT PAGE
@@ -477,9 +487,7 @@ plugin_steps: create disk/VM/boot/provide auto_install infra
 .LI
 GetTapIpAddr
 .LI
-qcow2 - DONE!
-.LI
-observe VM going down instead fixed waiting time
+more observation than fixed timeouts - if possible
 .LE
 .SUBTITLE "Needables"
 .BL
@@ -506,7 +514,7 @@ plugin: adapt to upcoming VMM features
 .LI
 make 'vagrant' a port and use it as a vbox post-processor
 .LI
- Cloudify the clones (cloud-init,context,..)
+ Cloudify the clones (cloud-init, context,..)
 .LI
  "Ecosystem" - cloud at puffy fingertips (hi mischa, sorry)
 .LI
@@ -539,14 +547,17 @@ Any help/pull request very welcome (e.g. multi-disk)
 .GPE_TIME 60
 .SK
 .sp 2v
-.TITLE "BEER after the closing session and **auction**"
-.TITLE "DO NOT MISS - and see you at the SENS after it"
-.MULB 11c 1n 11c
-.PSPIC ./images/qrcode.eps
+.TITLE "BEER after the closing session"
+.TITLE "DO NOT MISS - see you there"
+.MULB 15c 1n 7c
+Code/Slides -
+.SP 1v
+https://github.com/double-p/packer-builder-openbsd-vmm
+.SP 1v
+https://github.com/double-p/presentations
 .MULN
 .PSPIC ../../images/puflogv400X260.eps
 .MULE
-Code/Slides - https://v.gd/packobsd
 .GPE_TIME 30
 .GPE_SECTION "Attic"
 .\" ---- NEXT PAGE
