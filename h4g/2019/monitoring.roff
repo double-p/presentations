@@ -175,9 +175,19 @@ vendor/provider independence, OSS focus
 Rookie Guide Updates - see Redmine-Wiki
 .LI
 packer/VMM - finalize ports(7)
+.BL
 .LI
-Monitoring (haproxy/prometheus/suricata/grafana/...)
+see h4g-summer presentation for details
 .LI
+go dep / vendoring - painful, reposize
+.LI
+Possible with Makefile "trickery"
+.LE
+.LI
+Monitoring (haproxy/prometheus/suricata/VAST/grafana/...)
+.LI
+.LI
+https://github.com/double-p --- code & presentations
 .LE
 .GPE_TIME 90
 
@@ -185,3 +195,62 @@ Monitoring (haproxy/prometheus/suricata/grafana/...)
 .\" ---- NEXT PAGE
 .SK
 .TITLE "What's monitoring anyway?"
+.SUBTITLE "Stoneage approach (pull)"
+.BL
+.LI
+"GET / HTTP/1.0" - every 5 minutes. What about 
+the other 4.99 minutes?
+.LI
+parse logfiles "later", storage waste. Latency.
+.LI
+"static" dashboards/graphs. No drill down; realtime?
+.LE
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Push monitoring (nowadays)"
+.BL
+.LI
+"App" is generating events (riemann)
+.LI
+or exporting (prometheus)
+.LI
+serverless might be tricky (overhead, cost)
+.LE
+.SP 2v
+In overall way less latency, no additional logfile parsing.
+.SP 1v
+Good enough?
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Ask the network!"
+Picture: see https://twitter/pb_double
+.BL
+.LI
+Observe live traffic (opt: store PCAP for DPI)
+.LI
+works w/o logging (if supported anyway)
+.LI
+all details at your fingertips (even retrospective)
+.LI
+agnostic to VM/microsvc/lambda
+.LI
+different sort of complexity
+.LE
+.\" ---- NEXT PAGE
+.SK
+.TITLE "Egress!!"
+.SUBTITLE "application connects outbound"
+.BL
+.LI
+No (HTTP) logging
+.LI
+TLS1.3?
+.LI
+trust/keystore (JVM restart if PKIX)
+.LI
+outbound URL manipulation (api1 -> api2 at Sun midnight)
+.LI
+detect malicious outbound (bitcoin!)
+.LI
+IPv6!
+.LE
