@@ -64,7 +64,7 @@ vm.conf(5):
 
 
 ## Components / Terminology
-### Jitsi (1/2)
+### Jitsi
 nginx(8): `web`
 : serving web assets and reverse proxy BOSH; maybe websockets XXX-colibri? <!-- Bidirectional-streams Over Synchronous HTTP -->
 
@@ -72,7 +72,7 @@ prosody(8): `xmpp`
 : internal components communication (esp. "PubSub", health check) and user chat
 
 ## Components / Terminology
-### Jitsi (2/2)
+### Jitsi
 focus: `jicofo` JItsi COnference FOcus
 : room+session handling in conferences (who's talking to whom and where)
 
@@ -82,19 +82,65 @@ videobridge: `vibri`
 jibri: JItsi BRoadcasting Infrastructure
 : recording + streaming conferences
 
-## Details / Architecture
-### OpenBSD (1/n)
+## Details / Architecture OpenBSD
 XXX VMM+VMs+"switch" pic via mermaid.live + screenshot or 'inline'?
 
-## Details / Architecture
-### Jitsi (1/2)
+## Details / Architecture Jitsi (Net)
+![](img/arch-tcp.png){.r-stretch}
 
+## Details / Architecture Jitsi (logical / ext.)
+![](img/arch-pubsub.png){.r-stretch}
 
 ## Details / Configuration
-### OpenBSD VMM / all VM
+### OpenBSD VMM
+```{.bash code-line-numbers="|4,8"}
+mkdir /home/vmm; cd /home/vmm
+vmctl create -s 5G web.qcow2
+ftp https://cdn.openbsd.org/pub/OpenBSD/7.1/amd64/install71.iso
+vmctl start -m 2G -L -i 1 -r install71.iso -d /home/vmm/web.qcow2 web
+vmctl console web
+## run the (I)nstaller, default options. only one 'a' slice on (w)hole disk
+vmctl stop web
+for vm in xmpp jicofo vibri ; do cp web.qcow2 $vm.qcow2; done
+echo 'net.inet.ip.forwarding=1' >> /etc/sysctl.conf
+```
 
 ## Details / Configuration
-### OpenBSD (1/6)
+### OpenBSD VMM `/etc/vm.conf`:
+```{.python code-line-numbers="1-6|7-9|10-13|14-17|"}
+vm "web" {
+  enable
+  memory 2G
+  disk "/home/vmm/web.qcow2" format qcow2
+  local interface { up }
+}
+vm "web" instance "xmpp" {
+  disk "/home/vmm/xmpp.qcow2" format qcow2
+}
+vm "web" instance "jicofo" {
+  memory 4G
+  disk "/home/vmm/jicofo.qcow2" format qcow2
+}
+vm "web" instance "vibri" {
+  memory 4G
+  disk "/home/vmm/vibri.qcow2" format qcow2
+}
+```
+## Details / Configuration
+### OpenBSD all 
+`/etc/hosts`:
+
+```{.python code-line-numbers="|2"}
+100.64.1.3    web
+100.64.2.3    xmpp jitsi.fips.de
+100.64.3.3    jicofo
+100.64.4.3    vibri
+```
+- DNS: only one A-RR: jitsi.fips.de
+- adapt `/etc/myname` in each VM accordingly
+
+## Details / Configuration
+### OpenBSD
 - `pf.conf` VMM and all VMs:  
 Not needed for jitsi itself, rather common admin care
 ```{.python code-line-numbers="1|2|3|"}
@@ -103,7 +149,7 @@ pass out quick on egress proto { tcp udp } to any port { 123 53 80 443 }
 pass in quick on egress proto tcp from $admin to port 22
 ```
 ## Details / Configuration
-### OpenBSD (2/6)
+### OpenBSD
 - `pf.conf` VMM / router:  
 jitsi specifics
 ```{.python code-line-numbers="1|2|3-4|5|6|"}
@@ -116,7 +162,7 @@ pass in proto { udp tcp } from $vms to any port domain rdr-to $resolver
 ```
 
 ## Details / Configuration
-### OpenBSD (2/6)
+### OpenBSD
 - `pf.conf` nginx
 ```{.python code-line-numbers="1|2|"}
 pass in quick on egress proto tcp to self port { 80 443 }
@@ -124,7 +170,7 @@ pass out quick on egress proto tcp to xmpp port 5280
 ```
 
 ## Details / Configuration
-### OpenBSD (3/6)
+### OpenBSD
 - `pf.conf` prosody/xmpp
 ```{.python code-line-numbers="1|2|3|"}
 pass in proto tcp from { jicofo vibri } to self port 5222
@@ -133,7 +179,7 @@ pass in proto tcp from { any $admin } to self port 5280
 ```
 
 ## Details / Configuration
-### OpenBSD (4/6)
+### OpenBSD
 - `pf.conf` videobridge
 ```{.python code-line-numbers="1|2|"}
 pass out quick on egress proto tcp to xmpp port { 5222 5280 5347}
@@ -141,31 +187,114 @@ pass in quick on egress proto udp to self port 10000
 ```
 
 ## Details / Configuration
-### OpenBSD (5/6)
+### OpenBSD
 - `pf.conf` jicofo
 ```{.python code-line-numbers="1|"}
 pass out quick on egress proto tcp to xmpp port 5222
 ```
 
 ## Details / Configuration
-### Jitsi (1/5)
-nginx
+### Jitsi / xmpp
+`/etc/prosody/prosody.cfg.lua` (shortened)
+```{.lua code-line-numbers="|2,5|"}
+admins = { "focus@auth.jitsi.fips.de", "jvb@auth.jitsi.fips.de" }
+http_interfaces = { "*", "::" }
+VirtualHost "jitsi.fips.de"
+    authentication = "anonymous";
+    modules_enabled = { "bosh"; "pubsub"; }
+    c2s_require_encryption = false
+
+VirtualHost "auth.jitsi.fips.de"
+    ssl = { key = "/etc/prosody/certs/auth.jitsi.fips.de.key";
+            certificate = "/etc/prosody/certs/auth.jitsi.fips.de.crt"; }
+    authentication = "internal_hashed"
+```
+## Details / Configuration
+### Jitsi / xmpp
+`/etc/prosody/prosody.cfg.lua` (shortened) (cont.)
+```{.lua code-line-numbers="|6-7|"}
+Component "conference.jitsi.fips.de" "muc"
+
+Component "jvb.jitsi.fips.de"
+    component_secret = "CRED_VIBRI"
+
+Component "focus.jitsi.fips.de" "client_proxy"
+    target_address = "focus@auth.jitsi.fips.de"
+
+Component "internal.auth.jitsi.fips.de" "muc"
+    muc_room_locking = false
+    muc_room_default_public_jids = true
+```
+No extra DNS needed! Like "Host:" HTTP-Header.
 
 ## Details / Configuration
-### Jitsi (2/5)
-prosody / xmpp
+### Jitsi / nginx
+```{.nginx code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"}
+server_name  jitsi.fips.de;
+root         /var/www/jitsi-meet;
+ssi on;
+ssi_types application/x-javascript application/javascript;
+location ~ ^/(libs|css|static|images|fonts|lang|sounds|connection_optimization)/(.*)$ {
+  add_header 'Access-Control-Allow-Origin' '*';
+  alias /var/www/jitsi-meet/$1/$2; }
+location /external_api.js { alias /var/www/jitsi-meet/libs/external_api.min.js; }
+location = /http-bind {
+  proxy_pass      http://xmpp:5280/http-bind;
+  proxy_set_header X-Forwarded-For $remote_addr;
+  proxy_set_header Host $http_host; }
+location ~ ^/([a-zA-Z0-9=\?]+)$ {
+  rewrite ^/(.*)$ / break; }
+```
 
 ## Details / Configuration
-### Jitsi (3/5)
-videobridge
+### Jitsi / config.js (client)
+```{.javascript code-line-numbers="3-4|6|7|8,10|13|"}
+var config = {
+  hosts: {
+    domain: 'jitsi.fips.de',
+    muc: 'conference.jitsi.fips.de' // no DNS
+  },
+  bosh: '//jitsi.fips.de/http-bind',
+  useTurnUdp: false,
+  prejoinConfig: {
+    enabled: true,
+    hideExtraJoinButtons: ['no-audio', 'by-phone'] },
+  p2p: {
+    stunServers: [
+      { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' } ] }
+}
+```
 
 ## Details / Configuration
-### Jitsi (4/5)
+### Jitsi / vibri
+`/etc/jitsi/vibri.conf`
+```{.javascript code-line-numbers="5|6|9,10|12|13-15|16-17|"}
+videobridge { apis {
+  xmpp-client {
+   configs {
+    ourprosody {
+     hostname = "xmpp"
+     domain = "auth.jitsi.fips.de" // 'realm'
+     username = "jvb"
+     password = "REDACTED"
+     muc_jids = "JvbBrewery@internal.auth.jitsi.fips.de"
+     muc_nickname = "jvb-foo"
+     disable_certificate_verification = true } } } }
+  sctp { enabled = false } // n/a on OpenBSD
+  ice { tcp {
+    enabled = false
+    port = 443
+   } udp {
+    port = 10000
+   }
+  }
+}
+```
+
+## Details / Configuration
+### Jitsi
 jicofo
 
-## Details / Configuration
-### Jitsi (5/5)
-config.js (client)
 
 
 ## Config Pitfalls
@@ -173,7 +302,7 @@ config.js (client)
 - `rc.conf.local` daemon_flags jicofo
 
 ## Config Pitfalls
-### Jitsi (1/n)
+### Jitsi
 - xmpp: host vs. virtualhost vs. domain
 - DNS: one and only
 - no sctp (vibri AND jicofo)
