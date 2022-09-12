@@ -182,7 +182,7 @@ pass out quick on egress proto tcp to xmpp port 5280
 
 ## Details / Configuration
 ### OpenBSD
-- `pf.conf` prosody/xmpp
+- `pf.conf`: prosody/xmpp
 ```{.python code-line-numbers="1|2|3|"}
 pass in proto tcp from { jicofo vibri } to self port { 5222 5347 }
 pass in proto tcp from web to self port 5280
@@ -194,7 +194,7 @@ pass in proto tcp from { any $admin } to self port 5280 # debug
 
 ## Details / Configuration
 ### OpenBSD
-- `pf.conf` videobridge
+- `pf.conf`: videobridge
 ```{.python code-line-numbers="1|2|"}
 pass out quick on egress proto tcp to xmpp port { 5222 5280 5347}
 pass in quick on egress proto udp to self port 10000
@@ -294,7 +294,7 @@ videobridge { apis {
      hostname = "xmpp"
      domain = "auth.jitsi.fips.de" // 'realm'
      username = "jvb"
-     password = "REDACTED"
+     password = "CRED_VIBRI"
      muc_jids = "JvbBrewery@internal.auth.jitsi.fips.de"
      muc_nickname = "jvb-foo"
      disable_certificate_verification = true } } } }
@@ -311,17 +311,20 @@ videobridge { apis {
 
 ## Details / Configuration
 ### Jitsi / vibri
-`/etc/jitsi/sip-communicator.properties`
+`/etc/jitsi/sip-communicator.properties`:
 ```{.java}
 org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS=100.64.4.3
 org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=87.253.170.146
 org.ice4j.ice.harvest.DISABLE_AWS_HARVESTER=true
 ```
+:::{.callout-note}
+ice4j is not developed by Jitsi, thus not available in "new" JICO
+:::
 
 ## Details / Configuration
 ### Jitsi / jicofo
 `/etc/jitsi/jicofo.conf`: (shortened)
-```{.javascript code-line-numbers="|"}
+```{.javascript code-line-numbers="|2|3|4|8|14|"}
 jicofo { bridge {
   brewery-jid = "JvbBrewery@internal.auth.jitsi.fips.de"
   xmpp-connection-name = Client } // enum
@@ -350,26 +353,30 @@ jicofo_flags="--host=jitsi.fips.de"
 Needs `/etc/hosts` or split-DNS. Used for TCP connect AND virtualhost
 :::
 
-## Config Pitfalls
+## Pitfalls
 ### OpenBSD
-- `rc.conf.local` daemon_flags jicofo
+- `rc.conf.local` jicofo_flags: DNS/hosts
+- sctp
+- startup ordering (web, xmpp, jicofo, vibri)
 
-## Config Pitfalls
+## Pitfalls
 ### Jitsi
 - xmpp: host vs. virtualhost vs. domain
-- DNS: one and only
+- DNS: one and only one (or mess up xmpp fallback)
 - no sctp (vibri AND jicofo)
+- (hidden) version bumps ("no longer component!")
 
 ## Prayers for a Livedemo
 ### fips.de
 [`https://jitsi.fips.de/EBC`](https://jitsi.fips.de/EBC)
 
 ## Status / Outlook
+:::{.callout-important}
 IT WORKS!
+:::
 
 ### Ports / Packages
-- `nginx`: official (no config)
-- `prosody`: official (no config)
+- `nginx`, `prosody`: official (no config)
 - `net/jicofo`: published/review
 - `net/jitsi-videobridge`: published/review
 - `www/jitsi-meta`: planned, include above and coherent configuration (all on localhost)
