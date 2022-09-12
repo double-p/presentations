@@ -595,7 +595,7 @@ jitsi specifics</li>
 <section id="details-configuration-9" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-xmpp">Jitsi / xmpp</h3>
-<p><code>/etc/prosody/prosody.cfg.lua</code> (shortened)</p>
+<p><code>/etc/prosody/prosody.cfg.lua</code>: (shortened)</p>
 <div class="sourceCode" id="cb10" data-code-line-numbers="|2,5|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb10-1"><a href="#cb10-1"></a>admins <span class="op">=</span> <span class="op">{</span> <span class="st">"focus@auth.jitsi.fips.de"</span><span class="op">,</span> <span class="st">"jvb@auth.jitsi.fips.de"</span> <span class="op">}</span></span>
 <span id="cb10-2"><a href="#cb10-2"></a>http_interfaces <span class="op">=</span> <span class="op">{</span> <span class="st">"*"</span><span class="op">,</span> <span class="st">"::"</span> <span class="op">}</span></span>
 <span id="cb10-3"><a href="#cb10-3"></a>VirtualHost <span class="st">"jitsi.fips.de"</span></span>
@@ -611,7 +611,7 @@ jitsi specifics</li>
 <section id="details-configuration-10" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-xmpp-1">Jitsi / xmpp</h3>
-<p><code>/etc/prosody/prosody.cfg.lua</code> (shortened) (cont.)</p>
+<p><code>/etc/prosody/prosody.cfg.lua</code>: (shortened) (cont.)</p>
 <div class="sourceCode" id="cb11" data-code-line-numbers="|6-7|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb11-1"><a href="#cb11-1"></a>Component <span class="st">"conference.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
 <span id="cb11-2"><a href="#cb11-2"></a></span>
 <span id="cb11-3"><a href="#cb11-3"></a>Component <span class="st">"jvb.jitsi.fips.de"</span></span>
@@ -627,7 +627,7 @@ jitsi specifics</li>
 </section>
 <section id="details-configuration-11" class="slide level2">
 <h2>Details / Configuration</h2>
-<h3 id="jitsi-nginx">Jitsi / nginx</h3>
+<h3 id="jitsi-nginx-shortened-server">Jitsi / nginx (shortened server{})</h3>
 <div class="sourceCode" id="cb12" data-code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"><pre class="sourceCode numberSource nginx number-lines code-with-copy"><code class="sourceCode"><span id="cb12-1"><a href="#cb12-1"></a>server_name  jitsi.fips.de;</span>
 <span id="cb12-2"><a href="#cb12-2"></a>root         /var/www/jitsi-meet;</span>
 <span id="cb12-3"><a href="#cb12-3"></a>ssi on;</span>
@@ -645,7 +645,8 @@ jitsi specifics</li>
 </section>
 <section id="details-configuration-12" class="slide level2">
 <h2>Details / Configuration</h2>
-<h3 id="jitsi-config.js-client">Jitsi / config.js (client)</h3>
+<h3 id="jitsi-web-client">Jitsi / web client</h3>
+<p><code>/var/www/jitsi-meet/config.js</code>:</p>
 <div class="sourceCode" id="cb13" data-code-line-numbers="3-4|6|7|8,10|13|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">var</span> config <span class="op">=</span> {</span>
 <span id="cb13-2"><a href="#cb13-2"></a>  <span class="dt">hosts</span><span class="op">:</span> {</span>
 <span id="cb13-3"><a href="#cb13-3"></a>    <span class="dt">domain</span><span class="op">:</span> <span class="st">'jitsi.fips.de'</span><span class="op">,</span></span>
@@ -664,7 +665,7 @@ jitsi specifics</li>
 <section id="details-configuration-13" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-vibri">Jitsi / vibri</h3>
-<p><code>/etc/jitsi/vibri.conf</code></p>
+<p><code>/etc/jitsi/vibri.conf</code>:</p>
 <div class="sourceCode" id="cb14" data-code-line-numbers="5|6|9,10|12|13-15|16-17|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb14-1"><a href="#cb14-1"></a>videobridge { apis {</span>
 <span id="cb14-2"><a href="#cb14-2"></a>  xmpp<span class="op">-</span>client {</span>
 <span id="cb14-3"><a href="#cb14-3"></a>   configs {</span>
@@ -688,8 +689,51 @@ jitsi specifics</li>
 </section>
 <section id="details-configuration-14" class="slide level2">
 <h2>Details / Configuration</h2>
-<h3 id="jitsi-3">Jitsi</h3>
-<p>jicofo</p>
+<h3 id="jitsi-vibri-1">Jitsi / vibri</h3>
+<p><code>/etc/jitsi/sip-communicator.properties</code></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="cb15-1"><a href="#cb15-1"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_LOCAL_ADDRESS</span><span class="op">=</span><span class="fl">100.64.4.3</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_PUBLIC_ADDRESS</span><span class="op">=</span><span class="fl">87.253.170.146</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">DISABLE_AWS_HARVESTER</span><span class="op">=</span><span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="details-configuration-15" class="slide level2">
+<h2>Details / Configuration</h2>
+<h3 id="jitsi-jicofo">Jitsi / jicofo</h3>
+<p><code>/etc/jitsi/jicofo.conf</code>: (shortened)</p>
+<div class="sourceCode" id="cb16" data-code-line-numbers="|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb16-1"><a href="#cb16-1"></a>jicofo { bridge {</span>
+<span id="cb16-2"><a href="#cb16-2"></a>  brewery<span class="op">-</span>jid <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a>  xmpp<span class="op">-</span>connection<span class="op">-</span>name <span class="op">=</span> Client } <span class="co">// enum</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>sctp { enabled <span class="op">=</span> <span class="kw">false</span> } </span>
+<span id="cb16-5"><a href="#cb16-5"></a>  xmpp {</span>
+<span id="cb16-6"><a href="#cb16-6"></a>    client {</span>
+<span id="cb16-7"><a href="#cb16-7"></a>      port <span class="op">=</span> <span class="dv">5222</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a>      domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span></span>
+<span id="cb16-9"><a href="#cb16-9"></a>      username <span class="op">=</span> <span class="st">"focus"</span></span>
+<span id="cb16-10"><a href="#cb16-10"></a>      password <span class="op">=</span> <span class="st">"CRED_FOCUS"</span></span>
+<span id="cb16-11"><a href="#cb16-11"></a>      use<span class="op">-</span>tls <span class="op">=</span> <span class="kw">true</span></span>
+<span id="cb16-12"><a href="#cb16-12"></a>    }</span>
+<span id="cb16-13"><a href="#cb16-13"></a>    <span class="co">// trusted service domains. Logged in -&gt; advance to bridges</span></span>
+<span id="cb16-14"><a href="#cb16-14"></a>    trusted<span class="op">-</span>domains <span class="op">=</span> [ <span class="st">"auth.jitsi.fips.de"</span> ]</span>
+<span id="cb16-15"><a href="#cb16-15"></a>  }</span>
+<span id="cb16-16"><a href="#cb16-16"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="details-configuration-16" class="slide level2">
+<h2>Details / Configuration</h2>
+<h3 id="jitsi-jicofo-1">Jitsi / jicofo</h3>
+<p><code>/etc/rc.conf.local</code>:</p>
+<div class="sourceCode" id="cb17" data-code-line-numbers="|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1"></a><span class="va">jicofo_flags</span><span class="op">=</span><span class="st">"--host=jitsi.fips.de"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-important callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p>Needs <code>/etc/hosts</code> or split-DNS. Used for TCP connect AND virtualhost</p>
+</div>
+</div>
+</div>
 </section>
 <section id="config-pitfalls-1" class="slide level2">
 <h2>Config Pitfalls</h2>
@@ -700,7 +744,7 @@ jitsi specifics</li>
 </section>
 <section id="config-pitfalls-2" class="slide level2">
 <h2>Config Pitfalls</h2>
-<h3 id="jitsi-4">Jitsi</h3>
+<h3 id="jitsi-3">Jitsi</h3>
 <ul>
 <li>xmpp: host vs.&nbsp;virtualhost vs.&nbsp;domain</li>
 <li>DNS: one and only</li>

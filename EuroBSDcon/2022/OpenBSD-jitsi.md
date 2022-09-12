@@ -195,7 +195,7 @@ pass out quick on egress proto tcp to xmpp port 5222
 
 ## Details / Configuration
 ### Jitsi / xmpp
-`/etc/prosody/prosody.cfg.lua` (shortened)
+`/etc/prosody/prosody.cfg.lua`: (shortened)
 ```{.lua code-line-numbers="|2,5|"}
 admins = { "focus@auth.jitsi.fips.de", "jvb@auth.jitsi.fips.de" }
 http_interfaces = { "*", "::" }
@@ -211,7 +211,7 @@ VirtualHost "auth.jitsi.fips.de"
 ```
 ## Details / Configuration
 ### Jitsi / xmpp
-`/etc/prosody/prosody.cfg.lua` (shortened) (cont.)
+`/etc/prosody/prosody.cfg.lua`: (shortened) (cont.)
 ```{.lua code-line-numbers="|6-7|"}
 Component "conference.jitsi.fips.de" "muc"
 
@@ -228,7 +228,7 @@ Component "internal.auth.jitsi.fips.de" "muc"
 No extra DNS needed! Like "Host:" HTTP-Header.
 
 ## Details / Configuration
-### Jitsi / nginx
+### Jitsi / nginx (shortened server{})
 ```{.nginx code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"}
 server_name  jitsi.fips.de;
 root         /var/www/jitsi-meet;
@@ -247,7 +247,8 @@ location ~ ^/([a-zA-Z0-9=\?]+)$ {
 ```
 
 ## Details / Configuration
-### Jitsi / config.js (client)
+### Jitsi / web client 
+`/var/www/jitsi-meet/config.js`:
 ```{.javascript code-line-numbers="3-4|6|7|8,10|13|"}
 var config = {
   hosts: {
@@ -267,7 +268,7 @@ var config = {
 
 ## Details / Configuration
 ### Jitsi / vibri
-`/etc/jitsi/vibri.conf`
+`/etc/jitsi/vibri.conf`:
 ```{.javascript code-line-numbers="5|6|9,10|12|13-15|16-17|"}
 videobridge { apis {
   xmpp-client {
@@ -292,10 +293,45 @@ videobridge { apis {
 ```
 
 ## Details / Configuration
-### Jitsi
-jicofo
+### Jitsi / vibri
+`/etc/jitsi/sip-communicator.properties`
+```{.java}
+org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS=100.64.4.3
+org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=87.253.170.146
+org.ice4j.ice.harvest.DISABLE_AWS_HARVESTER=true
+```
 
+## Details / Configuration
+### Jitsi / jicofo
+`/etc/jitsi/jicofo.conf`: (shortened)
+```{.javascript code-line-numbers="|"}
+jicofo { bridge {
+  brewery-jid = "JvbBrewery@internal.auth.jitsi.fips.de"
+  xmpp-connection-name = Client } // enum
+sctp { enabled = false } 
+  xmpp {
+    client {
+      port = 5222
+      domain = "auth.jitsi.fips.de"
+      username = "focus"
+      password = "CRED_FOCUS"
+      use-tls = true
+    }
+    // trusted service domains. Logged in -> advance to bridges
+    trusted-domains = [ "auth.jitsi.fips.de" ]
+  }
+}
+```
+## Details / Configuration
+### Jitsi / jicofo
+`/etc/rc.conf.local`:
+```{.bash code-line-numbers="|"}
+jicofo_flags="--host=jitsi.fips.de"
+```
 
+:::{.callout-important}
+Needs `/etc/hosts` or split-DNS. Used for TCP connect AND virtualhost
+:::
 
 ## Config Pitfalls
 ### OpenBSD
