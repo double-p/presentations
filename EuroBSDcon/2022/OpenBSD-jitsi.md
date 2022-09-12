@@ -13,6 +13,8 @@ format:
     transition: fade
     transition-speed: slow
     background-transition: convex
+    footer: "EuroBSDCon 2022 - Vienna - Jitsi/OpenBSD"
+    logo: img/sysfive.jpg
 ---
 
 ## Presentation / C+C
@@ -32,27 +34,67 @@ format:
 
 ## Riddle
 ### Jitsi
+XXX
+many components
+even more communication channels
+who/where/what
+revproxy from hell
+quick install / one-debian VM FTW!
 
 ## Riddle
-### OpenBSD
+### OpenBSD XXX
+Linux-VMs yes/no/alpine
+vm.conf examples (hoowl-toooo)
+inter VM networking
+inside/outside networking (VMM as router)
 
 ## Components / Terminology
 ### OpenBSD
+vmm(4) - virtual machine monitor:
+: kernel driver isolating/providing the required resources for the VMs ("hypervisor")
+
+vmd(8):
+: userland daemon to interact with `vmm`
+
+vmctl(8):
+: administrative tool to create, start/stop, .. VMs
+
+vm.conf(5):
+: persist VMs resource configuration
+
 
 ## Components / Terminology
-### Jitsi
+### Jitsi (1/2)
+nginx(8): `web`
+: serving web assets and reverse proxy BOSH; maybe websockets XXX-colibri? <!-- Bidirectional-streams Over Synchronous HTTP -->
+
+prosody(8): `xmpp`
+: internal components communication (esp. "PubSub", health check) and user chat
+
+## Components / Terminology
+### Jitsi (2/2)
+focus: `jicofo` JItsi COnference FOcus
+: room+session handling in conferences (who's talking to whom and where)
+
+videobridge: `vibri`
+: mediastream (WebRTC) handlings between participants (SFU)
+
+jibri: JItsi BRoadcasting Infrastructure
+: recording + streaming conferences
 
 ## Details / Architecture
 ### OpenBSD (1/n)
+XXX VMM+VMs+"switch" pic via mermaid.live + screenshot or 'inline'?
 
 ## Details / Architecture
-### Jitsi (1/n)
+### Jitsi (1/2)
+
 
 ## Details / Configuration
 ### OpenBSD VMM / all VM
 
 ## Details / Configuration
-### OpenBSD (1/5)
+### OpenBSD (1/6)
 - `pf.conf` VMM and all VMs:  
 Not needed for jitsi itself, rather common admin care
 ```{.python code-line-numbers="1|2|3|"}
@@ -60,6 +102,8 @@ block return log
 pass out quick on egress proto { tcp udp } to any port { 123 53 80 443 }
 pass in quick on egress proto tcp from $admin to port 22
 ```
+## Details / Configuration
+### OpenBSD (2/6)
 - `pf.conf` VMM / router:  
 jitsi specifics
 ```{.python code-line-numbers="1|2|3-4|5|6|"}
@@ -72,7 +116,7 @@ pass in proto { udp tcp } from $vms to any port domain rdr-to $resolver
 ```
 
 ## Details / Configuration
-### OpenBSD (2/5)
+### OpenBSD (2/6)
 - `pf.conf` nginx
 ```{.python code-line-numbers="1|2|"}
 pass in quick on egress proto tcp to self port { 80 443 }
@@ -80,7 +124,7 @@ pass out quick on egress proto tcp to xmpp port 5280
 ```
 
 ## Details / Configuration
-### OpenBSD (3/5)
+### OpenBSD (3/6)
 - `pf.conf` prosody/xmpp
 ```{.python code-line-numbers="1|2|3|"}
 pass in proto tcp from { jicofo vibri } to self port 5222
@@ -89,7 +133,7 @@ pass in proto tcp from { any $admin } to self port 5280
 ```
 
 ## Details / Configuration
-### OpenBSD (4/5)
+### OpenBSD (4/6)
 - `pf.conf` videobridge
 ```{.python code-line-numbers="1|2|"}
 pass out quick on egress proto tcp to xmpp port { 5222 5280 5347}
@@ -97,7 +141,7 @@ pass in quick on egress proto udp to self port 10000
 ```
 
 ## Details / Configuration
-### OpenBSD (5/5)
+### OpenBSD (5/6)
 - `pf.conf` jicofo
 ```{.python code-line-numbers="1|"}
 pass out quick on egress proto tcp to xmpp port 5222
@@ -170,7 +214,6 @@ Thanks to:
 - sysfive.com GmbH
 - Aisha Tammy (ports)
 - thx 4
-- thx 5
 :::
 ::: {.column width="30%"}
 Misc:

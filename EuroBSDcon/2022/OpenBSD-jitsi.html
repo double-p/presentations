@@ -411,26 +411,75 @@
 <section id="riddle-1" class="slide level2">
 <h2>Riddle</h2>
 <h3 id="jitsi">Jitsi</h3>
+<p>XXX many components even more communication channels who/where/what revproxy from hell quick install / one-debian VM FTW!</p>
 </section>
 <section id="riddle-2" class="slide level2">
 <h2>Riddle</h2>
-<h3 id="openbsd">OpenBSD</h3>
+<h3 id="openbsd-xxx">OpenBSD XXX</h3>
+<p>Linux-VMs yes/no/alpine vm.conf examples (hoowl-toooo) inter VM networking inside/outside networking (VMM as router)</p>
 </section>
 <section id="components-terminology" class="slide level2">
 <h2>Components / Terminology</h2>
-<h3 id="openbsd-1">OpenBSD</h3>
+<h3 id="openbsd">OpenBSD</h3>
+<dl>
+<dt>vmm(4) - virtual machine monitor:</dt>
+<dd>
+kernel driver isolating/providing the required resources for the VMs (“hypervisor”)
+</dd>
+<dt>vmd(8):</dt>
+<dd>
+userland daemon to interact with <code>vmm</code>
+</dd>
+<dt>vmctl(8):</dt>
+<dd>
+administrative tool to create, start/stop, .. VMs
+</dd>
+<dt>vm.conf(5):</dt>
+<dd>
+persist VMs resource configuration
+</dd>
+</dl>
 </section>
 <section id="components-terminology-1" class="slide level2">
 <h2>Components / Terminology</h2>
-<h3 id="jitsi-1">Jitsi</h3>
+<h3 id="jitsi-12">Jitsi (1/2)</h3>
+<dl>
+<dt>nginx(8): <code>web</code></dt>
+<dd>
+serving web assets and reverse proxy BOSH; maybe websockets XXX-colibri? <!-- Bidirectional-streams Over Synchronous HTTP -->
+</dd>
+<dt>prosody(8): <code>xmpp</code></dt>
+<dd>
+internal components communication (esp.&nbsp;“PubSub”, health check) and user chat
+</dd>
+</dl>
+</section>
+<section id="components-terminology-2" class="slide level2">
+<h2>Components / Terminology</h2>
+<h3 id="jitsi-22">Jitsi (2/2)</h3>
+<dl>
+<dt>focus: <code>jicofo</code> JItsi COnference FOcus</dt>
+<dd>
+room+session handling in conferences (who’s talking to whom and where)
+</dd>
+<dt>videobridge: <code>vibri</code></dt>
+<dd>
+mediastream (WebRTC) handlings between participants (SFU)
+</dd>
+<dt>jibri: JItsi BRoadcasting Infrastructure</dt>
+<dd>
+recording + streaming conferences
+</dd>
+</dl>
 </section>
 <section id="details-architecture" class="slide level2">
 <h2>Details / Architecture</h2>
 <h3 id="openbsd-1n">OpenBSD (1/n)</h3>
+<p>XXX VMM+VMs+“switch” pic via mermaid.live + screenshot or ‘inline’?</p>
 </section>
 <section id="details-architecture-1" class="slide level2">
 <h2>Details / Architecture</h2>
-<h3 id="jitsi-1n">Jitsi (1/n)</h3>
+<h3 id="jitsi-12-1">Jitsi (1/2)</h3>
 </section>
 <section id="details-configuration" class="slide level2">
 <h2>Details / Configuration</h2>
@@ -438,7 +487,7 @@
 </section>
 <section id="details-configuration-1" class="slide level2">
 <h2>Details / Configuration</h2>
-<h3 id="openbsd-15">OpenBSD (1/5)</h3>
+<h3 id="openbsd-16">OpenBSD (1/6)</h3>
 <ul>
 <li><code>pf.conf</code> VMM and all VMs:<br>
 Not needed for jitsi itself, rather common admin care</li>
@@ -446,6 +495,10 @@ Not needed for jitsi itself, rather common admin care</li>
 <div class="sourceCode" id="cb1" data-code-line-numbers="1|2|3|"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a>block <span class="cf">return</span> log</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="cf">pass</span> out quick on egress proto { tcp udp } to <span class="bu">any</span> port { <span class="dv">123</span> <span class="dv">53</span> <span class="dv">80</span> <span class="dv">443</span> }</span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="cf">pass</span> <span class="kw">in</span> quick on egress proto tcp <span class="im">from</span> $admin to port <span class="dv">22</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="details-configuration-2" class="slide level2">
+<h2>Details / Configuration</h2>
+<h3 id="openbsd-26">OpenBSD (2/6)</h3>
 <ul>
 <li><code>pf.conf</code> VMM / router:<br>
 jitsi specifics</li>
@@ -457,18 +510,18 @@ jitsi specifics</li>
 <span id="cb2-5"><a href="#cb2-5"></a><span class="cf">pass</span> <span class="kw">in</span> on egress proto tcp to <span class="bu">any</span> port <span class="dv">5280</span> rdr<span class="op">-</span>to xmpp <span class="co"># debug</span></span>
 <span id="cb2-6"><a href="#cb2-6"></a><span class="cf">pass</span> <span class="kw">in</span> proto { udp tcp } <span class="im">from</span> $vms to <span class="bu">any</span> port domain rdr<span class="op">-</span>to $resolver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="details-configuration-2" class="slide level2">
+<section id="details-configuration-3" class="slide level2">
 <h2>Details / Configuration</h2>
-<h3 id="openbsd-25">OpenBSD (2/5)</h3>
+<h3 id="openbsd-26-1">OpenBSD (2/6)</h3>
 <ul>
 <li><code>pf.conf</code> nginx</li>
 </ul>
 <div class="sourceCode" id="cb3" data-code-line-numbers="1|2|"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="cf">pass</span> <span class="kw">in</span> quick on egress proto tcp to <span class="va">self</span> port { <span class="dv">80</span> <span class="dv">443</span> }</span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="cf">pass</span> out quick on egress proto tcp to xmpp port <span class="dv">5280</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="details-configuration-3" class="slide level2">
+<section id="details-configuration-4" class="slide level2">
 <h2>Details / Configuration</h2>
-<h3 id="openbsd-35">OpenBSD (3/5)</h3>
+<h3 id="openbsd-36">OpenBSD (3/6)</h3>
 <ul>
 <li><code>pf.conf</code> prosody/xmpp</li>
 </ul>
@@ -476,58 +529,58 @@ jitsi specifics</li>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="cf">pass</span> <span class="kw">in</span> proto tcp <span class="im">from</span> web to <span class="va">self</span> port <span class="dv">5280</span></span>
 <span id="cb4-3"><a href="#cb4-3"></a><span class="cf">pass</span> <span class="kw">in</span> proto tcp <span class="im">from</span> { <span class="bu">any</span> $admin } to <span class="va">self</span> port <span class="dv">5280</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="details-configuration-4" class="slide level2">
+<section id="details-configuration-5" class="slide level2">
 <h2>Details / Configuration</h2>
-<h3 id="openbsd-45">OpenBSD (4/5)</h3>
+<h3 id="openbsd-46">OpenBSD (4/6)</h3>
 <ul>
 <li><code>pf.conf</code> videobridge</li>
 </ul>
 <div class="sourceCode" id="cb5" data-code-line-numbers="1|2|"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="cf">pass</span> out quick on egress proto tcp to xmpp port { <span class="dv">5222</span> <span class="dv">5280</span> <span class="dv">5347</span>}</span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="cf">pass</span> <span class="kw">in</span> quick on egress proto udp to <span class="va">self</span> port <span class="dv">10000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="details-configuration-5" class="slide level2">
+<section id="details-configuration-6" class="slide level2">
 <h2>Details / Configuration</h2>
-<h3 id="openbsd-55">OpenBSD (5/5)</h3>
+<h3 id="openbsd-56">OpenBSD (5/6)</h3>
 <ul>
 <li><code>pf.conf</code> jicofo</li>
 </ul>
 <div class="sourceCode" id="cb6" data-code-line-numbers="1|"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="cf">pass</span> out quick on egress proto tcp to xmpp port <span class="dv">5222</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="details-configuration-6" class="slide level2">
+<section id="details-configuration-7" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-15">Jitsi (1/5)</h3>
 <p>nginx</p>
 </section>
-<section id="details-configuration-7" class="slide level2">
+<section id="details-configuration-8" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-25">Jitsi (2/5)</h3>
 <p>prosody / xmpp</p>
 </section>
-<section id="details-configuration-8" class="slide level2">
+<section id="details-configuration-9" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-35">Jitsi (3/5)</h3>
 <p>videobridge</p>
 </section>
-<section id="details-configuration-9" class="slide level2">
+<section id="details-configuration-10" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-45">Jitsi (4/5)</h3>
 <p>jicofo</p>
 </section>
-<section id="details-configuration-10" class="slide level2">
+<section id="details-configuration-11" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-55">Jitsi (5/5)</h3>
 <p>config.js (client)</p>
 </section>
 <section id="config-pitfalls-1" class="slide level2">
 <h2>Config Pitfalls</h2>
-<h3 id="openbsd-2">OpenBSD</h3>
+<h3 id="openbsd-1">OpenBSD</h3>
 <ul>
 <li><code>rc.conf.local</code> daemon_flags jicofo</li>
 </ul>
 </section>
 <section id="config-pitfalls-2" class="slide level2">
 <h2>Config Pitfalls</h2>
-<h3 id="jitsi-1n-1">Jitsi (1/n)</h3>
+<h3 id="jitsi-1n">Jitsi (1/n)</h3>
 <ul>
 <li>xmpp: host vs.&nbsp;virtualhost vs.&nbsp;domain</li>
 <li>DNS: one and only</li>
@@ -577,7 +630,6 @@ jitsi specifics</li>
 <li>sysfive.com GmbH</li>
 <li>Aisha Tammy (ports)</li>
 <li>thx 4</li>
-<li>thx 5</li>
 </ul>
 </div><div class="column" style="width:30%;">
 <p>Misc:</p>
@@ -602,8 +654,9 @@ jitsi specifics</li>
 </div>
 </div>
 </div>
+<p><img src="img/sysfive.jpg" class="slide-logo"></p>
 <div class="footer footer-default">
-
+<p>EuroBSDCon 2022 - Vienna - Jitsi/OpenBSD</p>
 </div>
 </section>
     </div>
