@@ -136,18 +136,29 @@ vm "web" instance "vibri" {
 100.64.3.3    jicofo
 100.64.4.3    vibri
 ```
-- DNS: only one A-RR: jitsi.fips.de
-- adapt `/etc/myname` in each VM accordingly
+:::{.callout-warning}
+adapt `/etc/myname` in each VM accordingly
+:::
+:::{.callout-note}
+DNS: only one A-RR: jitsi.fips.de ; `hosts` for jicofo
+:::
 
 ## Details / Configuration
 ### OpenBSD
-- `pf.conf` VMM and all VMs:  
+`pf.conf` VMM and all VMs:
+
+:::{.callout-note}
 Not needed for jitsi itself, rather common admin care
+:::
 ```{.python code-line-numbers="1|2|3|"}
 block return log
 pass out quick on egress proto { tcp udp } to any port { 123 53 80 443 }
 pass in quick on egress proto tcp from $admin to port 22
 ```
+:::{.callout-note}
+block both ways; allow NTP, DNS, HTTP(S), SSH
+:::
+
 ## Details / Configuration
 ### OpenBSD
 - `pf.conf` VMM / router:  
@@ -173,10 +184,13 @@ pass out quick on egress proto tcp to xmpp port 5280
 ### OpenBSD
 - `pf.conf` prosody/xmpp
 ```{.python code-line-numbers="1|2|3|"}
-pass in proto tcp from { jicofo vibri } to self port 5222
+pass in proto tcp from { jicofo vibri } to self port { 5222 5347 }
 pass in proto tcp from web to self port 5280
-pass in proto tcp from { any $admin } to self port 5280
+pass in proto tcp from { any $admin } to self port 5280 # debug
 ```
+:::{.callout-note}
+5347/tcp for explicit authentication if need be (not here)
+:::
 
 ## Details / Configuration
 ### OpenBSD
@@ -196,8 +210,7 @@ pass out quick on egress proto tcp to xmpp port 5222
 ## Details / Configuration
 ### Jitsi / xmpp
 `/etc/prosody/prosody.cfg.lua`: (shortened)
-```{.lua code-line-numbers="|2,5|"}
-admins = { "focus@auth.jitsi.fips.de", "jvb@auth.jitsi.fips.de" }
+```{.lua code-line-numbers="|1,4|"}
 http_interfaces = { "*", "::" }
 VirtualHost "jitsi.fips.de"
     authentication = "anonymous";
@@ -205,27 +218,31 @@ VirtualHost "jitsi.fips.de"
     c2s_require_encryption = false
 
 VirtualHost "auth.jitsi.fips.de"
+    admins = { "focus@auth.jitsi.fips.de", "jvb@auth.jitsi.fips.de" }
     ssl = { key = "/etc/prosody/certs/auth.jitsi.fips.de.key";
             certificate = "/etc/prosody/certs/auth.jitsi.fips.de.crt"; }
     authentication = "internal_hashed"
 ```
+:::{.callout-note}
+`admins` usage unclear
+:::
 ## Details / Configuration
 ### Jitsi / xmpp
 `/etc/prosody/prosody.cfg.lua`: (shortened) (cont.)
-```{.lua code-line-numbers="|6-7|"}
+```{.lua code-line-numbers="1|2,3|4,5|6-8|"}
 Component "conference.jitsi.fips.de" "muc"
-
 Component "jvb.jitsi.fips.de"
     component_secret = "CRED_VIBRI"
-
 Component "focus.jitsi.fips.de" "client_proxy"
     target_address = "focus@auth.jitsi.fips.de"
-
 Component "internal.auth.jitsi.fips.de" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
 ```
-No extra DNS needed! Like "Host:" HTTP-Header.
+:::{.callout-note}
+No extra DNS needed! Like "Host:" HTTP-Header.  
+`focus` like `jvb` in earlier versions (v1)
+:::
 
 ## Details / Configuration
 ### Jitsi / nginx (shortened server{})

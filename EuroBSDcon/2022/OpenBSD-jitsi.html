@@ -526,21 +526,66 @@ recording + streaming conferences
 <span id="cb3-2"><a href="#cb3-2"></a><span class="fl">100.64.2.3</span>    xmpp jitsi.fips.de</span>
 <span id="cb3-3"><a href="#cb3-3"></a><span class="fl">100.64.3.3</span>    jicofo</span>
 <span id="cb3-4"><a href="#cb3-4"></a><span class="fl">100.64.4.3</span>    vibri</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>DNS: only one A-RR: jitsi.fips.de</li>
-<li>adapt <code>/etc/myname</code> in each VM accordingly</li>
-</ul>
+<div class="callout callout-warning callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>adapt <code>/etc/myname</code> in each VM accordingly</p>
+</div>
+</div>
+</div>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>DNS: only one A-RR: jitsi.fips.de ; <code>hosts</code> for jicofo</p>
+</div>
+</div>
+</div>
 </section>
 <section id="details-configuration-3" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="openbsd-1">OpenBSD</h3>
-<ul>
-<li><code>pf.conf</code> VMM and all VMs:<br>
-Not needed for jitsi itself, rather common admin care</li>
-</ul>
+<p><code>pf.conf</code> VMM and all VMs:</p>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Not needed for jitsi itself, rather common admin care</p>
+</div>
+</div>
+</div>
 <div class="sourceCode" id="cb4" data-code-line-numbers="1|2|3|"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>block <span class="cf">return</span> log</span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="cf">pass</span> out quick on egress proto { tcp udp } to <span class="bu">any</span> port { <span class="dv">123</span> <span class="dv">53</span> <span class="dv">80</span> <span class="dv">443</span> }</span>
 <span id="cb4-3"><a href="#cb4-3"></a><span class="cf">pass</span> <span class="kw">in</span> quick on egress proto tcp <span class="im">from</span> $admin to port <span class="dv">22</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>block both ways; allow NTP, DNS, HTTP(S), SSH</p>
+</div>
+</div>
+</div>
 </section>
 <section id="details-configuration-4" class="slide level2">
 <h2>Details / Configuration</h2>
@@ -571,9 +616,22 @@ jitsi specifics</li>
 <ul>
 <li><code>pf.conf</code> prosody/xmpp</li>
 </ul>
-<div class="sourceCode" id="cb7" data-code-line-numbers="1|2|3|"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="cf">pass</span> <span class="kw">in</span> proto tcp <span class="im">from</span> { jicofo vibri } to <span class="va">self</span> port <span class="dv">5222</span></span>
+<div class="sourceCode" id="cb7" data-code-line-numbers="1|2|3|"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="cf">pass</span> <span class="kw">in</span> proto tcp <span class="im">from</span> { jicofo vibri } to <span class="va">self</span> port { <span class="dv">5222</span> <span class="dv">5347</span> }</span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="cf">pass</span> <span class="kw">in</span> proto tcp <span class="im">from</span> web to <span class="va">self</span> port <span class="dv">5280</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a><span class="cf">pass</span> <span class="kw">in</span> proto tcp <span class="im">from</span> { <span class="bu">any</span> $admin } to <span class="va">self</span> port <span class="dv">5280</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="cf">pass</span> <span class="kw">in</span> proto tcp <span class="im">from</span> { <span class="bu">any</span> $admin } to <span class="va">self</span> port <span class="dv">5280</span> <span class="co"># debug</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>5347/tcp for explicit authentication if need be (not here)</p>
+</div>
+</div>
+</div>
 </section>
 <section id="details-configuration-7" class="slide level2">
 <h2>Details / Configuration</h2>
@@ -596,34 +654,57 @@ jitsi specifics</li>
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-xmpp">Jitsi / xmpp</h3>
 <p><code>/etc/prosody/prosody.cfg.lua</code>: (shortened)</p>
-<div class="sourceCode" id="cb10" data-code-line-numbers="|2,5|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb10-1"><a href="#cb10-1"></a>admins <span class="op">=</span> <span class="op">{</span> <span class="st">"focus@auth.jitsi.fips.de"</span><span class="op">,</span> <span class="st">"jvb@auth.jitsi.fips.de"</span> <span class="op">}</span></span>
-<span id="cb10-2"><a href="#cb10-2"></a>http_interfaces <span class="op">=</span> <span class="op">{</span> <span class="st">"*"</span><span class="op">,</span> <span class="st">"::"</span> <span class="op">}</span></span>
-<span id="cb10-3"><a href="#cb10-3"></a>VirtualHost <span class="st">"jitsi.fips.de"</span></span>
-<span id="cb10-4"><a href="#cb10-4"></a>    authentication <span class="op">=</span> <span class="st">"anonymous"</span><span class="op">;</span></span>
-<span id="cb10-5"><a href="#cb10-5"></a>    modules_enabled <span class="op">=</span> <span class="op">{</span> <span class="st">"bosh"</span><span class="op">;</span> <span class="st">"pubsub"</span><span class="op">;</span> <span class="op">}</span></span>
-<span id="cb10-6"><a href="#cb10-6"></a>    c2s_require_encryption <span class="op">=</span> <span class="kw">false</span></span>
-<span id="cb10-7"><a href="#cb10-7"></a></span>
-<span id="cb10-8"><a href="#cb10-8"></a>VirtualHost <span class="st">"auth.jitsi.fips.de"</span></span>
+<div class="sourceCode" id="cb10" data-code-line-numbers="|1,4|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb10-1"><a href="#cb10-1"></a>http_interfaces <span class="op">=</span> <span class="op">{</span> <span class="st">"*"</span><span class="op">,</span> <span class="st">"::"</span> <span class="op">}</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>VirtualHost <span class="st">"jitsi.fips.de"</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>    authentication <span class="op">=</span> <span class="st">"anonymous"</span><span class="op">;</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a>    modules_enabled <span class="op">=</span> <span class="op">{</span> <span class="st">"bosh"</span><span class="op">;</span> <span class="st">"pubsub"</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>    c2s_require_encryption <span class="op">=</span> <span class="kw">false</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a></span>
+<span id="cb10-7"><a href="#cb10-7"></a>VirtualHost <span class="st">"auth.jitsi.fips.de"</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>    admins <span class="op">=</span> <span class="op">{</span> <span class="st">"focus@auth.jitsi.fips.de"</span><span class="op">,</span> <span class="st">"jvb@auth.jitsi.fips.de"</span> <span class="op">}</span></span>
 <span id="cb10-9"><a href="#cb10-9"></a>    ssl <span class="op">=</span> <span class="op">{</span> key <span class="op">=</span> <span class="st">"/etc/prosody/certs/auth.jitsi.fips.de.key"</span><span class="op">;</span></span>
 <span id="cb10-10"><a href="#cb10-10"></a>            certificate <span class="op">=</span> <span class="st">"/etc/prosody/certs/auth.jitsi.fips.de.crt"</span><span class="op">;</span> <span class="op">}</span></span>
 <span id="cb10-11"><a href="#cb10-11"></a>    authentication <span class="op">=</span> <span class="st">"internal_hashed"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p><code>admins</code> usage unclear</p>
+</div>
+</div>
+</div>
 </section>
 <section id="details-configuration-10" class="slide level2">
 <h2>Details / Configuration</h2>
 <h3 id="jitsi-xmpp-1">Jitsi / xmpp</h3>
 <p><code>/etc/prosody/prosody.cfg.lua</code>: (shortened) (cont.)</p>
-<div class="sourceCode" id="cb11" data-code-line-numbers="|6-7|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb11-1"><a href="#cb11-1"></a>Component <span class="st">"conference.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a></span>
-<span id="cb11-3"><a href="#cb11-3"></a>Component <span class="st">"jvb.jitsi.fips.de"</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a>    component_secret <span class="op">=</span> <span class="st">"CRED_VIBRI"</span></span>
-<span id="cb11-5"><a href="#cb11-5"></a></span>
-<span id="cb11-6"><a href="#cb11-6"></a>Component <span class="st">"focus.jitsi.fips.de"</span> <span class="st">"client_proxy"</span></span>
-<span id="cb11-7"><a href="#cb11-7"></a>    target_address <span class="op">=</span> <span class="st">"focus@auth.jitsi.fips.de"</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a></span>
-<span id="cb11-9"><a href="#cb11-9"></a>Component <span class="st">"internal.auth.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
-<span id="cb11-10"><a href="#cb11-10"></a>    muc_room_locking <span class="op">=</span> <span class="kw">false</span></span>
-<span id="cb11-11"><a href="#cb11-11"></a>    muc_room_default_public_jids <span class="op">=</span> <span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>No extra DNS needed! Like “Host:” HTTP-Header.</p>
+<div class="sourceCode" id="cb11" data-code-line-numbers="1|2,3|4,5|6-8|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb11-1"><a href="#cb11-1"></a>Component <span class="st">"conference.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>Component <span class="st">"jvb.jitsi.fips.de"</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a>    component_secret <span class="op">=</span> <span class="st">"CRED_VIBRI"</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>Component <span class="st">"focus.jitsi.fips.de"</span> <span class="st">"client_proxy"</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a>    target_address <span class="op">=</span> <span class="st">"focus@auth.jitsi.fips.de"</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a>Component <span class="st">"internal.auth.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a>    muc_room_locking <span class="op">=</span> <span class="kw">false</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a>    muc_room_default_public_jids <span class="op">=</span> <span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>No extra DNS needed! Like “Host:” HTTP-Header.<br>
+<code>focus</code> like <code>jvb</code> in earlier versions (v1)</p>
+</div>
+</div>
+</div>
 </section>
 <section id="details-configuration-11" class="slide level2">
 <h2>Details / Configuration</h2>
