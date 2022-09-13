@@ -510,7 +510,7 @@ Ports / Packages (Bonusslide)
 - `jibri`: maybe linux only (chrome-headless, fb/ffmpeg rip); otherwise like `jvb`
 - `jigasi`: feel free / just no SIP
 
-## k-thx-bye
+## Questions ? / k-thx-bye
 :::: {.columns}
 ::: {.column width="30%"}
 ![](img/url.png)
@@ -524,7 +524,7 @@ Thanks to:
 :::
 ::: {.column width="30%"}
 Misc:
-
+- QUESTIONS
 - Meet: Hallway
 - No Lunch
 
@@ -540,8 +540,10 @@ Created with `Quarto` (target: revealjs) [github](https://github.com/double-p/pr
 ### -current ports
 - fetch snapshots ports.tar.gz and unpack in a temporary path
 ```{.bash}
-CVSROOT=anoncvs.XX.openbsd.org:cvs cvs up
-cp -pr net/jitsi /usr/ports
+CVSROOT=anoncvs.XX.openbsd.org:cvs
+cd temppath/ports/net ; cvs up -Pd -A
+cp -pr jitsi /usr/ports/net
+cp ../infrastructure/db/user.list /usr/ports/infrastructure/db/
 cd /usr/ports/net/jitsi ; make package # get a coffee/tea/..
 scp /usr/ports/packages/amd64/all/jitsi-meet* web:/tmp
 scp /usr/ports/packages/amd64/all/jitsi-videobridge* jvb:/tmp

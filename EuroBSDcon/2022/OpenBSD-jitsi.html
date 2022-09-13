@@ -1113,8 +1113,8 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>jigasi</code>: feel free / just no SIP</li>
 </ul>
 </section>
-<section id="k-thx-bye" class="slide level2">
-<h2>k-thx-bye</h2>
+<section id="questions-k-thx-bye" class="slide level2">
+<h2>Questions ? / k-thx-bye</h2>
 <div class="columns">
 <div class="column" style="width:30%;">
 <p><img data-src="img/url.png"></p>
@@ -1126,11 +1126,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li>Aisha Tammy (ports)</li>
 </ul>
 </div><div class="column" style="width:30%;">
-<p>Misc:</p>
-<ul>
-<li>Meet: Hallway</li>
-<li>No Lunch</li>
-</ul>
+<p>Misc: - QUESTIONS - Meet: Hallway - No Lunch</p>
 </div>
 </div>
 <div class="callout callout-tip callout-captioned callout-style-default">
@@ -1153,12 +1149,14 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <ul>
 <li>fetch snapshots ports.tar.gz and unpack in a temporary path</li>
 </ul>
-<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1"></a><span class="va">CVSROOT</span><span class="op">=</span>anoncvs.XX.openbsd.org:cvs <span class="ex">cvs</span> up</span>
-<span id="cb26-2"><a href="#cb26-2"></a><span class="fu">cp</span> <span class="at">-pr</span> net/jitsi /usr/ports</span>
-<span id="cb26-3"><a href="#cb26-3"></a><span class="bu">cd</span> /usr/ports/net/jitsi <span class="kw">;</span> <span class="fu">make</span> package <span class="co"># get a coffee/tea/..</span></span>
-<span id="cb26-4"><a href="#cb26-4"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-meet<span class="pp">*</span> web:/tmp</span>
-<span id="cb26-5"><a href="#cb26-5"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-videobridge<span class="pp">*</span> jvb:/tmp</span>
-<span id="cb26-6"><a href="#cb26-6"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jicofo<span class="pp">*</span> jicofo:/tmp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1"></a><span class="va">CVSROOT</span><span class="op">=</span>anoncvs.XX.openbsd.org:cvs</span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="bu">cd</span> temppath/ports/net <span class="kw">;</span> <span class="ex">cvs</span> up <span class="at">-Pd</span> <span class="at">-A</span></span>
+<span id="cb26-3"><a href="#cb26-3"></a><span class="fu">cp</span> <span class="at">-pr</span> jitsi /usr/ports/net</span>
+<span id="cb26-4"><a href="#cb26-4"></a><span class="fu">cp</span> ../infrastructure/db/user.list /usr/ports/infrastructure/db/</span>
+<span id="cb26-5"><a href="#cb26-5"></a><span class="bu">cd</span> /usr/ports/net/jitsi <span class="kw">;</span> <span class="fu">make</span> package <span class="co"># get a coffee/tea/..</span></span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-meet<span class="pp">*</span> web:/tmp</span>
+<span id="cb26-7"><a href="#cb26-7"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-videobridge<span class="pp">*</span> jvb:/tmp</span>
+<span id="cb26-8"><a href="#cb26-8"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jicofo<span class="pp">*</span> jicofo:/tmp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>on each vm, install as so<br>
 <code>TRUSTED_PKG_PATH=/tmp pkg_add jicofo</code></p>
 
