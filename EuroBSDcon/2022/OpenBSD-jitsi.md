@@ -308,7 +308,21 @@ cp jicofo-key.store jvb-key.store
 `keytool` comes with JDK, this task can also be done on jicofo or jvb VM
 :::
 
-## WEB / nginx
+## Install nginx / web
+nginx and the jitsi web elements
+```{.bash}
+pkg_add nginx
+pkg_add jitsi-meet
+```
+Any TLS setup is mandatory or Chrome/Firefox/.. will refuse to let you
+use the camera+microphone.  
+Using Let's Encrypt with `acme-client` for the TLS setup is easily possible.
+
+:::{.callout-note}
+only needed jitsi configuration is config.js, see below
+:::
+
+## WEB / nginx.conf
 `/etc/nginx/nginx.conf`
 ```{.nginx code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"}
 server_name  jitsi.fips.de;
@@ -480,8 +494,9 @@ IT WORKS!
 
 ### Ports / Packages
 - `nginx`, `prosody`: official (no config)
-- `net/jicofo`: published/review
-- `net/jitsi-videobridge`: published/review
+- `net/jicofo`: [published/review](https://marc.info/?l=openbsd-ports&m=166299336227052&w=2)
+- `net/jitsi-videobridge`: [published/review](https://marc.info/?l=openbsd-ports&m=166299336227052&w=2)
+- `www/jitis-meet`: [published/review](https://marc.info/?l=openbsd-ports&m=166299336227052&w=2)
 - `www/jitsi-meta`: planned, include above and coherent configuration (all on localhost)
 
 ## Status / Outlook
@@ -505,15 +520,13 @@ Thanks to:
 - OpenBSD / Jitsi
 - sysfive.com GmbH
 - Aisha Tammy (ports)
-- thx 4
 :::
 ::: {.column width="30%"}
 Misc:
 
 - Meet: Hallway
 - No Lunch
-- misc 3
-- misc 4
+
 :::
 ::::
 :::{.callout-tip}
