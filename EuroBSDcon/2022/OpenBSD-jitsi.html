@@ -516,9 +516,10 @@ recording + streaming conferences
 <span id="cb1-4"><a href="#cb1-4"></a><span class="ex">vmctl</span> start <span class="at">-m</span> 2G <span class="at">-L</span> <span class="at">-i</span> 1 <span class="at">-r</span> install71.iso <span class="at">-d</span> /home/vmm/web.qcow2 web</span>
 <span id="cb1-5"><a href="#cb1-5"></a><span class="ex">vmctl</span> console web</span>
 <span id="cb1-6"><a href="#cb1-6"></a><span class="co">## run the (I)nstaller, default options. only one 'a' slice on (w)hole disk</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="ex">vmctl</span> stop web</span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="cf">for</span> vm <span class="kw">in</span> xmpp jicofo jvb <span class="kw">;</span> <span class="cf">do</span> <span class="fu">cp</span> web.qcow2 <span class="va">$vm</span>.qcow2<span class="kw">;</span> <span class="cf">done</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="bu">echo</span> <span class="st">'net.inet.ip.forwarding=1'</span> <span class="op">&gt;&gt;</span> /etc/sysctl.conf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">## halt -p (so new sshd_keys per VM)</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="ex">vmctl</span> stop web</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="cf">for</span> vm <span class="kw">in</span> xmpp jicofo jvb <span class="kw">;</span> <span class="cf">do</span> <span class="fu">cp</span> web.qcow2 <span class="va">$vm</span>.qcow2<span class="kw">;</span> <span class="cf">done</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="bu">echo</span> <span class="st">'net.inet.ip.forwarding=1'</span> <span class="op">&gt;&gt;</span> /etc/sysctl.conf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="vmm-etcvm.conf" class="slide level2">
 <h2>VMM <code>/etc/vm.conf</code></h2>
@@ -1090,12 +1091,11 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </div>
 </div>
 </div>
-<h3 id="ports-packages">Ports / Packages</h3>
+<p>Ports / Packages (Bonusslide)</p>
 <ul>
-<li><code>nginx</code>, <code>prosody</code>: official (no config)</li>
-<li><code>net/jicofo</code>: <a href="https://marc.info/?l=openbsd-ports&amp;m=166299336227052&amp;w=2">published/review</a></li>
-<li><code>net/jitsi-videobridge</code>: <a href="https://marc.info/?l=openbsd-ports&amp;m=166299336227052&amp;w=2">published/review</a></li>
-<li><code>www/jitis-meet</code>: <a href="https://marc.info/?l=openbsd-ports&amp;m=166299336227052&amp;w=2">published/review</a></li>
+<li><code>net/jitsi/videobridge</code>: <a href="https://marc.info/?l=openbsd-ports-cvs&amp;m=166307863805249&amp;w=2">current/7.2</a></li>
+<li><code>net/jitsi/jicofo</code>: <a href="https://marc.info/?l=openbsd-ports-cvs&amp;m=166307863805249&amp;w=2">current/7.2</a></li>
+<li><code>net/jitsi/meet</code>: <a href="https://marc.info/?l=openbsd-ports-cvs&amp;m=166307863805249&amp;w=2">current/7.2</a></li>
 <li><code>www/jitsi-meta</code>: planned, include above and coherent configuration (all on localhost)</li>
 </ul>
 </section>
@@ -1146,8 +1146,23 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </div>
 </div>
 </div>
-<p><img src="img/sysfive.jpg" class="slide-logo"></p>
-<div class="footer footer-default">
+</section>
+<section id="bonus" class="slide level2">
+<h2>Bonus</h2>
+<h3 id="current-ports">-current ports</h3>
+<ul>
+<li>fetch snapshots ports.tar.gz and unpack in a temporary path</li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1"></a><span class="va">CVSROOT</span><span class="op">=</span>anoncvs.XX.openbsd.org:cvs <span class="ex">cvs</span> up</span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="fu">cp</span> <span class="at">-pr</span> net/jitsi /usr/ports</span>
+<span id="cb26-3"><a href="#cb26-3"></a><span class="bu">cd</span> /usr/ports/net/jitsi <span class="kw">;</span> <span class="fu">make</span> package <span class="co"># get a coffee/tea/..</span></span>
+<span id="cb26-4"><a href="#cb26-4"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-meet<span class="pp">*</span> web:/tmp</span>
+<span id="cb26-5"><a href="#cb26-5"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-videobridge<span class="pp">*</span> jvb:/tmp</span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jicofo<span class="pp">*</span> jicofo:/tmp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>on each vm, install as so<br>
+<code>TRUSTED_PKG_PATH=/tmp pkg_add jicofo</code></p>
+
+<img src="img/sysfive.jpg" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>EuroBSDCon 2022 - Vienna - Jitsi/OpenBSD</p>
 </div>
 </section>

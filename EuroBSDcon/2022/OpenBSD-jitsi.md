@@ -112,6 +112,7 @@ ftp https://cdn.openbsd.org/pub/OpenBSD/7.1/amd64/install71.iso
 vmctl start -m 2G -L -i 1 -r install71.iso -d /home/vmm/web.qcow2 web
 vmctl console web
 ## run the (I)nstaller, default options. only one 'a' slice on (w)hole disk
+## halt -p (so new sshd_keys per VM)
 vmctl stop web
 for vm in xmpp jicofo jvb ; do cp web.qcow2 $vm.qcow2; done
 echo 'net.inet.ip.forwarding=1' >> /etc/sysctl.conf
@@ -492,11 +493,11 @@ ice4j is not developed by Jitsi, thus not available in "new" JICO config format
 IT WORKS!
 :::
 
-### Ports / Packages
-- `nginx`, `prosody`: official (no config)
-- `net/jicofo`: [published/review](https://marc.info/?l=openbsd-ports&m=166299336227052&w=2)
-- `net/jitsi-videobridge`: [published/review](https://marc.info/?l=openbsd-ports&m=166299336227052&w=2)
-- `www/jitis-meet`: [published/review](https://marc.info/?l=openbsd-ports&m=166299336227052&w=2)
+Ports / Packages (Bonusslide)
+
+- `net/jitsi/videobridge`: [current/7.2](https://marc.info/?l=openbsd-ports-cvs&m=166307863805249&w=2)
+- `net/jitsi/jicofo`: [current/7.2](https://marc.info/?l=openbsd-ports-cvs&m=166307863805249&w=2)
+- `net/jitsi/meet`: [current/7.2](https://marc.info/?l=openbsd-ports-cvs&m=166307863805249&w=2)
 - `www/jitsi-meta`: planned, include above and coherent configuration (all on localhost)
 
 ## Status / Outlook
@@ -534,3 +535,17 @@ Misc:
 Created with `Quarto` (target: revealjs) [github](https://github.com/double-p/presentations/tree/master/EuroBSDcon/2022/)
 `https://is.gd/ontSw3`
 :::
+
+## Bonus
+### -current ports
+- fetch snapshots ports.tar.gz and unpack in a temporary path
+```{.bash}
+CVSROOT=anoncvs.XX.openbsd.org:cvs cvs up
+cp -pr net/jitsi /usr/ports
+cd /usr/ports/net/jitsi ; make package # get a coffee/tea/..
+scp /usr/ports/packages/amd64/all/jitsi-meet* web:/tmp
+scp /usr/ports/packages/amd64/all/jitsi-videobridge* jvb:/tmp
+scp /usr/ports/packages/amd64/all/jicofo* jicofo:/tmp
+```
+on each vm, install as so  
+`TRUSTED_PKG_PATH=/tmp pkg_add jicofo`
