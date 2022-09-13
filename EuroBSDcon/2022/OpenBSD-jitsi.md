@@ -234,7 +234,7 @@ jicofo has a REST API on 8888/tcp for health/metrics (prometheus) - BROKEN
 Besides the package itself, we need some additional modules
 ```{.bash}
 pkg_add prosody
-prosodyctl install --server=https://modules.prosody.im/rocks/mod_client_proxy`
+prosodyctl install --server=https://modules.prosody.im/rocks/mod_client_proxy
 prosodyctl install --server=https://modules.prosody.im/rocks/mod_roster_command
 ```
 :::{.callout-note}
@@ -418,7 +418,7 @@ JVB_SC_HOME_NAME='jvb'
 :::{.callout-tip}
 jvb-key.store is generated from prosody certificate, see earlier slide. can be same file as /etc/jicofo/jicofo-key.store on one VM
 :::
-## Configuraition jvb.conf
+## Configuration jvb.conf
 - `/etc/jvb/jvb.conf`:
 ```{.javascript code-line-numbers="5|6|7,8|9,10|12|13-15|16-17|"}
 videobridge { apis {
@@ -456,7 +456,6 @@ ice4j is not developed by Jitsi, thus not available in "new" JICO config format
 
 `rcctl enable jvb ; rcctl start jvb`
 
-## 
 ## Pitfalls
 ### OpenBSD
 - `rc.conf.local`: jicofo_flags: IP instead DNS/hosts
