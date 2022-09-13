@@ -710,22 +710,42 @@ recording + streaming conferences
 </div>
 </div>
 </section>
+<section id="install-configuration-prosody-xmpp" class="slide level2">
+<h2>Install / Configuration prosody (xmpp)</h2>
+<p>Besides the package itself, we need some additional modules</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="ex">pkg_add</span> prosody</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="ex">prosodyctl</span> install <span class="at">--server</span><span class="op">=</span>https://modules.prosody.im/rocks/mod_client_proxy<span class="kw">`</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="ex">prosodyctl</span> install <span class="at">--server</span><span class="op">=</span>https://modules.prosody.im/rocks/mod_roster_command</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>The modules do not need further configuration. client_proxy gets autoloaded with component configuration. roster_command is CLI only.</p>
+</div>
+</div>
+</div>
+</section>
 <section id="configuration-prosody-xmpp" class="slide level2">
 <h2>Configuration prosody (xmpp)</h2>
 <ul>
 <li><code>/etc/prosody/prosody.cfg.lua</code>: (shortened)</li>
 </ul>
-<div class="sourceCode" id="cb11" data-code-line-numbers="|1,4|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb11-1"><a href="#cb11-1"></a>http_interfaces <span class="op">=</span> <span class="op">{</span> <span class="st">"*"</span><span class="op">,</span> <span class="st">"::"</span> <span class="op">}</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a>VirtualHost <span class="st">"jitsi.fips.de"</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a>    authentication <span class="op">=</span> <span class="st">"anonymous"</span><span class="op">;</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a>    modules_enabled <span class="op">=</span> <span class="op">{</span> <span class="st">"bosh"</span><span class="op">;</span> <span class="st">"pubsub"</span><span class="op">;</span> <span class="op">}</span></span>
-<span id="cb11-5"><a href="#cb11-5"></a>    c2s_require_encryption <span class="op">=</span> <span class="kw">false</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a></span>
-<span id="cb11-7"><a href="#cb11-7"></a>VirtualHost <span class="st">"auth.jitsi.fips.de"</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a>    admins <span class="op">=</span> <span class="op">{</span> <span class="st">"focus@auth.jitsi.fips.de"</span><span class="op">,</span> <span class="st">"jvb@auth.jitsi.fips.de"</span> <span class="op">}</span></span>
-<span id="cb11-9"><a href="#cb11-9"></a>    ssl <span class="op">=</span> <span class="op">{</span> key <span class="op">=</span> <span class="st">"/etc/prosody/certs/auth.jitsi.fips.de.key"</span><span class="op">;</span></span>
-<span id="cb11-10"><a href="#cb11-10"></a>            certificate <span class="op">=</span> <span class="st">"/etc/prosody/certs/auth.jitsi.fips.de.crt"</span><span class="op">;</span> <span class="op">}</span></span>
-<span id="cb11-11"><a href="#cb11-11"></a>    authentication <span class="op">=</span> <span class="st">"internal_hashed"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12" data-code-line-numbers="|1,4|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb12-1"><a href="#cb12-1"></a>http_interfaces <span class="op">=</span> <span class="op">{</span> <span class="st">"*"</span><span class="op">,</span> <span class="st">"::"</span> <span class="op">}</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>VirtualHost <span class="st">"jitsi.fips.de"</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>    authentication <span class="op">=</span> <span class="st">"anonymous"</span><span class="op">;</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>    modules_enabled <span class="op">=</span> <span class="op">{</span> <span class="st">"bosh"</span><span class="op">;</span> <span class="st">"pubsub"</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>    c2s_require_encryption <span class="op">=</span> <span class="kw">false</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a></span>
+<span id="cb12-7"><a href="#cb12-7"></a>VirtualHost <span class="st">"auth.jitsi.fips.de"</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a>    admins <span class="op">=</span> <span class="op">{</span> <span class="st">"focus@auth.jitsi.fips.de"</span><span class="op">,</span> <span class="st">"jvb@auth.jitsi.fips.de"</span> <span class="op">}</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a>    ssl <span class="op">=</span> <span class="op">{</span> key <span class="op">=</span> <span class="st">"/etc/prosody/certs/auth.jitsi.fips.de.key"</span><span class="op">;</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a>            certificate <span class="op">=</span> <span class="st">"/etc/prosody/certs/auth.jitsi.fips.de.crt"</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-11"><a href="#cb12-11"></a>    authentication <span class="op">=</span> <span class="st">"internal_hashed"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -745,14 +765,14 @@ recording + streaming conferences
 <ul>
 <li><code>/etc/prosody/prosody.cfg.lua</code>: (shortened)</li>
 </ul>
-<div class="sourceCode" id="cb12" data-code-line-numbers="1|2,3|4,5|6-8|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb12-1"><a href="#cb12-1"></a>Component <span class="st">"conference.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a>Component <span class="st">"jvb.jitsi.fips.de"</span></span>
-<span id="cb12-3"><a href="#cb12-3"></a>    component_secret <span class="op">=</span> <span class="st">"CRED_jvb"</span></span>
-<span id="cb12-4"><a href="#cb12-4"></a>Component <span class="st">"focus.jitsi.fips.de"</span> <span class="st">"client_proxy"</span></span>
-<span id="cb12-5"><a href="#cb12-5"></a>    target_address <span class="op">=</span> <span class="st">"focus@auth.jitsi.fips.de"</span></span>
-<span id="cb12-6"><a href="#cb12-6"></a>Component <span class="st">"internal.auth.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
-<span id="cb12-7"><a href="#cb12-7"></a>    muc_room_locking <span class="op">=</span> <span class="kw">false</span></span>
-<span id="cb12-8"><a href="#cb12-8"></a>    muc_room_default_public_jids <span class="op">=</span> <span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13" data-code-line-numbers="1|2,3|4,5|6-8|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb13-1"><a href="#cb13-1"></a>Component <span class="st">"conference.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>Component <span class="st">"jvb.jitsi.fips.de"</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>    component_secret <span class="op">=</span> <span class="st">"CRED_jvb"</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>Component <span class="st">"focus.jitsi.fips.de"</span> <span class="st">"client_proxy"</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>    target_address <span class="op">=</span> <span class="st">"focus@auth.jitsi.fips.de"</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>Component <span class="st">"internal.auth.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a>    muc_room_locking <span class="op">=</span> <span class="kw">false</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a>    muc_room_default_public_jids <span class="op">=</span> <span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -768,43 +788,86 @@ recording + streaming conferences
 </div>
 </div>
 </section>
-<section id="details-configuration" class="slide level2">
-<h2>Details / Configuration</h2>
-<h3 id="jitsi-nginx-shortened-server">Jitsi / nginx (shortened server{})</h3>
-<div class="sourceCode" id="cb13" data-code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"><pre class="sourceCode numberSource nginx number-lines code-with-copy"><code class="sourceCode"><span id="cb13-1"><a href="#cb13-1"></a>server_name  jitsi.fips.de;</span>
-<span id="cb13-2"><a href="#cb13-2"></a>root         /var/www/jitsi-meet;</span>
-<span id="cb13-3"><a href="#cb13-3"></a>ssi on;</span>
-<span id="cb13-4"><a href="#cb13-4"></a>ssi_types application/x-javascript application/javascript;</span>
-<span id="cb13-5"><a href="#cb13-5"></a>location ~ ^/(libs|css|static|images|fonts|lang|sounds|connection_optimization)/(.*)$ {</span>
-<span id="cb13-6"><a href="#cb13-6"></a>  add_header 'Access-Control-Allow-Origin' '*';</span>
-<span id="cb13-7"><a href="#cb13-7"></a>  alias /var/www/jitsi-meet/$1/$2; }</span>
-<span id="cb13-8"><a href="#cb13-8"></a>location /external_api.js { alias /var/www/jitsi-meet/libs/external_api.min.js; }</span>
-<span id="cb13-9"><a href="#cb13-9"></a>location = /http-bind {</span>
-<span id="cb13-10"><a href="#cb13-10"></a>  proxy_pass      http://xmpp:5280/http-bind;</span>
-<span id="cb13-11"><a href="#cb13-11"></a>  proxy_set_header X-Forwarded-For $remote_addr;</span>
-<span id="cb13-12"><a href="#cb13-12"></a>  proxy_set_header Host $http_host; }</span>
-<span id="cb13-13"><a href="#cb13-13"></a>location ~ ^/([a-zA-Z0-9=\?]+)$ {</span>
-<span id="cb13-14"><a href="#cb13-14"></a>  rewrite ^/(.*)$ / break; }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="prosody-users" class="slide level2">
+<h2>Prosody users</h2>
+<p>The connection for <code>jvb</code> uses a shared secret as shown on the previous page (“Component”) but also:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="ex">prosodyctl</span> register jvb auth.jitsi.fips.de CRED_JVB</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Jicofo’s “focus” user:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prosodyctl</span> register focus auth.jitsi.fips.de CRED_FOCUS</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="ex">prosodyctl</span> mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Documentation a bit scarce about what’s in for this subscription</p>
+</div>
+</div>
+</div>
 </section>
-<section id="jitsi-web-mobile-client" class="slide level2">
-<h2>Jitsi web / mobile client</h2>
+<section id="tls-certificates-prosody-jks" class="slide level2">
+<h2>TLS certificates (prosody / JKS)</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">prosodyctl</span> cert generate fips.de</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="bu">cd</span> /etc/prosody/certs</span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="ex">keytool</span> <span class="at">-import</span> <span class="at">-alias</span> prosody <span class="at">-file</span> auth.fips.jitsi.de.crt <span class="dt">\</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>  <span class="at">-keystore</span> jicofo-key.store <span class="at">-storepass</span> jitsicool</span>
+<span id="cb16-5"><a href="#cb16-5"></a><span class="fu">cp</span> jicofo-key.store jvb-key.store</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p><code>keytool</code> comes with JDK, this task can also be done on jicofo or jvb VM</p>
+</div>
+</div>
+</div>
+</section>
+<section id="web-nginx" class="slide level2">
+<h2>WEB / nginx</h2>
+<p><code>/etc/nginx/nginx.conf</code></p>
+<div class="sourceCode" id="cb17" data-code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"><pre class="sourceCode numberSource nginx number-lines code-with-copy"><code class="sourceCode"><span id="cb17-1"><a href="#cb17-1"></a>server_name  jitsi.fips.de;</span>
+<span id="cb17-2"><a href="#cb17-2"></a>root         /var/www/jitsi-meet;</span>
+<span id="cb17-3"><a href="#cb17-3"></a>ssi on;</span>
+<span id="cb17-4"><a href="#cb17-4"></a>ssi_types application/x-javascript application/javascript;</span>
+<span id="cb17-5"><a href="#cb17-5"></a>location ~ ^/(libs|css|static|images|fonts|lang|sounds|connection_optimization)/(.*)$ {</span>
+<span id="cb17-6"><a href="#cb17-6"></a>  add_header 'Access-Control-Allow-Origin' '*';</span>
+<span id="cb17-7"><a href="#cb17-7"></a>  alias /var/www/jitsi-meet/$1/$2; }</span>
+<span id="cb17-8"><a href="#cb17-8"></a>location /external_api.js { alias /var/www/jitsi-meet/libs/external_api.min.js; }</span>
+<span id="cb17-9"><a href="#cb17-9"></a>location = /http-bind {</span>
+<span id="cb17-10"><a href="#cb17-10"></a>  proxy_pass      http://xmpp:5280/http-bind;</span>
+<span id="cb17-11"><a href="#cb17-11"></a>  proxy_set_header X-Forwarded-For $remote_addr;</span>
+<span id="cb17-12"><a href="#cb17-12"></a>  proxy_set_header Host $http_host; }</span>
+<span id="cb17-13"><a href="#cb17-13"></a>location ~ ^/([a-zA-Z0-9=\?]+)$ {</span>
+<span id="cb17-14"><a href="#cb17-14"></a>  rewrite ^/(.*)$ / break; }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If using LE, put the <code>.well-known</code> location first (above L5)</p>
+</section>
+<section id="web-mobile-client" class="slide level2">
+<h2>web / mobile client</h2>
 <ul>
 <li><code>/var/www/jitsi-meet/config.js</code>:</li>
 </ul>
-<div class="sourceCode" id="cb14" data-code-line-numbers="3-4|6|7|8,10|13|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">var</span> config <span class="op">=</span> {</span>
-<span id="cb14-2"><a href="#cb14-2"></a>  <span class="dt">hosts</span><span class="op">:</span> {</span>
-<span id="cb14-3"><a href="#cb14-3"></a>    <span class="dt">domain</span><span class="op">:</span> <span class="st">'jitsi.fips.de'</span><span class="op">,</span></span>
-<span id="cb14-4"><a href="#cb14-4"></a>    <span class="dt">muc</span><span class="op">:</span> <span class="st">'conference.jitsi.fips.de'</span> <span class="co">// no DNS</span></span>
-<span id="cb14-5"><a href="#cb14-5"></a>  }<span class="op">,</span></span>
-<span id="cb14-6"><a href="#cb14-6"></a>  <span class="dt">bosh</span><span class="op">:</span> <span class="st">'//jitsi.fips.de/http-bind'</span><span class="op">,</span></span>
-<span id="cb14-7"><a href="#cb14-7"></a>  <span class="dt">useTurnUdp</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
-<span id="cb14-8"><a href="#cb14-8"></a>  <span class="dt">prejoinConfig</span><span class="op">:</span> {</span>
-<span id="cb14-9"><a href="#cb14-9"></a>    <span class="dt">enabled</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
-<span id="cb14-10"><a href="#cb14-10"></a>    <span class="dt">hideExtraJoinButtons</span><span class="op">:</span> [<span class="st">'no-audio'</span><span class="op">,</span> <span class="st">'by-phone'</span>] }<span class="op">,</span></span>
-<span id="cb14-11"><a href="#cb14-11"></a>  <span class="dt">p2p</span><span class="op">:</span> {</span>
-<span id="cb14-12"><a href="#cb14-12"></a>    <span class="dt">stunServers</span><span class="op">:</span> [</span>
-<span id="cb14-13"><a href="#cb14-13"></a>      { <span class="dt">urls</span><span class="op">:</span> <span class="st">'stun:meet-jit-si-turnrelay.jitsi.net:443'</span> } ] }</span>
-<span id="cb14-14"><a href="#cb14-14"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18" data-code-line-numbers="3-4|6|7|8,10|13|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw">var</span> config <span class="op">=</span> {</span>
+<span id="cb18-2"><a href="#cb18-2"></a>  <span class="dt">hosts</span><span class="op">:</span> {</span>
+<span id="cb18-3"><a href="#cb18-3"></a>    <span class="dt">domain</span><span class="op">:</span> <span class="st">'jitsi.fips.de'</span><span class="op">,</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a>    <span class="dt">muc</span><span class="op">:</span> <span class="st">'conference.jitsi.fips.de'</span> <span class="co">// no DNS</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a>  }<span class="op">,</span></span>
+<span id="cb18-6"><a href="#cb18-6"></a>  <span class="dt">bosh</span><span class="op">:</span> <span class="st">'//jitsi.fips.de/http-bind'</span><span class="op">,</span></span>
+<span id="cb18-7"><a href="#cb18-7"></a>  <span class="dt">useTurnUdp</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a>  <span class="dt">prejoinConfig</span><span class="op">:</span> {</span>
+<span id="cb18-9"><a href="#cb18-9"></a>    <span class="dt">enabled</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb18-10"><a href="#cb18-10"></a>    <span class="dt">hideExtraJoinButtons</span><span class="op">:</span> [<span class="st">'no-audio'</span><span class="op">,</span> <span class="st">'by-phone'</span>] }<span class="op">,</span></span>
+<span id="cb18-11"><a href="#cb18-11"></a>  <span class="dt">p2p</span><span class="op">:</span> {</span>
+<span id="cb18-12"><a href="#cb18-12"></a>    <span class="dt">stunServers</span><span class="op">:</span> [</span>
+<span id="cb18-13"><a href="#cb18-13"></a>      { <span class="dt">urls</span><span class="op">:</span> <span class="st">'stun:meet-jit-si-turnrelay.jitsi.net:443'</span> } ] }</span>
+<span id="cb18-14"><a href="#cb18-14"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -819,82 +882,38 @@ recording + streaming conferences
 </div>
 </div>
 </section>
-<section id="videobridge-jvb" class="slide level2">
-<h2>Videobridge / jvb</h2>
-<ul>
-<li><code>/etc/jvb/jvb.conf</code>:</li>
-</ul>
-<div class="sourceCode" id="cb15" data-code-line-numbers="5|6|9,10|12|13-15|16-17|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb15-1"><a href="#cb15-1"></a>videobridge { apis {</span>
-<span id="cb15-2"><a href="#cb15-2"></a>  xmpp<span class="op">-</span>client {</span>
-<span id="cb15-3"><a href="#cb15-3"></a>   configs {</span>
-<span id="cb15-4"><a href="#cb15-4"></a>    ourprosody {</span>
-<span id="cb15-5"><a href="#cb15-5"></a>     hostname <span class="op">=</span> <span class="st">"xmpp"</span></span>
-<span id="cb15-6"><a href="#cb15-6"></a>     domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span> <span class="co">// 'realm'</span></span>
-<span id="cb15-7"><a href="#cb15-7"></a>     username <span class="op">=</span> <span class="st">"jvb"</span></span>
-<span id="cb15-8"><a href="#cb15-8"></a>     password <span class="op">=</span> <span class="st">"CRED_jvb"</span></span>
-<span id="cb15-9"><a href="#cb15-9"></a>     muc_jids <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
-<span id="cb15-10"><a href="#cb15-10"></a>     muc_nickname <span class="op">=</span> <span class="st">"jvb-foo"</span></span>
-<span id="cb15-11"><a href="#cb15-11"></a>     disable_certificate_verification <span class="op">=</span> <span class="kw">true</span> } } } }</span>
-<span id="cb15-12"><a href="#cb15-12"></a>  sctp { enabled <span class="op">=</span> <span class="kw">false</span> } <span class="co">// n/a on OpenBSD</span></span>
-<span id="cb15-13"><a href="#cb15-13"></a>  ice { tcp {</span>
-<span id="cb15-14"><a href="#cb15-14"></a>    enabled <span class="op">=</span> <span class="kw">false</span></span>
-<span id="cb15-15"><a href="#cb15-15"></a>    port <span class="op">=</span> <span class="dv">443</span></span>
-<span id="cb15-16"><a href="#cb15-16"></a>   } udp {</span>
-<span id="cb15-17"><a href="#cb15-17"></a>    port <span class="op">=</span> <span class="dv">10000</span></span>
-<span id="cb15-18"><a href="#cb15-18"></a>   }</span>
-<span id="cb15-19"><a href="#cb15-19"></a>  }</span>
-<span id="cb15-20"><a href="#cb15-20"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="jitsi-jvb" class="slide level2">
-<h2>Jitsi / jvb</h2>
-<ul>
-<li><code>/etc/jvb/sip-communicator.properties</code>:</li>
-</ul>
-<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="cb16-1"><a href="#cb16-1"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_LOCAL_ADDRESS</span><span class="op">=</span><span class="fl">100.64.4.3</span></span>
-<span id="cb16-2"><a href="#cb16-2"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_PUBLIC_ADDRESS</span><span class="op">=</span><span class="fl">87.253.170.146</span></span>
-<span id="cb16-3"><a href="#cb16-3"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">DISABLE_AWS_HARVESTER</span><span class="op">=</span><span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-note callout-captioned callout-style-default">
-<div class="callout-body">
-<div class="callout-caption">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Note</strong></p>
-</div>
-<div class="callout-content">
-<p>ice4j is not developed by Jitsi, thus not available in “new” JICO config format</p>
-</div>
-</div>
-</div>
+<section id="keystore-jvbjicofo" class="slide level2">
+<h2>keystore / jvb+jicofo</h2>
+<p>XXX</p>
 </section>
 <section id="jitsi-jicofo" class="slide level2">
 <h2>Jitsi / jicofo</h2>
 <ul>
 <li><code>/etc/jicofo/jicofo.conf</code>: (shortened)</li>
 </ul>
-<div class="sourceCode" id="cb17" data-code-line-numbers="|2|3|4|8|14|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb17-1"><a href="#cb17-1"></a>jicofo { bridge {</span>
-<span id="cb17-2"><a href="#cb17-2"></a>  brewery<span class="op">-</span>jid <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
-<span id="cb17-3"><a href="#cb17-3"></a>  xmpp<span class="op">-</span>connection<span class="op">-</span>name <span class="op">=</span> Client } <span class="co">// enum</span></span>
-<span id="cb17-4"><a href="#cb17-4"></a>sctp { enabled <span class="op">=</span> <span class="kw">false</span> } </span>
-<span id="cb17-5"><a href="#cb17-5"></a>  xmpp {</span>
-<span id="cb17-6"><a href="#cb17-6"></a>    client {</span>
-<span id="cb17-7"><a href="#cb17-7"></a>      port <span class="op">=</span> <span class="dv">5222</span></span>
-<span id="cb17-8"><a href="#cb17-8"></a>      domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span></span>
-<span id="cb17-9"><a href="#cb17-9"></a>      username <span class="op">=</span> <span class="st">"focus"</span></span>
-<span id="cb17-10"><a href="#cb17-10"></a>      password <span class="op">=</span> <span class="st">"CRED_FOCUS"</span></span>
-<span id="cb17-11"><a href="#cb17-11"></a>      use<span class="op">-</span>tls <span class="op">=</span> <span class="kw">true</span></span>
-<span id="cb17-12"><a href="#cb17-12"></a>    }</span>
-<span id="cb17-13"><a href="#cb17-13"></a>    <span class="co">// trusted service domains. Logged in -&gt; advance to bridges</span></span>
-<span id="cb17-14"><a href="#cb17-14"></a>    trusted<span class="op">-</span>domains <span class="op">=</span> [ <span class="st">"auth.jitsi.fips.de"</span> ]</span>
-<span id="cb17-15"><a href="#cb17-15"></a>  }</span>
-<span id="cb17-16"><a href="#cb17-16"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19" data-code-line-numbers="|2|3|4|8|14|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb19-1"><a href="#cb19-1"></a>jicofo { bridge {</span>
+<span id="cb19-2"><a href="#cb19-2"></a>  brewery<span class="op">-</span>jid <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a>  xmpp<span class="op">-</span>connection<span class="op">-</span>name <span class="op">=</span> Client } <span class="co">// enum</span></span>
+<span id="cb19-4"><a href="#cb19-4"></a>  sctp { enabled <span class="op">=</span> <span class="kw">false</span> } </span>
+<span id="cb19-5"><a href="#cb19-5"></a>  xmpp {</span>
+<span id="cb19-6"><a href="#cb19-6"></a>    client {</span>
+<span id="cb19-7"><a href="#cb19-7"></a>      port <span class="op">=</span> <span class="dv">5222</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a>      domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span></span>
+<span id="cb19-9"><a href="#cb19-9"></a>      username <span class="op">=</span> <span class="st">"focus"</span></span>
+<span id="cb19-10"><a href="#cb19-10"></a>      password <span class="op">=</span> <span class="st">"CRED_FOCUS"</span></span>
+<span id="cb19-11"><a href="#cb19-11"></a>      use<span class="op">-</span>tls <span class="op">=</span> <span class="kw">true</span></span>
+<span id="cb19-12"><a href="#cb19-12"></a>    }</span>
+<span id="cb19-13"><a href="#cb19-13"></a>    <span class="co">// trusted service domains. Logged in -&gt; advance to bridges</span></span>
+<span id="cb19-14"><a href="#cb19-14"></a>    trusted<span class="op">-</span>domains <span class="op">=</span> [ <span class="st">"auth.jitsi.fips.de"</span> ]</span>
+<span id="cb19-15"><a href="#cb19-15"></a>  }</span>
+<span id="cb19-16"><a href="#cb19-16"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="jitsi-jicofo-cont." class="slide level2">
 <h2>Jitsi / jicofo (cont.)</h2>
 <ul>
 <li><code>/etc/rc.conf.local</code>:</li>
 </ul>
-<div class="sourceCode" id="cb18" data-code-line-numbers="|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1"></a><span class="va">jicofo_flags</span><span class="op">=</span><span class="st">"--host=jitsi.fips.de"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20" data-code-line-numbers="|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1"></a><span class="va">jicofo_flags</span><span class="op">=</span><span class="st">"--host=jitsi.fips.de"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-important callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -908,6 +927,75 @@ recording + streaming conferences
 </div>
 </div>
 </div>
+</section>
+<section id="install-config-jvb" class="slide level2">
+<h2>Install / Config jvb</h2>
+<ul>
+<li><code>pkg_add jitsi-videobrige</code></li>
+<li>adapt <code>/etc/jvb/jvb.in.sh</code> if need be</li>
+</ul>
+<div class="sourceCode" id="cb21" data-code-line-numbers="1|2|3-4|5-7|8-10|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1"></a><span class="va">JVB_CONF</span><span class="op">=</span>/etc/jvb/jvb.conf</span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="va">JVB_LOG_CONFIG</span><span class="op">=</span>/usr/local/share/jvb/lib/logging.properties</span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="va">JVB_TRUSTSTORE</span><span class="op">=</span>/etc/ssl/jvb-key.store</span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="va">JVB_TRUSTSTORE_PASSWORD</span><span class="op">=</span>jitsicool</span>
+<span id="cb21-5"><a href="#cb21-5"></a><span class="va">JVB_MAXMEM</span><span class="op">=</span>3G</span>
+<span id="cb21-6"><a href="#cb21-6"></a><span class="va">JVB_DHKEYSIZE</span><span class="op">=</span>2048</span>
+<span id="cb21-7"><a href="#cb21-7"></a><span class="va">JVB_GC_TYPE</span><span class="op">=</span>G1GC</span>
+<span id="cb21-8"><a href="#cb21-8"></a><span class="co"># reads /etc/jvb/sip-communicator.properties</span></span>
+<span id="cb21-9"><a href="#cb21-9"></a><span class="va">JVB_SC_HOME_LOCATION</span><span class="op">=</span><span class="st">'/etc'</span></span>
+<span id="cb21-10"><a href="#cb21-10"></a><span class="va">JVB_SC_HOME_NAME</span><span class="op">=</span><span class="st">'jvb'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="configuraition-jvb.conf" class="slide level2">
+<h2>Configuraition jvb.conf</h2>
+<ul>
+<li><code>/etc/jvb/jvb.conf</code>:</li>
+</ul>
+<div class="sourceCode" id="cb22" data-code-line-numbers="5|6|7,8|9,10|12|13-15|16-17|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb22-1"><a href="#cb22-1"></a>videobridge { apis {</span>
+<span id="cb22-2"><a href="#cb22-2"></a>  xmpp<span class="op">-</span>client {</span>
+<span id="cb22-3"><a href="#cb22-3"></a>   configs {</span>
+<span id="cb22-4"><a href="#cb22-4"></a>    ourprosody {</span>
+<span id="cb22-5"><a href="#cb22-5"></a>     hostname <span class="op">=</span> <span class="st">"xmpp"</span></span>
+<span id="cb22-6"><a href="#cb22-6"></a>     domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span> <span class="co">// 'realm'</span></span>
+<span id="cb22-7"><a href="#cb22-7"></a>     username <span class="op">=</span> <span class="st">"jvb"</span></span>
+<span id="cb22-8"><a href="#cb22-8"></a>     password <span class="op">=</span> <span class="st">"CRED_jvb"</span></span>
+<span id="cb22-9"><a href="#cb22-9"></a>     muc_jids <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
+<span id="cb22-10"><a href="#cb22-10"></a>     muc_nickname <span class="op">=</span> <span class="st">"jvb-foo"</span></span>
+<span id="cb22-11"><a href="#cb22-11"></a>     disable_certificate_verification <span class="op">=</span> <span class="kw">true</span> } } } }</span>
+<span id="cb22-12"><a href="#cb22-12"></a>  sctp { enabled <span class="op">=</span> <span class="kw">false</span> } <span class="co">// n/a on OpenBSD</span></span>
+<span id="cb22-13"><a href="#cb22-13"></a>  ice { tcp {</span>
+<span id="cb22-14"><a href="#cb22-14"></a>    enabled <span class="op">=</span> <span class="kw">false</span></span>
+<span id="cb22-15"><a href="#cb22-15"></a>    port <span class="op">=</span> <span class="dv">443</span></span>
+<span id="cb22-16"><a href="#cb22-16"></a>   } udp {</span>
+<span id="cb22-17"><a href="#cb22-17"></a>    port <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="cb22-18"><a href="#cb22-18"></a>   }</span>
+<span id="cb22-19"><a href="#cb22-19"></a>  }</span>
+<span id="cb22-20"><a href="#cb22-20"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="jitsi-jvb" class="slide level2">
+<h2>Jitsi / jvb</h2>
+<ul>
+<li><code>/etc/jvb/sip-communicator.properties</code>:</li>
+</ul>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="cb23-1"><a href="#cb23-1"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_LOCAL_ADDRESS</span><span class="op">=</span><span class="fl">100.64.4.3</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_PUBLIC_ADDRESS</span><span class="op">=</span><span class="fl">87.253.170.146</span></span>
+<span id="cb23-3"><a href="#cb23-3"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">DISABLE_AWS_HARVESTER</span><span class="op">=</span><span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-note callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>ice4j is not developed by Jitsi, thus not available in “new” JICO config format</p>
+</div>
+</div>
+</div>
+<p><code>rcctl enable jvb ; rcctl start jvb</code></p>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
 </section>
 <section id="pitfalls" class="slide level2">
 <h2>Pitfalls</h2>

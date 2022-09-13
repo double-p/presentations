@@ -230,6 +230,18 @@ pass in quick on egress proto tcp from $monitor to self port 8888
 jicofo has a REST API on 8888/tcp for health/metrics (prometheus) - BROKEN
 :::
 
+## Install / Configuration prosody (xmpp)
+Besides the package itself, we need some additional modules
+```{.bash}
+pkg_add prosody
+prosodyctl install --server=https://modules.prosody.im/rocks/mod_client_proxy`
+prosodyctl install --server=https://modules.prosody.im/rocks/mod_roster_command
+```
+:::{.callout-note}
+The modules do not need further configuration. client_proxy gets autoloaded with
+component configuration. roster_command is CLI only.
+:::
+
 ## Configuration prosody (xmpp)
 - `/etc/prosody/prosody.cfg.lua`: (shortened)
 ```{.lua code-line-numbers="|1,4|"}
@@ -248,6 +260,7 @@ VirtualHost "auth.jitsi.fips.de"
 :::{.callout-note}
 `admins` usage details unclear
 :::
+
 ## Configuration prosody (xmpp) (cont.)
 - `/etc/prosody/prosody.cfg.lua`: (shortened)
 ```{.lua code-line-numbers="1|2,3|4,5|6-8|"}
@@ -260,13 +273,43 @@ Component "internal.auth.jitsi.fips.de" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
 ```
+
 :::{.callout-note}
 No extra DNS needed! Like "Host:" HTTP-Header.  
 `focus` like `jvb` in earlier versions (v1)
 :::
 
-## Details / Configuration
-### Jitsi / nginx (shortened server{})
+## Prosody users
+The connection for `jvb` uses a shared secret as shown on the previous page ("Component") but
+also:
+```{.bash}
+prosodyctl register jvb auth.jitsi.fips.de CRED_JVB
+```
+
+Jicofo's "focus" user:
+```{.bash}
+prosodyctl register focus auth.jitsi.fips.de CRED_FOCUS
+prosodyctl mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de
+```
+
+:::{.callout-note}
+Documentation a bit scarce about what's in for this subscription
+:::
+
+## TLS certificates (prosody / JKS)
+```{.bash}
+prosodyctl cert generate fips.de
+cd /etc/prosody/certs
+keytool -import -alias prosody -file auth.fips.jitsi.de.crt \
+  -keystore jicofo-key.store -storepass jitsicool
+cp jicofo-key.store jvb-key.store
+```
+:::{.callout-note}
+`keytool` comes with JDK, this task can also be done on jicofo or jvb VM
+:::
+
+## WEB / nginx
+`/etc/nginx/nginx.conf`
 ```{.nginx code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"}
 server_name  jitsi.fips.de;
 root         /var/www/jitsi-meet;
@@ -283,8 +326,9 @@ location = /http-bind {
 location ~ ^/([a-zA-Z0-9=\?]+)$ {
   rewrite ^/(.*)$ / break; }
 ```
+If using LE, put the `.well-known` location first (above L5)
 
-## Jitsi web / mobile client 
+## web / mobile client 
 - `/var/www/jitsi-meet/config.js`:
 ```{.javascript code-line-numbers="3-4|6|7|8,10|13|"}
 var config = {
@@ -306,9 +350,59 @@ var config = {
 TURN depends on NAT environment(s)
 :::
 
-## Videobridge / jvb
+## keystore / jvb+jicofo
+XXX
+
+## Jitsi / jicofo
+- `/etc/jicofo/jicofo.conf`: (shortened)
+```{.javascript code-line-numbers="|2|3|4|8|14|"}
+jicofo { bridge {
+  brewery-jid = "JvbBrewery@internal.auth.jitsi.fips.de"
+  xmpp-connection-name = Client } // enum
+  sctp { enabled = false } 
+  xmpp {
+    client {
+      port = 5222
+      domain = "auth.jitsi.fips.de"
+      username = "focus"
+      password = "CRED_FOCUS"
+      use-tls = true
+    }
+    // trusted service domains. Logged in -> advance to bridges
+    trusted-domains = [ "auth.jitsi.fips.de" ]
+  }
+}
+```
+## Jitsi / jicofo (cont.)
+- `/etc/rc.conf.local`:
+```{.bash code-line-numbers="|"}
+jicofo_flags="--host=jitsi.fips.de"
+```
+
+:::{.callout-important}
+Needs `/etc/hosts` or split-DNS. Used for TCP connect AND virtualhost
+:::
+
+## Install / Config jvb
+- `pkg_add jitsi-videobrige`
+- adapt `/etc/jvb/jvb.in.sh` if need be
+```{.bash code-line-numbers="1|2|3-4|5-7|8-10|"}
+JVB_CONF=/etc/jvb/jvb.conf
+JVB_LOG_CONFIG=/usr/local/share/jvb/lib/logging.properties
+JVB_TRUSTSTORE=/etc/ssl/jvb-key.store
+JVB_TRUSTSTORE_PASSWORD=jitsicool
+JVB_MAXMEM=3G
+JVB_DHKEYSIZE=2048
+JVB_GC_TYPE=G1GC
+# reads /etc/jvb/sip-communicator.properties
+JVB_SC_HOME_LOCATION='/etc'
+JVB_SC_HOME_NAME='jvb'
+```
+
+
+## Configuraition jvb.conf
 - `/etc/jvb/jvb.conf`:
-```{.javascript code-line-numbers="5|6|9,10|12|13-15|16-17|"}
+```{.javascript code-line-numbers="5|6|7,8|9,10|12|13-15|16-17|"}
 videobridge { apis {
   xmpp-client {
    configs {
@@ -342,36 +436,9 @@ org.ice4j.ice.harvest.DISABLE_AWS_HARVESTER=true
 ice4j is not developed by Jitsi, thus not available in "new" JICO config format
 :::
 
-## Jitsi / jicofo
-- `/etc/jicofo/jicofo.conf`: (shortened)
-```{.javascript code-line-numbers="|2|3|4|8|14|"}
-jicofo { bridge {
-  brewery-jid = "JvbBrewery@internal.auth.jitsi.fips.de"
-  xmpp-connection-name = Client } // enum
-sctp { enabled = false } 
-  xmpp {
-    client {
-      port = 5222
-      domain = "auth.jitsi.fips.de"
-      username = "focus"
-      password = "CRED_FOCUS"
-      use-tls = true
-    }
-    // trusted service domains. Logged in -> advance to bridges
-    trusted-domains = [ "auth.jitsi.fips.de" ]
-  }
-}
-```
-## Jitsi / jicofo (cont.)
-- `/etc/rc.conf.local`:
-```{.bash code-line-numbers="|"}
-jicofo_flags="--host=jitsi.fips.de"
-```
+`rcctl enable jvb ; rcctl start jvb`
 
-:::{.callout-important}
-Needs `/etc/hosts` or split-DNS. Used for TCP connect AND virtualhost
-:::
-
+## 
 ## Pitfalls
 ### OpenBSD
 - `rc.conf.local`: jicofo_flags: IP instead DNS/hosts
