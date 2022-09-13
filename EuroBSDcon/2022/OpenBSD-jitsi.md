@@ -350,8 +350,22 @@ var config = {
 TURN depends on NAT environment(s)
 :::
 
-## keystore / jvb+jicofo
-XXX
+## Install / Config jicofo
+- `pkg_add jicofo`
+- adapt `/etc/jicofo/jicofo.in.sh` if need be
+```{.bash code-line-numbers="1|2|3-4|5-6|"}
+JICOFO_CONF=/etc/jicofo/jicofo.conf
+JICOFO_LOG_CONFIG=/usr/local/share/jicofo/lib/logging.properties
+JICOFO_TRUSTSTORE=/etc/ssl/jicofo-key.store
+JICOFO_TRUSTSTORE_PASSWORD=jitsicool
+JICOFO_MAXMEM=3G
+JICOFO_DHKEYSIZE=2048
+```
+
+:::{.callout-tip}
+jicofo-key.store is generated from prosody certificate, see earlier slide
+:::
+
 
 ## Jitsi / jicofo
 - `/etc/jicofo/jicofo.conf`: (shortened)
@@ -383,6 +397,8 @@ jicofo_flags="--host=jitsi.fips.de"
 Needs `/etc/hosts` or split-DNS. Used for TCP connect AND virtualhost
 :::
 
+`rcctl enable jicofo ; rcctl start jicofo`
+
 ## Install / Config jvb
 - `pkg_add jitsi-videobrige`
 - adapt `/etc/jvb/jvb.in.sh` if need be
@@ -399,7 +415,9 @@ JVB_SC_HOME_LOCATION='/etc'
 JVB_SC_HOME_NAME='jvb'
 ```
 
-
+:::{.callout-tip}
+jvb-key.store is generated from prosody certificate, see earlier slide. can be same file as /etc/jicofo/jicofo-key.store on one VM
+:::
 ## Configuraition jvb.conf
 - `/etc/jvb/jvb.conf`:
 ```{.javascript code-line-numbers="5|6|7,8|9,10|12|13-15|16-17|"}
