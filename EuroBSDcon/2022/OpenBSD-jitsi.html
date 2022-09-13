@@ -714,9 +714,9 @@ recording + streaming conferences
 <section id="install-configuration-prosody-xmpp" class="slide level2">
 <h2>Install / Configuration prosody (xmpp)</h2>
 <p>Besides the package itself, we need some additional modules</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="ex">pkg_add</span> prosody</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="ex">prosodyctl</span> install <span class="at">--server</span><span class="op">=</span>https://modules.prosody.im/rocks/mod_client_proxy</span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="ex">prosodyctl</span> install <span class="at">--server</span><span class="op">=</span>https://modules.prosody.im/rocks/mod_roster_command</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="ex">pkg_add</span> unzip-- prosody</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="ex">prosodyctl</span> install <span class="at">--server</span><span class="op">=</span>https://modules.prosody.im/rocks/ mod_client_proxy</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="ex">prosodyctl</span> install <span class="at">--server</span><span class="op">=</span>https://modules.prosody.im/rocks/ mod_roster_command</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -744,8 +744,8 @@ recording + streaming conferences
 <span id="cb12-6"><a href="#cb12-6"></a></span>
 <span id="cb12-7"><a href="#cb12-7"></a>VirtualHost <span class="st">"auth.jitsi.fips.de"</span></span>
 <span id="cb12-8"><a href="#cb12-8"></a>    admins <span class="op">=</span> <span class="op">{</span> <span class="st">"focus@auth.jitsi.fips.de"</span><span class="op">,</span> <span class="st">"jvb@auth.jitsi.fips.de"</span> <span class="op">}</span></span>
-<span id="cb12-9"><a href="#cb12-9"></a>    ssl <span class="op">=</span> <span class="op">{</span> key <span class="op">=</span> <span class="st">"/etc/prosody/certs/auth.jitsi.fips.de.key"</span><span class="op">;</span></span>
-<span id="cb12-10"><a href="#cb12-10"></a>            certificate <span class="op">=</span> <span class="st">"/etc/prosody/certs/auth.jitsi.fips.de.crt"</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a>    ssl <span class="op">=</span> <span class="op">{</span> key <span class="op">=</span> <span class="st">"/var/prosody/auth.jitsi.fips.de.key"</span><span class="op">;</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a>            certificate <span class="op">=</span> <span class="st">"/var/prosody/auth.jitsi.fips.de.crt"</span><span class="op">;</span> <span class="op">}</span></span>
 <span id="cb12-11"><a href="#cb12-11"></a>    authentication <span class="op">=</span> <span class="st">"internal_hashed"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
@@ -792,7 +792,8 @@ recording + streaming conferences
 <section id="prosody-users" class="slide level2">
 <h2>Prosody users</h2>
 <p>The connection for <code>jvb</code> uses a shared secret as shown on the previous page (“Component”) but also:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="ex">prosodyctl</span> register jvb auth.jitsi.fips.de CRED_JVB</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="ex">rcctl</span> enable prosody <span class="kw">;</span> <span class="ex">rcctl</span> start prosody</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="ex">prosodyctl</span> register jvb auth.jitsi.fips.de CRED_JVB</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Jicofo’s “focus” user:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prosodyctl</span> register focus auth.jitsi.fips.de CRED_FOCUS</span>
 <span id="cb15-2"><a href="#cb15-2"></a><span class="ex">prosodyctl</span> mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -812,11 +813,11 @@ recording + streaming conferences
 </section>
 <section id="tls-certificates-prosody-jks" class="slide level2">
 <h2>TLS certificates (prosody / JKS)</h2>
-<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">prosodyctl</span> cert generate fips.de</span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="bu">cd</span> /etc/prosody/certs</span>
-<span id="cb16-3"><a href="#cb16-3"></a><span class="ex">keytool</span> <span class="at">-import</span> <span class="at">-alias</span> prosody <span class="at">-file</span> auth.fips.jitsi.de.crt <span class="dt">\</span></span>
-<span id="cb16-4"><a href="#cb16-4"></a>  <span class="at">-keystore</span> jicofo-key.store <span class="at">-storepass</span> jitsicool</span>
-<span id="cb16-5"><a href="#cb16-5"></a><span class="fu">cp</span> jicofo-key.store jvb-key.store</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">prosodyctl</span> cert generate auth.jitsi.fips.de</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="bu">cd</span> /var/prosody</span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="fu">yes</span> <span class="kw">|</span> <span class="ex">/usr/local/jdk-11/bin/keytool</span> <span class="at">-import</span> <span class="at">-alias</span> prosody <span class="at">-file</span> <span class="dt">\</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>  auth.jitsi.fips.de.crt <span class="at">-keystore</span> jicofo-key.store <span class="at">-storepass</span> jitsicool</span>
+<span id="cb16-5"><a href="#cb16-5"></a><span class="fu">cp</span> jicofo-key.store jvb-key.store <span class="co"># copy to VM jicofo, jvb accordingly</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -958,6 +959,11 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>/etc/rc.conf.local</code>:</li>
 </ul>
 <div class="sourceCode" id="cb22" data-code-line-numbers="|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1"></a><span class="va">jicofo_flags</span><span class="op">=</span><span class="st">"--host=jitsi.fips.de"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>/etc/syslog.conf</code></li>
+</ul>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb23-1"><a href="#cb23-1"></a>!jicofo</span>
+<span id="cb23-2"><a href="#cb23-2"></a>*.*     /var/log/jicofo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-important callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -979,16 +985,16 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>pkg_add jitsi-videobrige</code></li>
 <li>adapt <code>/etc/jvb/jvb.in.sh</code> if need be</li>
 </ul>
-<div class="sourceCode" id="cb23" data-code-line-numbers="1|2|3-4|5-7|8-10|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1"></a><span class="va">JVB_CONF</span><span class="op">=</span>/etc/jvb/jvb.conf</span>
-<span id="cb23-2"><a href="#cb23-2"></a><span class="va">JVB_LOG_CONFIG</span><span class="op">=</span>/usr/local/share/jvb/lib/logging.properties</span>
-<span id="cb23-3"><a href="#cb23-3"></a><span class="va">JVB_TRUSTSTORE</span><span class="op">=</span>/etc/ssl/jvb-key.store</span>
-<span id="cb23-4"><a href="#cb23-4"></a><span class="va">JVB_TRUSTSTORE_PASSWORD</span><span class="op">=</span>jitsicool</span>
-<span id="cb23-5"><a href="#cb23-5"></a><span class="va">JVB_MAXMEM</span><span class="op">=</span>3G</span>
-<span id="cb23-6"><a href="#cb23-6"></a><span class="va">JVB_DHKEYSIZE</span><span class="op">=</span>2048</span>
-<span id="cb23-7"><a href="#cb23-7"></a><span class="va">JVB_GC_TYPE</span><span class="op">=</span>G1GC</span>
-<span id="cb23-8"><a href="#cb23-8"></a><span class="co"># reads /etc/jvb/sip-communicator.properties</span></span>
-<span id="cb23-9"><a href="#cb23-9"></a><span class="va">JVB_SC_HOME_LOCATION</span><span class="op">=</span><span class="st">'/etc'</span></span>
-<span id="cb23-10"><a href="#cb23-10"></a><span class="va">JVB_SC_HOME_NAME</span><span class="op">=</span><span class="st">'jvb'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24" data-code-line-numbers="1|2|3-4|5-7|8-10|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1"></a><span class="va">JVB_CONF</span><span class="op">=</span>/etc/jvb/jvb.conf</span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="va">JVB_LOG_CONFIG</span><span class="op">=</span>/usr/local/share/jvb/lib/logging.properties</span>
+<span id="cb24-3"><a href="#cb24-3"></a><span class="va">JVB_TRUSTSTORE</span><span class="op">=</span>/etc/ssl/jvb-key.store</span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="va">JVB_TRUSTSTORE_PASSWORD</span><span class="op">=</span>jitsicool</span>
+<span id="cb24-5"><a href="#cb24-5"></a><span class="va">JVB_MAXMEM</span><span class="op">=</span>3G</span>
+<span id="cb24-6"><a href="#cb24-6"></a><span class="va">JVB_DHKEYSIZE</span><span class="op">=</span>2048</span>
+<span id="cb24-7"><a href="#cb24-7"></a><span class="va">JVB_GC_TYPE</span><span class="op">=</span>G1GC</span>
+<span id="cb24-8"><a href="#cb24-8"></a><span class="co"># reads /etc/jvb/sip-communicator.properties</span></span>
+<span id="cb24-9"><a href="#cb24-9"></a><span class="va">JVB_SC_HOME_LOCATION</span><span class="op">=</span><span class="st">'/etc'</span></span>
+<span id="cb24-10"><a href="#cb24-10"></a><span class="va">JVB_SC_HOME_NAME</span><span class="op">=</span><span class="st">'jvb'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-tip callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -1003,40 +1009,35 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </div>
 </div>
 </section>
-<section id="configuration-jvb.conf" class="slide level2">
-<h2>Configuration jvb.conf</h2>
-<ul>
-<li><code>/etc/jvb/jvb.conf</code>:</li>
-</ul>
-<div class="sourceCode" id="cb24" data-code-line-numbers="5|6|7,8|9,10|12|13-15|16-17|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb24-1"><a href="#cb24-1"></a>videobridge { apis {</span>
-<span id="cb24-2"><a href="#cb24-2"></a>  xmpp<span class="op">-</span>client {</span>
-<span id="cb24-3"><a href="#cb24-3"></a>   configs {</span>
-<span id="cb24-4"><a href="#cb24-4"></a>    ourprosody {</span>
-<span id="cb24-5"><a href="#cb24-5"></a>     hostname <span class="op">=</span> <span class="st">"xmpp"</span></span>
-<span id="cb24-6"><a href="#cb24-6"></a>     domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span> <span class="co">// 'realm'</span></span>
-<span id="cb24-7"><a href="#cb24-7"></a>     username <span class="op">=</span> <span class="st">"jvb"</span></span>
-<span id="cb24-8"><a href="#cb24-8"></a>     password <span class="op">=</span> <span class="st">"CRED_jvb"</span></span>
-<span id="cb24-9"><a href="#cb24-9"></a>     muc_jids <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
-<span id="cb24-10"><a href="#cb24-10"></a>     muc_nickname <span class="op">=</span> <span class="st">"jvb-foo"</span></span>
-<span id="cb24-11"><a href="#cb24-11"></a>     disable_certificate_verification <span class="op">=</span> <span class="kw">true</span> } } } }</span>
-<span id="cb24-12"><a href="#cb24-12"></a>  sctp { enabled <span class="op">=</span> <span class="kw">false</span> } <span class="co">// n/a on OpenBSD</span></span>
-<span id="cb24-13"><a href="#cb24-13"></a>  ice { tcp {</span>
-<span id="cb24-14"><a href="#cb24-14"></a>    enabled <span class="op">=</span> <span class="kw">false</span></span>
-<span id="cb24-15"><a href="#cb24-15"></a>    port <span class="op">=</span> <span class="dv">443</span></span>
-<span id="cb24-16"><a href="#cb24-16"></a>   } udp {</span>
-<span id="cb24-17"><a href="#cb24-17"></a>    port <span class="op">=</span> <span class="dv">10000</span></span>
-<span id="cb24-18"><a href="#cb24-18"></a>   }</span>
-<span id="cb24-19"><a href="#cb24-19"></a>  }</span>
-<span id="cb24-20"><a href="#cb24-20"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="configuration-etcjvbjvb.conf" class="slide level2">
+<h2>Configuration <code>/etc/jvb/jvb.conf</code></h2>
+<div class="sourceCode" id="cb25" data-code-line-numbers="5|6|7,8|9,10|12|13-15|16-17|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb25-1"><a href="#cb25-1"></a>videobridge { apis {</span>
+<span id="cb25-2"><a href="#cb25-2"></a>  xmpp<span class="op">-</span>client {</span>
+<span id="cb25-3"><a href="#cb25-3"></a>   configs {</span>
+<span id="cb25-4"><a href="#cb25-4"></a>    ourprosody {</span>
+<span id="cb25-5"><a href="#cb25-5"></a>     hostname <span class="op">=</span> <span class="st">"xmpp"</span></span>
+<span id="cb25-6"><a href="#cb25-6"></a>     domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span> <span class="co">// 'realm'</span></span>
+<span id="cb25-7"><a href="#cb25-7"></a>     username <span class="op">=</span> <span class="st">"jvb"</span></span>
+<span id="cb25-8"><a href="#cb25-8"></a>     password <span class="op">=</span> <span class="st">"CRED_jvb"</span></span>
+<span id="cb25-9"><a href="#cb25-9"></a>     muc_jids <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
+<span id="cb25-10"><a href="#cb25-10"></a>     muc_nickname <span class="op">=</span> <span class="st">"jvb-foo"</span></span>
+<span id="cb25-11"><a href="#cb25-11"></a>     disable_certificate_verification <span class="op">=</span> <span class="kw">true</span> } } } }</span>
+<span id="cb25-12"><a href="#cb25-12"></a>  sctp { enabled <span class="op">=</span> <span class="kw">false</span> } <span class="co">// n/a on OpenBSD</span></span>
+<span id="cb25-13"><a href="#cb25-13"></a>  ice { tcp {</span>
+<span id="cb25-14"><a href="#cb25-14"></a>    enabled <span class="op">=</span> <span class="kw">false</span></span>
+<span id="cb25-15"><a href="#cb25-15"></a>    port <span class="op">=</span> <span class="dv">443</span></span>
+<span id="cb25-16"><a href="#cb25-16"></a>   } udp {</span>
+<span id="cb25-17"><a href="#cb25-17"></a>    port <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="cb25-18"><a href="#cb25-18"></a>   }</span>
+<span id="cb25-19"><a href="#cb25-19"></a>  }</span>
+<span id="cb25-20"><a href="#cb25-20"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="jitsi-jvb" class="slide level2">
 <h2>Jitsi / jvb</h2>
-<ul>
-<li><code>/etc/jvb/sip-communicator.properties</code>:</li>
-</ul>
-<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="cb25-1"><a href="#cb25-1"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_LOCAL_ADDRESS</span><span class="op">=</span><span class="fl">100.64.4.3</span></span>
-<span id="cb25-2"><a href="#cb25-2"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_PUBLIC_ADDRESS</span><span class="op">=</span><span class="fl">87.253.170.146</span></span>
-<span id="cb25-3"><a href="#cb25-3"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">DISABLE_AWS_HARVESTER</span><span class="op">=</span><span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>/etc/jvb/sip-communicator.properties</code>:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="cb26-1"><a href="#cb26-1"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_LOCAL_ADDRESS</span><span class="op">=</span><span class="fl">100.64.4.3</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_PUBLIC_ADDRESS</span><span class="op">=</span><span class="fl">87.253.170.146</span></span>
+<span id="cb26-3"><a href="#cb26-3"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">DISABLE_AWS_HARVESTER</span><span class="op">=</span><span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -1050,6 +1051,9 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </div>
 </div>
 </div>
+<p><code>/etc/syslog.conf</code></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb27-1"><a href="#cb27-1"></a>!jvb</span>
+<span id="cb27-2"><a href="#cb27-2"></a>*.*     /var/log/jvb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>rcctl enable jvb ; rcctl start jvb</code></p>
 </section>
 <section id="pitfalls" class="slide level2">
@@ -1149,16 +1153,16 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <ul>
 <li>fetch snapshots ports.tar.gz and unpack in a temporary path</li>
 </ul>
-<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1"></a><span class="va">CVSROOT</span><span class="op">=</span>anoncvs.XX.openbsd.org:cvs</span>
-<span id="cb26-2"><a href="#cb26-2"></a><span class="bu">cd</span> temppath/ports/net <span class="kw">;</span> <span class="ex">cvs</span> up <span class="at">-Pd</span> <span class="at">-A</span></span>
-<span id="cb26-3"><a href="#cb26-3"></a><span class="fu">cp</span> <span class="at">-pr</span> jitsi /usr/ports/net</span>
-<span id="cb26-4"><a href="#cb26-4"></a><span class="fu">cp</span> ../infrastructure/db/user.list /usr/ports/infrastructure/db/</span>
-<span id="cb26-5"><a href="#cb26-5"></a><span class="bu">cd</span> /usr/ports/net/jitsi <span class="kw">;</span> <span class="fu">make</span> package <span class="co"># get a coffee/tea/..</span></span>
-<span id="cb26-6"><a href="#cb26-6"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-meet<span class="pp">*</span> web:/tmp</span>
-<span id="cb26-7"><a href="#cb26-7"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-videobridge<span class="pp">*</span> jvb:/tmp</span>
-<span id="cb26-8"><a href="#cb26-8"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jicofo<span class="pp">*</span> jicofo:/tmp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1"></a><span class="va">CVSROOT</span><span class="op">=</span>anoncvs.XX.openbsd.org:cvs</span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="bu">cd</span> temppath/ports/net <span class="kw">;</span> <span class="ex">cvs</span> up <span class="at">-Pd</span> <span class="at">-A</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a><span class="fu">cp</span> <span class="at">-pr</span> jitsi /usr/ports/net</span>
+<span id="cb28-4"><a href="#cb28-4"></a><span class="fu">cp</span> ../infrastructure/db/user.list /usr/ports/infrastructure/db/</span>
+<span id="cb28-5"><a href="#cb28-5"></a><span class="bu">cd</span> /usr/ports/net/jitsi <span class="kw">;</span> <span class="fu">make</span> package <span class="co"># get a coffee/tea/..</span></span>
+<span id="cb28-6"><a href="#cb28-6"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-meet<span class="pp">*</span> web:/tmp</span>
+<span id="cb28-7"><a href="#cb28-7"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-videobridge<span class="pp">*</span> jvb:/tmp</span>
+<span id="cb28-8"><a href="#cb28-8"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jicofo<span class="pp">*</span> jicofo:/tmp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>on each vm, install as so<br>
-<code>TRUSTED_PKG_PATH=/tmp pkg_add jicofo</code></p>
+<code>TRUSTED_PKG_PATH="/tmp:https://cdn.openbsd.org/pub/OpenBSD/7.1/packages/amd64/"  pkg_add jicofo</code></p>
 
 <img src="img/sysfive.jpg" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>EuroBSDCon 2022 - Vienna - Jitsi/OpenBSD</p>

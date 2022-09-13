@@ -234,9 +234,9 @@ jicofo has a REST API on 8888/tcp for health/metrics (prometheus) - BROKEN
 ## Install / Configuration prosody (xmpp)
 Besides the package itself, we need some additional modules
 ```{.bash}
-pkg_add prosody
-prosodyctl install --server=https://modules.prosody.im/rocks/mod_client_proxy
-prosodyctl install --server=https://modules.prosody.im/rocks/mod_roster_command
+pkg_add unzip-- prosody
+prosodyctl install --server=https://modules.prosody.im/rocks/ mod_client_proxy
+prosodyctl install --server=https://modules.prosody.im/rocks/ mod_roster_command
 ```
 :::{.callout-note}
 The modules do not need further configuration. client_proxy gets autoloaded with
@@ -254,8 +254,8 @@ VirtualHost "jitsi.fips.de"
 
 VirtualHost "auth.jitsi.fips.de"
     admins = { "focus@auth.jitsi.fips.de", "jvb@auth.jitsi.fips.de" }
-    ssl = { key = "/etc/prosody/certs/auth.jitsi.fips.de.key";
-            certificate = "/etc/prosody/certs/auth.jitsi.fips.de.crt"; }
+    ssl = { key = "/var/prosody/auth.jitsi.fips.de.key";
+            certificate = "/var/prosody/auth.jitsi.fips.de.crt"; }
     authentication = "internal_hashed"
 ```
 :::{.callout-note}
@@ -284,6 +284,7 @@ No extra DNS needed! Like "Host:" HTTP-Header.
 The connection for `jvb` uses a shared secret as shown on the previous page ("Component") but
 also:
 ```{.bash}
+rcctl enable prosody ; rcctl start prosody
 prosodyctl register jvb auth.jitsi.fips.de CRED_JVB
 ```
 
@@ -299,11 +300,11 @@ Documentation a bit scarce about what's in for this subscription
 
 ## TLS certificates (prosody / JKS)
 ```{.bash}
-prosodyctl cert generate fips.de
-cd /etc/prosody/certs
-keytool -import -alias prosody -file auth.fips.jitsi.de.crt \
-  -keystore jicofo-key.store -storepass jitsicool
-cp jicofo-key.store jvb-key.store
+prosodyctl cert generate auth.jitsi.fips.de
+cd /var/prosody
+yes | /usr/local/jdk-11/bin/keytool -import -alias prosody -file \
+  auth.jitsi.fips.de.crt -keystore jicofo-key.store -storepass jitsicool
+cp jicofo-key.store jvb-key.store # copy to VM jicofo, jvb accordingly
 ```
 :::{.callout-note}
 `keytool` comes with JDK, this task can also be done on jicofo or jvb VM
@@ -407,6 +408,11 @@ jicofo { bridge {
 ```{.bash code-line-numbers="|"}
 jicofo_flags="--host=jitsi.fips.de"
 ```
+- `/etc/syslog.conf`
+```{.text}
+!jicofo
+*.*     /var/log/jicofo
+```
 
 :::{.callout-important}
 Needs `/etc/hosts` or split-DNS. Used for TCP connect AND virtualhost
@@ -433,8 +439,7 @@ JVB_SC_HOME_NAME='jvb'
 :::{.callout-tip}
 jvb-key.store is generated from prosody certificate, see earlier slide. can be same file as /etc/jicofo/jicofo-key.store on one VM
 :::
-## Configuration jvb.conf
-- `/etc/jvb/jvb.conf`:
+## Configuration `/etc/jvb/jvb.conf`
 ```{.javascript code-line-numbers="5|6|7,8|9,10|12|13-15|16-17|"}
 videobridge { apis {
   xmpp-client {
@@ -459,7 +464,7 @@ videobridge { apis {
 ```
 
 ## Jitsi / jvb
-- `/etc/jvb/sip-communicator.properties`:
+`/etc/jvb/sip-communicator.properties`:
 ```{.java}
 org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS=100.64.4.3
 org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=87.253.170.146
@@ -468,6 +473,12 @@ org.ice4j.ice.harvest.DISABLE_AWS_HARVESTER=true
 :::{.callout-note}
 ice4j is not developed by Jitsi, thus not available in "new" JICO config format
 :::
+
+`/etc/syslog.conf`
+```{.text}
+!jvb
+*.*     /var/log/jvb
+```
 
 `rcctl enable jvb ; rcctl start jvb`
 
@@ -550,4 +561,4 @@ scp /usr/ports/packages/amd64/all/jitsi-videobridge* jvb:/tmp
 scp /usr/ports/packages/amd64/all/jicofo* jicofo:/tmp
 ```
 on each vm, install as so  
-`TRUSTED_PKG_PATH=/tmp pkg_add jicofo`
+`TRUSTED_PKG_PATH="/tmp:https://cdn.openbsd.org/pub/OpenBSD/7.1/packages/amd64/"  pkg_add jicofo`
