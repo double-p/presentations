@@ -768,7 +768,7 @@ recording + streaming conferences
 </ul>
 <div class="sourceCode" id="cb13" data-code-line-numbers="1|2,3|4,5|6-8|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb13-1"><a href="#cb13-1"></a>Component <span class="st">"conference.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
 <span id="cb13-2"><a href="#cb13-2"></a>Component <span class="st">"jvb.jitsi.fips.de"</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a>    component_secret <span class="op">=</span> <span class="st">"CRED_jvb"</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>    component_secret <span class="op">=</span> <span class="st">"CHANGE_jvb"</span></span>
 <span id="cb13-4"><a href="#cb13-4"></a>Component <span class="st">"focus.jitsi.fips.de"</span> <span class="st">"client_proxy"</span></span>
 <span id="cb13-5"><a href="#cb13-5"></a>    target_address <span class="op">=</span> <span class="st">"focus@auth.jitsi.fips.de"</span></span>
 <span id="cb13-6"><a href="#cb13-6"></a>Component <span class="st">"internal.auth.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
@@ -793,9 +793,9 @@ recording + streaming conferences
 <h2>Prosody users</h2>
 <p>The connection for <code>jvb</code> uses a shared secret as shown on the previous page (“Component”) but also:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="ex">rcctl</span> enable prosody <span class="kw">;</span> <span class="ex">rcctl</span> start prosody</span>
-<span id="cb14-2"><a href="#cb14-2"></a><span class="ex">prosodyctl</span> register jvb auth.jitsi.fips.de CRED_JVB</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="ex">prosodyctl</span> register jvb auth.jitsi.fips.de CHANGE_JVB</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Jicofo’s “focus” user:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prosodyctl</span> register focus auth.jitsi.fips.de CRED_FOCUS</span>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prosodyctl</span> register focus auth.jitsi.fips.de CHANGE_FOCUS</span>
 <span id="cb15-2"><a href="#cb15-2"></a><span class="ex">prosodyctl</span> mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
@@ -945,7 +945,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <span id="cb21-7"><a href="#cb21-7"></a>      port <span class="op">=</span> <span class="dv">5222</span></span>
 <span id="cb21-8"><a href="#cb21-8"></a>      domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span></span>
 <span id="cb21-9"><a href="#cb21-9"></a>      username <span class="op">=</span> <span class="st">"focus"</span></span>
-<span id="cb21-10"><a href="#cb21-10"></a>      password <span class="op">=</span> <span class="st">"CRED_FOCUS"</span></span>
+<span id="cb21-10"><a href="#cb21-10"></a>      password <span class="op">=</span> <span class="st">"CHANGE_FOCUS"</span></span>
 <span id="cb21-11"><a href="#cb21-11"></a>      use<span class="op">-</span>tls <span class="op">=</span> <span class="kw">true</span></span>
 <span id="cb21-12"><a href="#cb21-12"></a>    }</span>
 <span id="cb21-13"><a href="#cb21-13"></a>    <span class="co">// trusted service domains. Logged in -&gt; advance to bridges</span></span>
@@ -1018,7 +1018,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <span id="cb25-5"><a href="#cb25-5"></a>     hostname <span class="op">=</span> <span class="st">"xmpp"</span></span>
 <span id="cb25-6"><a href="#cb25-6"></a>     domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span> <span class="co">// 'realm'</span></span>
 <span id="cb25-7"><a href="#cb25-7"></a>     username <span class="op">=</span> <span class="st">"jvb"</span></span>
-<span id="cb25-8"><a href="#cb25-8"></a>     password <span class="op">=</span> <span class="st">"CRED_jvb"</span></span>
+<span id="cb25-8"><a href="#cb25-8"></a>     password <span class="op">=</span> <span class="st">"CHANGE_jvb"</span></span>
 <span id="cb25-9"><a href="#cb25-9"></a>     muc_jids <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
 <span id="cb25-10"><a href="#cb25-10"></a>     muc_nickname <span class="op">=</span> <span class="st">"jvb-foo"</span></span>
 <span id="cb25-11"><a href="#cb25-11"></a>     disable_certificate_verification <span class="op">=</span> <span class="kw">true</span> } } } }</span>
@@ -1130,7 +1130,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li>Aisha Tammy (ports)</li>
 </ul>
 </div><div class="column" style="width:30%;">
-<p>Misc: - QUESTIONS - Meet: Hallway - No Lunch</p>
+<p>Misc: - all config in git &lt;- - QUESTIONS - Meet: Hallway - No Lunch</p>
 </div>
 </div>
 <div class="callout callout-tip callout-captioned callout-style-default">

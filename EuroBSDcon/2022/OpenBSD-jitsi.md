@@ -267,7 +267,7 @@ VirtualHost "auth.jitsi.fips.de"
 ```{.lua code-line-numbers="1|2,3|4,5|6-8|"}
 Component "conference.jitsi.fips.de" "muc"
 Component "jvb.jitsi.fips.de"
-    component_secret = "CRED_jvb"
+    component_secret = "CHANGE_jvb"
 Component "focus.jitsi.fips.de" "client_proxy"
     target_address = "focus@auth.jitsi.fips.de"
 Component "internal.auth.jitsi.fips.de" "muc"
@@ -285,12 +285,12 @@ The connection for `jvb` uses a shared secret as shown on the previous page ("Co
 also:
 ```{.bash}
 rcctl enable prosody ; rcctl start prosody
-prosodyctl register jvb auth.jitsi.fips.de CRED_JVB
+prosodyctl register jvb auth.jitsi.fips.de CHANGE_JVB
 ```
 
 Jicofo's "focus" user:
 ```{.bash}
-prosodyctl register focus auth.jitsi.fips.de CRED_FOCUS
+prosodyctl register focus auth.jitsi.fips.de CHANGE_FOCUS
 prosodyctl mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de
 ```
 
@@ -395,7 +395,7 @@ jicofo { bridge {
       port = 5222
       domain = "auth.jitsi.fips.de"
       username = "focus"
-      password = "CRED_FOCUS"
+      password = "CHANGE_FOCUS"
       use-tls = true
     }
     // trusted service domains. Logged in -> advance to bridges
@@ -448,7 +448,7 @@ videobridge { apis {
      hostname = "xmpp"
      domain = "auth.jitsi.fips.de" // 'realm'
      username = "jvb"
-     password = "CRED_jvb"
+     password = "CHANGE_jvb"
      muc_jids = "JvbBrewery@internal.auth.jitsi.fips.de"
      muc_nickname = "jvb-foo"
      disable_certificate_verification = true } } } }
@@ -535,6 +535,7 @@ Thanks to:
 :::
 ::: {.column width="30%"}
 Misc:
+- all config in git <-
 - QUESTIONS
 - Meet: Hallway
 - No Lunch
