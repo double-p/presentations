@@ -471,7 +471,7 @@ org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=87.253.170.146
 org.ice4j.ice.harvest.DISABLE_AWS_HARVESTER=true
 ```
 :::{.callout-note}
-ice4j is not developed by Jitsi, thus not available in "new" JICO config format
+ice4j has not been migrated yet, thus not available in "new" JICO config format
 :::
 
 `/etc/syslog.conf`
@@ -494,6 +494,7 @@ ice4j is not developed by Jitsi, thus not available in "new" JICO config format
 - not disabling sctp (jvb AND jicofo)
 - (hidden) version bumps ("no longer component!")
 - jicofo has an XMPP-packetlogger (see `logging.properties)
+- Patience, be really patient (at initial start)
 
 ## Prayers for a Livedemo
 ### fips.de
@@ -517,9 +518,10 @@ Ports / Packages (Bonusslide)
 - harder: `xmpp`
 - unsure: `jicofo`
 
-### Jibri / Jigasi
+### Jibri / Jigasi / websockets
 - `jibri`: maybe linux only (chrome-headless, fb/ffmpeg rip); otherwise like `jvb`
 - `jigasi`: feel free / just no SIP
+- `xmpp/jvb`: might move from BOSH to websockets eventually (who takes the perf hit)
 
 ## Questions ? / k-thx-bye
 :::: {.columns}
