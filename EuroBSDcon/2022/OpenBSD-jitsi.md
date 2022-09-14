@@ -512,17 +512,20 @@ Ports / Packages (Bonusslide)
 - `net/jitsi/meet`: [current/7.2](https://marc.info/?l=openbsd-ports-cvs&m=166307863805249&w=2)
 - `www/jitsi-meta`: planned, include above and coherent configuration (all on localhost)
 
-## Status / Outlook
-### Cloudification
-- easy scale out `nginx`, `jvb` (use statistics)
-- harder: `xmpp`
-- unsure: `jicofo`
+## / misc
+### scale / Cloudification
+- `nginx`: easy scale out; protect nginx->xmpp (new CPU sink with TLS)
+- `jvb`: ok; use statistics and only on IP only per instance
+- `xmpp`: harder; what parameter to split on the frontend/nginx. how to tell jicofo(s)
+- `jicofo`: unsure; not the workload horse, also 
 
 ### Jibri / Jigasi / websockets
 - `jibri`: maybe linux only (chrome-headless, fb/ffmpeg rip); otherwise like `jvb`
 - `jigasi`: feel free / just no SIP
 - `xmpp/jvb`: might move from BOSH to websockets eventually (who takes the perf hit)
 
+### others
+- community.jitsi.org: it's a rough place
 ## Questions ? / k-thx-bye
 :::: {.columns}
 ::: {.column width="30%"}

@@ -1104,13 +1104,14 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>www/jitsi-meta</code>: planned, include above and coherent configuration (all on localhost)</li>
 </ul>
 </section>
-<section id="status-outlook-2" class="slide level2">
-<h2>Status / Outlook</h2>
-<h3 id="cloudification">Cloudification</h3>
+<section id="misc" class="slide level2">
+<h2>/ misc</h2>
+<h3 id="scale-cloudification">scale / Cloudification</h3>
 <ul>
-<li>easy scale out <code>nginx</code>, <code>jvb</code> (use statistics)</li>
-<li>harder: <code>xmpp</code></li>
-<li>unsure: <code>jicofo</code></li>
+<li><code>nginx</code>: easy scale out; protect nginx-&gt;xmpp (new CPU sink with TLS)</li>
+<li><code>jvb</code>: ok; use statistics and only on IP only per instance</li>
+<li><code>xmpp</code>: harder; what parameter to split on the frontend/nginx. how to tell jicofo(s)</li>
+<li><code>jicofo</code>: unsure; not the workload horse, also</li>
 </ul>
 <h3 id="jibri-jigasi-websockets">Jibri / Jigasi / websockets</h3>
 <ul>
@@ -1118,36 +1119,18 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>jigasi</code>: feel free / just no SIP</li>
 <li><code>xmpp/jvb</code>: might move from BOSH to websockets eventually (who takes the perf hit)</li>
 </ul>
-</section>
-<section id="questions-k-thx-bye" class="slide level2">
-<h2>Questions ? / k-thx-bye</h2>
-<div class="columns">
-<div class="column" style="width:30%;">
-<p><img data-src="img/url.png"></p>
-</div><div class="column" style="width:40%;">
-<p>Thanks to:</p>
+<h3 id="others">others</h3>
 <ul>
-<li>OpenBSD / Jitsi</li>
-<li>sysfive.com GmbH</li>
-<li>Aisha Tammy (ports)</li>
+<li><p>community.jitsi.org: it’s a rough place ## Questions ? / k-thx-bye :::: {.columns} ::: {.column width=“30%”} <img data-src="img/url.png"> ::: ::: {.column width=“40%”} Thanks to:</p></li>
+<li><p>OpenBSD / Jitsi</p></li>
+<li><p>sysfive.com GmbH</p></li>
+<li><p>Aisha Tammy (ports) ::: ::: {.column width=“30%”} Misc:</p></li>
+<li><p>all config in git &lt;-</p></li>
+<li><p>QUESTIONS</p></li>
+<li><p>Meet: Hallway</p></li>
+<li><p>No Lunch</p></li>
 </ul>
-</div><div class="column" style="width:30%;">
-<p>Misc: - all config in git &lt;- - QUESTIONS - Meet: Hallway - No Lunch</p>
-</div>
-</div>
-<div class="callout callout-tip callout-captioned callout-style-default">
-<div class="callout-body">
-<div class="callout-caption">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Presentation</strong></p>
-</div>
-<div class="callout-content">
-<p>Created with <code>Quarto</code> (target: revealjs) <a href="https://github.com/double-p/presentations/tree/master/EuroBSDcon/2022/">github</a> <code>https://is.gd/ontSw3</code></p>
-</div>
-</div>
-</div>
+<p>::: :::: :::{.callout-tip} ## Presentation Created with <code>Quarto</code> (target: revealjs) <a href="https://github.com/double-p/presentations/tree/master/EuroBSDcon/2022/">github</a> <code>https://is.gd/ontSw3</code> :::</p>
 </section>
 <section id="bonus" class="slide level2">
 <h2>Bonus</h2>
