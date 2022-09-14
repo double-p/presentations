@@ -1081,8 +1081,8 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <h3 id="fips.de">fips.de</h3>
 <p><a href="https://jitsi.fips.de/EBC"><code>https://jitsi.fips.de/EBC</code></a></p>
 </section>
-<section id="status-outlook-1" class="slide level2">
-<h2>Status / Outlook</h2>
+<section id="status-openbsd" class="slide level2">
+<h2>Status OpenBSD</h2>
 <div class="callout callout-important callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -1096,7 +1096,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </div>
 </div>
 </div>
-<p>Ports / Packages (Bonusslide)</p>
+<p>Ports / Packages <span style="color:#cc0000">(Bonusslide)</span></p>
 <ul>
 <li><code>net/jitsi/videobridge</code>: <a href="https://marc.info/?l=openbsd-ports-cvs&amp;m=166307863805249&amp;w=2">current/7.2</a></li>
 <li><code>net/jitsi/jicofo</code>: <a href="https://marc.info/?l=openbsd-ports-cvs&amp;m=166307863805249&amp;w=2">current/7.2</a></li>
@@ -1104,8 +1104,8 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>www/jitsi-meta</code>: planned, include above and coherent configuration (all on localhost)</li>
 </ul>
 </section>
-<section id="misc" class="slide level2">
-<h2>/ misc</h2>
+<section id="outlook-scale" class="slide level2">
+<h2>Outlook scale</h2>
 <h3 id="scale-cloudification">scale / Cloudification</h3>
 <ul>
 <li><code>nginx</code>: easy scale out; protect nginx-&gt;xmpp (new CPU sink with TLS)</li>
@@ -1113,24 +1113,55 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>xmpp</code>: harder; what parameter to split on the frontend/nginx. how to tell jicofo(s)</li>
 <li><code>jicofo</code>: unsure; not the workload horse, also</li>
 </ul>
+</section>
+<section id="outlook-others" class="slide level2">
+<h2>Outlook others</h2>
 <h3 id="jibri-jigasi-websockets">Jibri / Jigasi / websockets</h3>
 <ul>
 <li><code>jibri</code>: maybe linux only (chrome-headless, fb/ffmpeg rip); otherwise like <code>jvb</code></li>
 <li><code>jigasi</code>: feel free / just no SIP</li>
 <li><code>xmpp/jvb</code>: might move from BOSH to websockets eventually (who takes the perf hit)</li>
 </ul>
-<h3 id="others">others</h3>
+<h3 id="help">help</h3>
 <ul>
-<li><p>community.jitsi.org: it’s a rough place ## Questions ? / k-thx-bye :::: {.columns} ::: {.column width=“30%”} <img data-src="img/url.png"> ::: ::: {.column width=“40%”} Thanks to:</p></li>
-<li><p>OpenBSD / Jitsi</p></li>
-<li><p>sysfive.com GmbH</p></li>
-<li><p>Aisha Tammy (ports) ::: ::: {.column width=“30%”} Misc:</p></li>
-<li><p>all config in git &lt;-</p></li>
-<li><p>QUESTIONS</p></li>
-<li><p>Meet: Hallway</p></li>
-<li><p>No Lunch</p></li>
+<li>community.jitsi.org: it’s a rough place</li>
 </ul>
-<p>::: :::: :::{.callout-tip} ## Presentation Created with <code>Quarto</code> (target: revealjs) <a href="https://github.com/double-p/presentations/tree/master/EuroBSDcon/2022/">github</a> <code>https://is.gd/ontSw3</code> :::</p>
+</section>
+<section id="questions-k-thx-bye" class="slide level2">
+<h2>Questions ? / k-thx-bye</h2>
+<div class="columns">
+<div class="column" style="width:30%;">
+<p><img data-src="img/url.png"></p>
+</div><div class="column" style="width:40%;">
+<p>Thanks to:</p>
+<ul>
+<li>OpenBSD / Jitsi</li>
+<li>sysfive.com GmbH</li>
+<li>Aisha Tammy (ports)</li>
+</ul>
+</div><div class="column" style="width:30%;">
+<p>Misc:</p>
+<ul>
+<li>QUESTIONS</li>
+<li>Meet: Hallway</li>
+<li>No Lunch</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-tip callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Presentation</strong></p>
+</div>
+<div class="callout-content">
+<p>Created with <code>Quarto / revealjs</code><br>
+<a href="https://github.com/double-p/presentations/tree/master/EuroBSDcon/2022/">presentation (+testing-config)</a> <code>https://is.gd/ontSw3</code></p>
+</div>
+</div>
+</div>
 </section>
 <section id="bonus" class="slide level2">
 <h2>Bonus</h2>

@@ -500,32 +500,34 @@ ice4j has not been migrated yet, thus not available in "new" JICO config format
 ### fips.de
 [`https://jitsi.fips.de/EBC`](https://jitsi.fips.de/EBC)
 
-## Status / Outlook
+## Status OpenBSD
 :::{.callout-important}
 IT WORKS!
 :::
 
-Ports / Packages (Bonusslide)
+Ports / Packages [(Bonusslide)]{style="color:#cc0000"}
 
 - `net/jitsi/videobridge`: [current/7.2](https://marc.info/?l=openbsd-ports-cvs&m=166307863805249&w=2)
 - `net/jitsi/jicofo`: [current/7.2](https://marc.info/?l=openbsd-ports-cvs&m=166307863805249&w=2)
 - `net/jitsi/meet`: [current/7.2](https://marc.info/?l=openbsd-ports-cvs&m=166307863805249&w=2)
 - `www/jitsi-meta`: planned, include above and coherent configuration (all on localhost)
 
-## / misc
+## Outlook scale
 ### scale / Cloudification
 - `nginx`: easy scale out; protect nginx->xmpp (new CPU sink with TLS)
 - `jvb`: ok; use statistics and only on IP only per instance
 - `xmpp`: harder; what parameter to split on the frontend/nginx. how to tell jicofo(s)
 - `jicofo`: unsure; not the workload horse, also 
 
+## Outlook others
 ### Jibri / Jigasi / websockets
 - `jibri`: maybe linux only (chrome-headless, fb/ffmpeg rip); otherwise like `jvb`
 - `jigasi`: feel free / just no SIP
 - `xmpp/jvb`: might move from BOSH to websockets eventually (who takes the perf hit)
 
-### others
+### help
 - community.jitsi.org: it's a rough place
+
 ## Questions ? / k-thx-bye
 :::: {.columns}
 ::: {.column width="30%"}
@@ -540,16 +542,16 @@ Thanks to:
 :::
 ::: {.column width="30%"}
 Misc:
-- all config in git <-
+
 - QUESTIONS
 - Meet: Hallway
 - No Lunch
-
 :::
 ::::
 :::{.callout-tip}
 ## Presentation
-Created with `Quarto` (target: revealjs) [github](https://github.com/double-p/presentations/tree/master/EuroBSDcon/2022/)
+Created with `Quarto / revealjs`  
+[presentation (+testing-config)](https://github.com/double-p/presentations/tree/master/EuroBSDcon/2022/)
 `https://is.gd/ontSw3`
 :::
 
