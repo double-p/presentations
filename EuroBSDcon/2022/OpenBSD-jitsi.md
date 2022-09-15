@@ -499,6 +499,8 @@ ice4j has not been migrated yet, thus not available in "new" JICO config format
 ### fips.de
 [`https://jitsi.fips.de/EBC`](https://jitsi.fips.de/EBC)
 
+Infrastructure kindly provided by Mischa Peters from [openbsd.amsterdam](https://openbsd.amsterdam)
+
 ## Status OpenBSD
 :::{.callout-important}
 IT WORKS!
@@ -538,6 +540,7 @@ Thanks to:
 - OpenBSD / Jitsi
 - sysfive.com GmbH
 - Aisha Tammy (ports)
+- Mischa (obsd.ams)
 :::
 ::: {.column width="30%"}
 Misc:
