@@ -482,19 +482,18 @@ ice4j has not been migrated yet, thus not available in "new" JICO config format
 
 `rcctl enable jvb ; rcctl start jvb`
 
-## Pitfalls
-### OpenBSD
+## Pitfalls / Hints OpenBSD
 - `rc.conf.local`: jicofo_flags: IP instead DNS/hosts
 - startup ordering (web, xmpp, jicofo, jvb); avoid retries
 
-## Pitfalls / Hints
-### Jitsi
+## Pitfalls / Hints Jitsi
 - xmpp: host vs. virtualhost vs. domain
 - DNS: one and only one (or mess up xmpp fallback)
 - not disabling sctp (jvb AND jicofo)
 - (hidden) version bumps ("no longer component!")
 - jicofo has an XMPP-packetlogger (see `logging.properties)
 - Patience, be really patient (at initial start)
+- always check the `,` in config.js (JSON after all..)
 
 ## Prayers for a Livedemo
 ### fips.de

@@ -1056,17 +1056,15 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <span id="cb27-2"><a href="#cb27-2"></a>*.*     /var/log/jvb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>rcctl enable jvb ; rcctl start jvb</code></p>
 </section>
-<section id="pitfalls" class="slide level2">
-<h2>Pitfalls</h2>
-<h3 id="openbsd">OpenBSD</h3>
+<section id="pitfalls-hints-openbsd" class="slide level2">
+<h2>Pitfalls / Hints OpenBSD</h2>
 <ul>
 <li><code>rc.conf.local</code>: jicofo_flags: IP instead DNS/hosts</li>
 <li>startup ordering (web, xmpp, jicofo, jvb); avoid retries</li>
 </ul>
 </section>
-<section id="pitfalls-hints" class="slide level2">
-<h2>Pitfalls / Hints</h2>
-<h3 id="jitsi">Jitsi</h3>
+<section id="pitfalls-hints-jitsi" class="slide level2">
+<h2>Pitfalls / Hints Jitsi</h2>
 <ul>
 <li>xmpp: host vs.&nbsp;virtualhost vs.&nbsp;domain</li>
 <li>DNS: one and only one (or mess up xmpp fallback)</li>
@@ -1074,6 +1072,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li>(hidden) version bumps (“no longer component!”)</li>
 <li>jicofo has an XMPP-packetlogger (see `logging.properties)</li>
 <li>Patience, be really patient (at initial start)</li>
+<li>always check the <code>,</code> in config.js (JSON after all..)</li>
 </ul>
 </section>
 <section id="prayers-for-a-livedemo" class="slide level2">
