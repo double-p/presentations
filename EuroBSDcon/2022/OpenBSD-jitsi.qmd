@@ -324,6 +324,10 @@ cp jicofo-key.store jvb-key.store # copy to VM jicofo, jvb accordingly
 `keytool` comes with JDK, this task can also be done on jicofo or jvb VM
 :::
 
+:::{.callout-important}
+Do NOT change `cacerts` - upgrade from jdk-11 to newer would "forget" the keystore
+:::
+
 ## Install nginx / web
 nginx and the jitsi web elements
 ```{.bash}
@@ -584,5 +588,6 @@ scp /usr/ports/packages/amd64/all/jitsi-meet* web:/tmp
 scp /usr/ports/packages/amd64/all/jitsi-videobridge* jvb:/tmp
 scp /usr/ports/packages/amd64/all/jicofo* jicofo:/tmp
 ```
+## Bonus 2
 on each vm, install as so  
-`TRUSTED_PKG_PATH="/tmp:https://cdn.openbsd.org/pub/OpenBSD/7.1/packages/amd64/"  pkg_add jicofo`
+`TRUSTED_PKG_PATH="/tmp:https://cdn.openbsd.org/pub/OpenBSD/7.1/packages/amd64/" pkg_add jicofo`

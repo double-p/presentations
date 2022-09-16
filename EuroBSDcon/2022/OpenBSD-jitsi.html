@@ -860,6 +860,19 @@ recording + streaming conferences
 </div>
 </div>
 </div>
+<div class="callout callout-important callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p>Do NOT change <code>cacerts</code> - upgrade from jdk-11 to newer would “forget” the keystore</p>
+</div>
+</div>
+</div>
 </section>
 <section id="install-nginx-web" class="slide level2">
 <h2>Install nginx / web</h2>
@@ -1207,8 +1220,11 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <span id="cb28-6"><a href="#cb28-6"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-meet<span class="pp">*</span> web:/tmp</span>
 <span id="cb28-7"><a href="#cb28-7"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jitsi-videobridge<span class="pp">*</span> jvb:/tmp</span>
 <span id="cb28-8"><a href="#cb28-8"></a><span class="fu">scp</span> /usr/ports/packages/amd64/all/jicofo<span class="pp">*</span> jicofo:/tmp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="bonus-2" class="slide level2">
+<h2>Bonus 2</h2>
 <p>on each vm, install as so<br>
-<code>TRUSTED_PKG_PATH="/tmp:https://cdn.openbsd.org/pub/OpenBSD/7.1/packages/amd64/"  pkg_add jicofo</code></p>
+<code>TRUSTED_PKG_PATH="/tmp:https://cdn.openbsd.org/pub/OpenBSD/7.1/packages/amd64/" pkg_add jicofo</code></p>
 
 <img src="img/sysfive.jpg" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>EuroBSDCon 2022 - Vienna - Jitsi/OpenBSD</p>
