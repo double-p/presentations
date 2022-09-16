@@ -33,6 +33,9 @@ format:
 ::: {.column width="50%"}
 `https://is.gd/ontSw3`
 ![](img/url.png)
+
+- smtp: pb@sysfive.com
+- bird: @pb_double  ;  matrix/irc: double-p
 :::
 ::::
 
@@ -86,7 +89,7 @@ jibri: JItsi BRoadcasting Infrastructure
 : recording + streaming conferences
 
 ## Architecture OpenBSD
-XXX VMM+VMs+"switch" pic via mermaid.live + screenshot or 'inline'?
+![!](img/arch-openbsd.png){.r-stretch}
 
 ## Architecture Jitsi (Net)
 ![](img/arch-tcp.png){.r-stretch}
