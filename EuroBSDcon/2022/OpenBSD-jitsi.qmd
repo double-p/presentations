@@ -97,6 +97,17 @@ jibri: JItsi BRoadcasting Infrastructure
 ## Architecture Jitsi (logical / ext.)
 ![](img/arch-pubsub.png){.r-stretch}
 
+## Communications workflow
+```{mermaid}
+flowchart LR
+  F[jicofo] --> D
+  A(browser) --> B{webserver}
+  B --> C[js/html]
+  B --> D[prosody]
+  A --> E[videobridge]
+  E --> D
+```
+
 ## Install Overview
 - create VM images
 - /etc/vm.conf

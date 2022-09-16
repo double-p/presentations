@@ -382,6 +382,9 @@
       margin-right: 0; 
     }
   </style>
+  <script src="OpenBSD-jitsi_files/libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="OpenBSD-jitsi_files/libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="OpenBSD-jitsi_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
 </head>
 <body class="quarto-dark">
   <div class="reveal">
@@ -499,6 +502,28 @@ recording + streaming conferences
 <section id="architecture-jitsi-logical-ext." class="slide level2">
 <h2>Architecture Jitsi (logical / ext.)</h2>
 <img data-src="img/arch-pubsub.png" class="r-stretch">
+</section>
+<section id="communications-workflow" class="slide level2">
+<h2>Communications workflow</h2>
+<div class="cell" data-reveal="true">
+<div class="cell-output-display">
+<div>
+<p>
+</p><pre class="mermaid" data-tooltip-selector="#mermaid-tooltip-1">flowchart LR
+  F[jicofo] --&gt; D
+  A(browser) --&gt; B{webserver}
+  B --&gt; C[js/html]
+  B --&gt; D[prosody]
+  A --&gt; E[videobridge]
+  E --&gt; D
+</pre>
+<div id="mermaid-tooltip-1" class="mermaidTooltip">
+
+</div>
+<p></p>
+</div>
+</div>
+</div>
 </section>
 <section id="install-overview-1" class="slide level2">
 <h2>Install Overview</h2>
