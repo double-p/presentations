@@ -1225,6 +1225,24 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <h2>Bonus 2</h2>
 <p>on each vm, install as so<br>
 <code>TRUSTED_PKG_PATH="/tmp:https://cdn.openbsd.org/pub/OpenBSD/7.1/packages/amd64/" pkg_add jicofo</code></p>
+</section>
+<section id="bonus-logs-xmppjicofo" class="slide level2">
+<h2>Bonus Logs (xmpp/jicofo)</h2>
+<pre><code>wrong/missing keystore:
+Sep 16 14:35:58 c2s60a86b47480  info    Client connected
+Sep 16 14:35:58 c2s60a86b47480  info    Client disconnected: sslv3 alert certificate unknown
+
+wrong password:
+Sep 16 14:36:20 c2s60b1aced0c0  info    Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
+Sep 16 14:36:21 c2s60b1aced0c0  info    Client disconnected: connection closed
+
+all good:
+Sep 16 14:37:00 c2s60a5b549900  info    Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
+Sep 16 14:37:01 c2s60a5b549900  info    Authenticated as focus@auth.jts.fips.de
+</code></pre>
+<p>:</p>
+<pre><code>cant use bridge before (might take; "presence-interval = 120s")
+Jicofo 2022-09-16 14:45:24.260 INFO: [35] [type=bridge brewery=jvbbrewery] BaseBrewery.addInstance#341: Added brewery instance: jvbbrewery@internal.auth.jts.fips.de/jvb</code></pre>
 
 <img src="img/sysfive.jpg" class="slide-logo r-stretch"><div class="footer footer-default">
 <p>EuroBSDCon 2022 - Vienna - Jitsi/OpenBSD</p>

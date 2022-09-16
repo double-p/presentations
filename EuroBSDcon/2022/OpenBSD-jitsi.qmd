@@ -591,3 +591,24 @@ scp /usr/ports/packages/amd64/all/jicofo* jicofo:/tmp
 ## Bonus 2
 on each vm, install as so  
 `TRUSTED_PKG_PATH="/tmp:https://cdn.openbsd.org/pub/OpenBSD/7.1/packages/amd64/" pkg_add jicofo`
+
+## Bonus Logs (xmpp/jicofo)
+```
+wrong/missing keystore:
+Sep 16 14:35:58 c2s60a86b47480  info    Client connected
+Sep 16 14:35:58 c2s60a86b47480  info    Client disconnected: sslv3 alert certificate unknown
+
+wrong password:
+Sep 16 14:36:20 c2s60b1aced0c0  info    Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
+Sep 16 14:36:21 c2s60b1aced0c0  info    Client disconnected: connection closed
+
+all good:
+Sep 16 14:37:00 c2s60a5b549900  info    Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
+Sep 16 14:37:01 c2s60a5b549900  info    Authenticated as focus@auth.jts.fips.de
+
+```
+:
+```
+cant use bridge before (might take; "presence-interval = 120s")
+Jicofo 2022-09-16 14:45:24.260 INFO: [35] [type=bridge brewery=jvbbrewery] BaseBrewery.addInstance#341: Added brewery instance: jvbbrewery@internal.auth.jts.fips.de/jvb
+```
