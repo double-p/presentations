@@ -155,12 +155,12 @@ vm "web" instance "jvb" {
 
 ## DNS, `/etc/hosts`
 :::{.callout-note}
-DNS: only one A-RR for jitsi.fips.de, but `hosts` for jicofo
+DNS: only one A-RR for jts.fips.de, but `hosts` for jicofo
 :::
 
 ```{.python code-line-numbers="|2"}
 100.64.1.3    web
-100.64.2.3    xmpp jitsi.fips.de
+100.64.2.3    xmpp jts.fips.de
 100.64.3.3    jicofo
 100.64.4.3    jvb
 ```
@@ -261,15 +261,15 @@ component configuration. roster_command is CLI only.
 - `/etc/prosody/prosody.cfg.lua`: (shortened)
 ```{.lua code-line-numbers="|1,4|"}
 http_interfaces = { "*", "::" }
-VirtualHost "jitsi.fips.de"
+VirtualHost "jts.fips.de"
     authentication = "anonymous";
     modules_enabled = { "bosh"; "pubsub"; }
     c2s_require_encryption = false
 
-VirtualHost "auth.jitsi.fips.de"
-    admins = { "focus@auth.jitsi.fips.de", "jvb@auth.jitsi.fips.de" }
-    ssl = { key = "/var/prosody/auth.jitsi.fips.de.key";
-            certificate = "/var/prosody/auth.jitsi.fips.de.crt"; }
+VirtualHost "auth.jts.fips.de"
+    admins = { "focus@auth.jts.fips.de", "jvb@auth.jts.fips.de" }
+    ssl = { key = "/var/prosody/auth.jts.fips.de.key";
+            certificate = "/var/prosody/auth.jts.fips.de.crt"; }
     authentication = "internal_hashed"
 ```
 :::{.callout-note}
@@ -279,12 +279,12 @@ VirtualHost "auth.jitsi.fips.de"
 ## Configuration prosody (xmpp) (cont.)
 - `/etc/prosody/prosody.cfg.lua`: (shortened)
 ```{.lua code-line-numbers="1|2,3|4,5|6-8|"}
-Component "conference.jitsi.fips.de" "muc"
-Component "jvb.jitsi.fips.de"
+Component "conference.jts.fips.de" "muc"
+Component "jvb.jts.fips.de"
     component_secret = "CHANGE_jvb"
-Component "focus.jitsi.fips.de" "client_proxy"
-    target_address = "focus@auth.jitsi.fips.de"
-Component "internal.auth.jitsi.fips.de" "muc"
+Component "focus.jts.fips.de" "client_proxy"
+    target_address = "focus@auth.jts.fips.de"
+Component "internal.auth.jts.fips.de" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
 ```
@@ -299,13 +299,13 @@ The connection for `jvb` uses a shared secret as shown on the previous page ("Co
 also:
 ```{.bash}
 rcctl enable prosody ; rcctl start prosody
-prosodyctl register jvb auth.jitsi.fips.de CHANGE_JVB
+prosodyctl register jvb auth.jts.fips.de CHANGE_JVB
 ```
 
 Jicofo's "focus" user:
 ```{.bash}
-prosodyctl register focus auth.jitsi.fips.de CHANGE_FOCUS
-prosodyctl mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de
+prosodyctl register focus auth.jts.fips.de CHANGE_FOCUS
+prosodyctl mod_roster_command subscribe focus.jts.fips.de focus@auth.jts.fips.de
 ```
 
 :::{.callout-note}
@@ -314,10 +314,10 @@ Documentation a bit scarce about what's in for this subscription
 
 ## TLS certificates (prosody / JKS)
 ```{.bash}
-prosodyctl cert generate auth.jitsi.fips.de
+prosodyctl cert generate auth.jts.fips.de
 cd /var/prosody
 yes | /usr/local/jdk-11/bin/keytool -import -alias prosody -file \
-  auth.jitsi.fips.de.crt -keystore jicofo-key.store -storepass jitsicool
+  auth.jts.fips.de.crt -keystore jicofo-key.store -storepass jitsicool
 cp jicofo-key.store jvb-key.store # copy to VM jicofo, jvb accordingly
 ```
 :::{.callout-note}
@@ -345,7 +345,7 @@ only needed jitsi configuration is config.js, see below
 ## WEB / nginx.conf
 `/etc/nginx/nginx.conf`
 ```{.nginx code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"}
-server_name  jitsi.fips.de;
+server_name  jts.fips.de;
 root         /var/www/jitsi-meet;
 ssi on;
 ssi_types application/x-javascript application/javascript;
@@ -367,11 +367,11 @@ If using LE, put the `.well-known` location first (above L5)
 ```{.javascript code-line-numbers="3-4|6|7|8,10|13|"}
 var config = {
   hosts: {
-    domain: 'jitsi.fips.de',
-    muc: 'conference.jitsi.fips.de' // no DNS
+    domain: 'jts.fips.de',
+    muc: 'conference.jts.fips.de' // no DNS
   },
-  bosh: '//jitsi.fips.de/http-bind',
-  useTurnUdp: false,
+  bosh: '//jts.fips.de/http-bind',
+  useTurnUdp: false, enableWelcomePage: true,
   prejoinConfig: {
     enabled: true,
     hideExtraJoinButtons: ['no-audio', 'by-phone'] },
@@ -405,26 +405,26 @@ jicofo-key.store is generated from prosody certificate, see earlier slide
 - `/etc/jicofo/jicofo.conf`: (shortened)
 ```{.javascript code-line-numbers="|2|3|4|8|14|"}
 jicofo { bridge {
-  brewery-jid = "JvbBrewery@internal.auth.jitsi.fips.de"
+  brewery-jid = "JvbBrewery@internal.auth.jts.fips.de"
   xmpp-connection-name = Client } // enum
   sctp { enabled = false } 
   xmpp {
     client {
       port = 5222
-      domain = "auth.jitsi.fips.de"
+      domain = "auth.jts.fips.de"
       username = "focus"
       password = "CHANGE_FOCUS"
       use-tls = true
     }
     // trusted service domains. Logged in -> advance to bridges
-    trusted-domains = [ "auth.jitsi.fips.de" ]
+    trusted-domains = [ "auth.jts.fips.de" ]
   }
 }
 ```
 ## Jitsi / jicofo (cont.)
 - `/etc/rc.conf.local`:
 ```{.bash code-line-numbers="|"}
-jicofo_flags="--host=jitsi.fips.de"
+jicofo_flags="--host=jts.fips.de"
 ```
 - `/etc/syslog.conf`
 ```{.text}
@@ -464,10 +464,10 @@ videobridge { apis {
    configs {
     ourprosody {
      hostname = "xmpp"
-     domain = "auth.jitsi.fips.de" // 'realm'
+     domain = "auth.jts.fips.de" // 'realm'
      username = "jvb"
      password = "CHANGE_jvb"
-     muc_jids = "JvbBrewery@internal.auth.jitsi.fips.de"
+     muc_jids = "JvbBrewery@internal.auth.jts.fips.de"
      muc_nickname = "jvb-foo"
      disable_certificate_verification = true } } } }
   sctp { enabled = false } // n/a on OpenBSD
@@ -515,7 +515,7 @@ ice4j has not been migrated yet, thus not available in "new" JICO config format
 
 ## Prayers for a Livedemo
 ### fips.de
-[`https://jitsi.fips.de/EBC`](https://jitsi.fips.de/EBC)
+[`https://jts.fips.de/EBC`](https://jts.fips.de/EBC)
 
 Infrastructure kindly provided by Mischa Peters from [openbsd.amsterdam](https://openbsd.amsterdam)
 

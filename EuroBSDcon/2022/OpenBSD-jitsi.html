@@ -581,12 +581,12 @@ recording + streaming conferences
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>DNS: only one A-RR for jitsi.fips.de, but <code>hosts</code> for jicofo</p>
+<p>DNS: only one A-RR for jts.fips.de, but <code>hosts</code> for jicofo</p>
 </div>
 </div>
 </div>
 <div class="sourceCode" id="cb3" data-code-line-numbers="|2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="fl">100.64.1.3</span>    web</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="fl">100.64.2.3</span>    xmpp jitsi.fips.de</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="fl">100.64.2.3</span>    xmpp jts.fips.de</span>
 <span id="cb3-3"><a href="#cb3-3"></a><span class="fl">100.64.3.3</span>    jicofo</span>
 <span id="cb3-4"><a href="#cb3-4"></a><span class="fl">100.64.4.3</span>    jvb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
@@ -766,15 +766,15 @@ recording + streaming conferences
 <li><code>/etc/prosody/prosody.cfg.lua</code>: (shortened)</li>
 </ul>
 <div class="sourceCode" id="cb12" data-code-line-numbers="|1,4|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb12-1"><a href="#cb12-1"></a>http_interfaces <span class="op">=</span> <span class="op">{</span> <span class="st">"*"</span><span class="op">,</span> <span class="st">"::"</span> <span class="op">}</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a>VirtualHost <span class="st">"jitsi.fips.de"</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>VirtualHost <span class="st">"jts.fips.de"</span></span>
 <span id="cb12-3"><a href="#cb12-3"></a>    authentication <span class="op">=</span> <span class="st">"anonymous"</span><span class="op">;</span></span>
 <span id="cb12-4"><a href="#cb12-4"></a>    modules_enabled <span class="op">=</span> <span class="op">{</span> <span class="st">"bosh"</span><span class="op">;</span> <span class="st">"pubsub"</span><span class="op">;</span> <span class="op">}</span></span>
 <span id="cb12-5"><a href="#cb12-5"></a>    c2s_require_encryption <span class="op">=</span> <span class="kw">false</span></span>
 <span id="cb12-6"><a href="#cb12-6"></a></span>
-<span id="cb12-7"><a href="#cb12-7"></a>VirtualHost <span class="st">"auth.jitsi.fips.de"</span></span>
-<span id="cb12-8"><a href="#cb12-8"></a>    admins <span class="op">=</span> <span class="op">{</span> <span class="st">"focus@auth.jitsi.fips.de"</span><span class="op">,</span> <span class="st">"jvb@auth.jitsi.fips.de"</span> <span class="op">}</span></span>
-<span id="cb12-9"><a href="#cb12-9"></a>    ssl <span class="op">=</span> <span class="op">{</span> key <span class="op">=</span> <span class="st">"/var/prosody/auth.jitsi.fips.de.key"</span><span class="op">;</span></span>
-<span id="cb12-10"><a href="#cb12-10"></a>            certificate <span class="op">=</span> <span class="st">"/var/prosody/auth.jitsi.fips.de.crt"</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a>VirtualHost <span class="st">"auth.jts.fips.de"</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a>    admins <span class="op">=</span> <span class="op">{</span> <span class="st">"focus@auth.jts.fips.de"</span><span class="op">,</span> <span class="st">"jvb@auth.jts.fips.de"</span> <span class="op">}</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a>    ssl <span class="op">=</span> <span class="op">{</span> key <span class="op">=</span> <span class="st">"/var/prosody/auth.jts.fips.de.key"</span><span class="op">;</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a>            certificate <span class="op">=</span> <span class="st">"/var/prosody/auth.jts.fips.de.crt"</span><span class="op">;</span> <span class="op">}</span></span>
 <span id="cb12-11"><a href="#cb12-11"></a>    authentication <span class="op">=</span> <span class="st">"internal_hashed"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
@@ -795,12 +795,12 @@ recording + streaming conferences
 <ul>
 <li><code>/etc/prosody/prosody.cfg.lua</code>: (shortened)</li>
 </ul>
-<div class="sourceCode" id="cb13" data-code-line-numbers="1|2,3|4,5|6-8|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb13-1"><a href="#cb13-1"></a>Component <span class="st">"conference.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
-<span id="cb13-2"><a href="#cb13-2"></a>Component <span class="st">"jvb.jitsi.fips.de"</span></span>
+<div class="sourceCode" id="cb13" data-code-line-numbers="1|2,3|4,5|6-8|"><pre class="sourceCode numberSource lua number-lines code-with-copy"><code class="sourceCode lua"><span id="cb13-1"><a href="#cb13-1"></a>Component <span class="st">"conference.jts.fips.de"</span> <span class="st">"muc"</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>Component <span class="st">"jvb.jts.fips.de"</span></span>
 <span id="cb13-3"><a href="#cb13-3"></a>    component_secret <span class="op">=</span> <span class="st">"CHANGE_jvb"</span></span>
-<span id="cb13-4"><a href="#cb13-4"></a>Component <span class="st">"focus.jitsi.fips.de"</span> <span class="st">"client_proxy"</span></span>
-<span id="cb13-5"><a href="#cb13-5"></a>    target_address <span class="op">=</span> <span class="st">"focus@auth.jitsi.fips.de"</span></span>
-<span id="cb13-6"><a href="#cb13-6"></a>Component <span class="st">"internal.auth.jitsi.fips.de"</span> <span class="st">"muc"</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>Component <span class="st">"focus.jts.fips.de"</span> <span class="st">"client_proxy"</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>    target_address <span class="op">=</span> <span class="st">"focus@auth.jts.fips.de"</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>Component <span class="st">"internal.auth.jts.fips.de"</span> <span class="st">"muc"</span></span>
 <span id="cb13-7"><a href="#cb13-7"></a>    muc_room_locking <span class="op">=</span> <span class="kw">false</span></span>
 <span id="cb13-8"><a href="#cb13-8"></a>    muc_room_default_public_jids <span class="op">=</span> <span class="kw">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
@@ -822,10 +822,10 @@ recording + streaming conferences
 <h2>Prosody users</h2>
 <p>The connection for <code>jvb</code> uses a shared secret as shown on the previous page (“Component”) but also:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="ex">rcctl</span> enable prosody <span class="kw">;</span> <span class="ex">rcctl</span> start prosody</span>
-<span id="cb14-2"><a href="#cb14-2"></a><span class="ex">prosodyctl</span> register jvb auth.jitsi.fips.de CHANGE_JVB</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="ex">prosodyctl</span> register jvb auth.jts.fips.de CHANGE_JVB</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Jicofo’s “focus” user:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prosodyctl</span> register focus auth.jitsi.fips.de CHANGE_FOCUS</span>
-<span id="cb15-2"><a href="#cb15-2"></a><span class="ex">prosodyctl</span> mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prosodyctl</span> register focus auth.jts.fips.de CHANGE_FOCUS</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="ex">prosodyctl</span> mod_roster_command subscribe focus.jts.fips.de focus@auth.jts.fips.de</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -842,10 +842,10 @@ recording + streaming conferences
 </section>
 <section id="tls-certificates-prosody-jks" class="slide level2">
 <h2>TLS certificates (prosody / JKS)</h2>
-<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">prosodyctl</span> cert generate auth.jitsi.fips.de</span>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">prosodyctl</span> cert generate auth.jts.fips.de</span>
 <span id="cb16-2"><a href="#cb16-2"></a><span class="bu">cd</span> /var/prosody</span>
 <span id="cb16-3"><a href="#cb16-3"></a><span class="fu">yes</span> <span class="kw">|</span> <span class="ex">/usr/local/jdk-11/bin/keytool</span> <span class="at">-import</span> <span class="at">-alias</span> prosody <span class="at">-file</span> <span class="dt">\</span></span>
-<span id="cb16-4"><a href="#cb16-4"></a>  auth.jitsi.fips.de.crt <span class="at">-keystore</span> jicofo-key.store <span class="at">-storepass</span> jitsicool</span>
+<span id="cb16-4"><a href="#cb16-4"></a>  auth.jts.fips.de.crt <span class="at">-keystore</span> jicofo-key.store <span class="at">-storepass</span> jitsicool</span>
 <span id="cb16-5"><a href="#cb16-5"></a><span class="fu">cp</span> jicofo-key.store jvb-key.store <span class="co"># copy to VM jicofo, jvb accordingly</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
@@ -898,7 +898,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <section id="web-nginx.conf" class="slide level2">
 <h2>WEB / nginx.conf</h2>
 <p><code>/etc/nginx/nginx.conf</code></p>
-<div class="sourceCode" id="cb18" data-code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"><pre class="sourceCode numberSource nginx number-lines code-with-copy"><code class="sourceCode"><span id="cb18-1"><a href="#cb18-1"></a>server_name  jitsi.fips.de;</span>
+<div class="sourceCode" id="cb18" data-code-line-numbers="|1|2|3-4|5-7|8|9-12|13-14|"><pre class="sourceCode numberSource nginx number-lines code-with-copy"><code class="sourceCode"><span id="cb18-1"><a href="#cb18-1"></a>server_name  jts.fips.de;</span>
 <span id="cb18-2"><a href="#cb18-2"></a>root         /var/www/jitsi-meet;</span>
 <span id="cb18-3"><a href="#cb18-3"></a>ssi on;</span>
 <span id="cb18-4"><a href="#cb18-4"></a>ssi_types application/x-javascript application/javascript;</span>
@@ -921,11 +921,11 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </ul>
 <div class="sourceCode" id="cb19" data-code-line-numbers="3-4|6|7|8,10|13|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">var</span> config <span class="op">=</span> {</span>
 <span id="cb19-2"><a href="#cb19-2"></a>  <span class="dt">hosts</span><span class="op">:</span> {</span>
-<span id="cb19-3"><a href="#cb19-3"></a>    <span class="dt">domain</span><span class="op">:</span> <span class="st">'jitsi.fips.de'</span><span class="op">,</span></span>
-<span id="cb19-4"><a href="#cb19-4"></a>    <span class="dt">muc</span><span class="op">:</span> <span class="st">'conference.jitsi.fips.de'</span> <span class="co">// no DNS</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a>    <span class="dt">domain</span><span class="op">:</span> <span class="st">'jts.fips.de'</span><span class="op">,</span></span>
+<span id="cb19-4"><a href="#cb19-4"></a>    <span class="dt">muc</span><span class="op">:</span> <span class="st">'conference.jts.fips.de'</span> <span class="co">// no DNS</span></span>
 <span id="cb19-5"><a href="#cb19-5"></a>  }<span class="op">,</span></span>
-<span id="cb19-6"><a href="#cb19-6"></a>  <span class="dt">bosh</span><span class="op">:</span> <span class="st">'//jitsi.fips.de/http-bind'</span><span class="op">,</span></span>
-<span id="cb19-7"><a href="#cb19-7"></a>  <span class="dt">useTurnUdp</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb19-6"><a href="#cb19-6"></a>  <span class="dt">bosh</span><span class="op">:</span> <span class="st">'//jts.fips.de/http-bind'</span><span class="op">,</span></span>
+<span id="cb19-7"><a href="#cb19-7"></a>  <span class="dt">useTurnUdp</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">enableWelcomePage</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
 <span id="cb19-8"><a href="#cb19-8"></a>  <span class="dt">prejoinConfig</span><span class="op">:</span> {</span>
 <span id="cb19-9"><a href="#cb19-9"></a>    <span class="dt">enabled</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
 <span id="cb19-10"><a href="#cb19-10"></a>    <span class="dt">hideExtraJoinButtons</span><span class="op">:</span> [<span class="st">'no-audio'</span><span class="op">,</span> <span class="st">'by-phone'</span>] }<span class="op">,</span></span>
@@ -979,19 +979,19 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>/etc/jicofo/jicofo.conf</code>: (shortened)</li>
 </ul>
 <div class="sourceCode" id="cb21" data-code-line-numbers="|2|3|4|8|14|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb21-1"><a href="#cb21-1"></a>jicofo { bridge {</span>
-<span id="cb21-2"><a href="#cb21-2"></a>  brewery<span class="op">-</span>jid <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>  brewery<span class="op">-</span>jid <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jts.fips.de"</span></span>
 <span id="cb21-3"><a href="#cb21-3"></a>  xmpp<span class="op">-</span>connection<span class="op">-</span>name <span class="op">=</span> Client } <span class="co">// enum</span></span>
 <span id="cb21-4"><a href="#cb21-4"></a>  sctp { enabled <span class="op">=</span> <span class="kw">false</span> } </span>
 <span id="cb21-5"><a href="#cb21-5"></a>  xmpp {</span>
 <span id="cb21-6"><a href="#cb21-6"></a>    client {</span>
 <span id="cb21-7"><a href="#cb21-7"></a>      port <span class="op">=</span> <span class="dv">5222</span></span>
-<span id="cb21-8"><a href="#cb21-8"></a>      domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span></span>
+<span id="cb21-8"><a href="#cb21-8"></a>      domain <span class="op">=</span> <span class="st">"auth.jts.fips.de"</span></span>
 <span id="cb21-9"><a href="#cb21-9"></a>      username <span class="op">=</span> <span class="st">"focus"</span></span>
 <span id="cb21-10"><a href="#cb21-10"></a>      password <span class="op">=</span> <span class="st">"CHANGE_FOCUS"</span></span>
 <span id="cb21-11"><a href="#cb21-11"></a>      use<span class="op">-</span>tls <span class="op">=</span> <span class="kw">true</span></span>
 <span id="cb21-12"><a href="#cb21-12"></a>    }</span>
 <span id="cb21-13"><a href="#cb21-13"></a>    <span class="co">// trusted service domains. Logged in -&gt; advance to bridges</span></span>
-<span id="cb21-14"><a href="#cb21-14"></a>    trusted<span class="op">-</span>domains <span class="op">=</span> [ <span class="st">"auth.jitsi.fips.de"</span> ]</span>
+<span id="cb21-14"><a href="#cb21-14"></a>    trusted<span class="op">-</span>domains <span class="op">=</span> [ <span class="st">"auth.jts.fips.de"</span> ]</span>
 <span id="cb21-15"><a href="#cb21-15"></a>  }</span>
 <span id="cb21-16"><a href="#cb21-16"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
@@ -1000,7 +1000,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <ul>
 <li><code>/etc/rc.conf.local</code>:</li>
 </ul>
-<div class="sourceCode" id="cb22" data-code-line-numbers="|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1"></a><span class="va">jicofo_flags</span><span class="op">=</span><span class="st">"--host=jitsi.fips.de"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22" data-code-line-numbers="|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1"></a><span class="va">jicofo_flags</span><span class="op">=</span><span class="st">"--host=jts.fips.de"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><code>/etc/syslog.conf</code></li>
 </ul>
@@ -1058,10 +1058,10 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <span id="cb25-3"><a href="#cb25-3"></a>   configs {</span>
 <span id="cb25-4"><a href="#cb25-4"></a>    ourprosody {</span>
 <span id="cb25-5"><a href="#cb25-5"></a>     hostname <span class="op">=</span> <span class="st">"xmpp"</span></span>
-<span id="cb25-6"><a href="#cb25-6"></a>     domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span> <span class="co">// 'realm'</span></span>
+<span id="cb25-6"><a href="#cb25-6"></a>     domain <span class="op">=</span> <span class="st">"auth.jts.fips.de"</span> <span class="co">// 'realm'</span></span>
 <span id="cb25-7"><a href="#cb25-7"></a>     username <span class="op">=</span> <span class="st">"jvb"</span></span>
 <span id="cb25-8"><a href="#cb25-8"></a>     password <span class="op">=</span> <span class="st">"CHANGE_jvb"</span></span>
-<span id="cb25-9"><a href="#cb25-9"></a>     muc_jids <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>
+<span id="cb25-9"><a href="#cb25-9"></a>     muc_jids <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jts.fips.de"</span></span>
 <span id="cb25-10"><a href="#cb25-10"></a>     muc_nickname <span class="op">=</span> <span class="st">"jvb-foo"</span></span>
 <span id="cb25-11"><a href="#cb25-11"></a>     disable_certificate_verification <span class="op">=</span> <span class="kw">true</span> } } } }</span>
 <span id="cb25-12"><a href="#cb25-12"></a>  sctp { enabled <span class="op">=</span> <span class="kw">false</span> } <span class="co">// n/a on OpenBSD</span></span>
@@ -1120,7 +1120,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <section id="prayers-for-a-livedemo" class="slide level2">
 <h2>Prayers for a Livedemo</h2>
 <h3 id="fips.de">fips.de</h3>
-<p><a href="https://jitsi.fips.de/EBC"><code>https://jitsi.fips.de/EBC</code></a></p>
+<p><a href="https://jts.fips.de/EBC"><code>https://jts.fips.de/EBC</code></a></p>
 <p>Infrastructure kindly provided by Mischa Peters from <a href="https://openbsd.amsterdam">openbsd.amsterdam</a></p>
 </section>
 <section id="status-openbsd" class="slide level2">

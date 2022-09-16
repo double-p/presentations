@@ -31,7 +31,7 @@ log = {
 
 -- ### MAIN
 
-VirtualHost "jitsi.fips.de"
+VirtualHost "jts.fips.de"
     authentication = "anonymous";
     modules_enabled = {
         "bosh";
@@ -39,25 +39,25 @@ VirtualHost "jitsi.fips.de"
     }
     c2s_require_encryption = false
 
-VirtualHost "auth.jitsi.fips.de"
+VirtualHost "auth.jts.fips.de"
     ssl = {
-         key = "/var/prosody/auth.jitsi.fips.de.key";
-         certificate = "/var/prosody/auth.jitsi.fips.de.crt";
+         key = "/var/prosody/auth.jts.fips.de.key";
+         certificate = "/var/prosody/auth.jts.fips.de.crt";
     }
     authentication = "internal_hashed"
 
-Component "conference.jitsi.fips.de" "muc"
-Component "jvb.jitsi.fips.de"
+Component "conference.jts.fips.de" "muc"
+Component "jvb.jts.fips.de"
     component_secret = "CRED_JVB"
-Component "focus.jitsi.fips.de" "client_proxy"
-    target_address = "focus@auth.jitsi.fips.de"
+Component "focus.jts.fips.de" "client_proxy"
+    target_address = "focus@auth.jts.fips.de"
     -- component_secret = "CRED_JICOFO"
-Component "internal.auth.jitsi.fips.de" "muc"
+Component "internal.auth.jts.fips.de" "muc"
     storage = "memory"
     modules_enabled = {
       "ping";
     }
-    admins = { "focus@auth.jitsi.fips.de", "jvb@auth.jitsi.fips.de" }
+    admins = { "focus@auth.jts.fips.de", "jvb@auth.jts.fips.de" }
     muc_room_locking = false
     muc_room_default_public_jids = true
     muc_room_cache_size = 1000
