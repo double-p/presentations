@@ -424,7 +424,7 @@
 <li>all localhost and “discovery magic”</li>
 <li><code>location ~ ^/([^/?&amp;:'"]+)/(.*)$</code></li>
 <li>help? -&gt; “quick install!”, “one-debian VM”</li>
-<li>java, uuuh, two of ’em!</li>
+<li>java, uuuh, two versions of ’em!</li>
 <li>how many in DNS again?</li>
 <li>who/where/what/wtf - towel launcher</li>
 </ul>
@@ -534,12 +534,13 @@ recording + streaming conferences
 <li>nginx: install, config, certs</li>
 <li>prosody: install, config, certs, users</li>
 <li>jicofo: install, config</li>
-<li>jvb: install, config DONE.</li>
+<li>jvb: install, config</li>
+<li>DONE</li>
 </ul>
 </section>
 <section id="vm-installation" class="slide level2">
 <h2>VM installation</h2>
-<div class="sourceCode" id="cb1" data-code-line-numbers="|4,8"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">mkdir</span> /home/vmm<span class="kw">;</span> <span class="bu">cd</span> /home/vmm</span>
+<div class="sourceCode" id="cb1" data-code-line-numbers="|4,8-9"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">mkdir</span> /home/vmm<span class="kw">;</span> <span class="bu">cd</span> /home/vmm</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="ex">vmctl</span> create <span class="at">-s</span> 5G web.qcow2</span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="fu">ftp</span> https://cdn.openbsd.org/pub/OpenBSD/7.1/amd64/install71.iso</span>
 <span id="cb1-4"><a href="#cb1-4"></a><span class="ex">vmctl</span> start <span class="at">-m</span> 2G <span class="at">-L</span> <span class="at">-i</span> 1 <span class="at">-r</span> install71.iso <span class="at">-d</span> /home/vmm/web.qcow2 web</span>
@@ -581,7 +582,7 @@ recording + streaming conferences
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>DNS: only one A-RR for jts.fips.de, but <code>hosts</code> for jicofo</p>
+<p>DNS: ONE A-RR for jts.fips.de; but local <code>hosts</code> for jicofo (or split DNS)</p>
 </div>
 </div>
 </div>
@@ -735,7 +736,7 @@ recording + streaming conferences
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>jicofo has a REST API on 8888/tcp for health/metrics (prometheus) - BROKEN</p>
+<p>jicofo has a REST API on 8888/tcp for health/metrics (prometheus) - BROKEN?</p>
 </div>
 </div>
 </div>
@@ -755,7 +756,7 @@ recording + streaming conferences
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>The modules do not need further configuration. client_proxy gets autoloaded with component configuration. roster_command is CLI only.</p>
+<p>The modules do not need further configuration in prosody.cfg.lua: client_proxy gets loaded with “Component” configuration. roster_command is CLI only.</p>
 </div>
 </div>
 </div>
@@ -813,16 +814,15 @@ recording + streaming conferences
 </div>
 <div class="callout-content">
 <p>No extra DNS needed! Like “Host:” HTTP-Header.<br>
-<code>focus</code> like <code>jvb</code> in earlier versions (v1)</p>
+<code>focus</code> was using component_secret like <code>jvb</code> in earlier versions</p>
 </div>
 </div>
 </div>
 </section>
 <section id="prosody-users" class="slide level2">
 <h2>Prosody users</h2>
-<p>The connection for <code>jvb</code> uses a shared secret as shown on the previous page (“Component”) but also:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="ex">rcctl</span> enable prosody <span class="kw">;</span> <span class="ex">rcctl</span> start prosody</span>
-<span id="cb14-2"><a href="#cb14-2"></a><span class="ex">prosodyctl</span> register jvb auth.jts.fips.de CHANGE_JVB</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The connection for <code>jvb</code> uses a shared secret as shown on the previous page.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="ex">rcctl</span> enable prosody <span class="kw">;</span> <span class="ex">rcctl</span> start prosody</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Jicofo’s “focus” user:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prosodyctl</span> register focus auth.jts.fips.de CHANGE_FOCUS</span>
 <span id="cb15-2"><a href="#cb15-2"></a><span class="ex">prosodyctl</span> mod_roster_command subscribe focus.jts.fips.de focus@auth.jts.fips.de</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -835,7 +835,7 @@ recording + streaming conferences
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>Documentation a bit scarce about what’s in for this subscription</p>
+<p>Documentation a bit scarce about what’s in for this subscription part - but needed.</p>
 </div>
 </div>
 </div>
@@ -843,10 +843,11 @@ recording + streaming conferences
 <section id="tls-certificates-prosody-jks" class="slide level2">
 <h2>TLS certificates (prosody / JKS)</h2>
 <div class="sourceCode" id="cb16"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">prosodyctl</span> cert generate auth.jts.fips.de</span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="bu">cd</span> /var/prosody</span>
-<span id="cb16-3"><a href="#cb16-3"></a><span class="fu">yes</span> <span class="kw">|</span> <span class="ex">/usr/local/jdk-11/bin/keytool</span> <span class="at">-import</span> <span class="at">-alias</span> prosody <span class="at">-file</span> <span class="dt">\</span></span>
-<span id="cb16-4"><a href="#cb16-4"></a>  auth.jts.fips.de.crt <span class="at">-keystore</span> jicofo-key.store <span class="at">-storepass</span> jitsicool</span>
-<span id="cb16-5"><a href="#cb16-5"></a><span class="fu">cp</span> jicofo-key.store jvb-key.store <span class="co"># copy to VM jicofo, jvb accordingly</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="co"># fill in `openssl req` dialog</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="bu">cd</span> /var/prosody</span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="fu">yes</span> <span class="kw">|</span> <span class="ex">/usr/local/jdk-11/bin/keytool</span> <span class="at">-import</span> <span class="at">-alias</span> prosody <span class="at">-file</span> <span class="dt">\</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a>  auth.jts.fips.de.crt <span class="at">-keystore</span> jicofo-key.store <span class="at">-storepass</span> jitsicool</span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="fu">cp</span> jicofo-key.store jvb-key.store <span class="co"># copy to VM jicofo, jvb accordingly</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -856,7 +857,7 @@ recording + streaming conferences
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p><code>keytool</code> comes with JDK, this task can also be done on jicofo or jvb VM</p>
+<p><code>keytool</code> comes with JDK, this task can also be done on jicofo or jvb VM - or copy over the resulting store-files to jicofo/jvb VM respectivly</p>
 </div>
 </div>
 </div>
@@ -869,7 +870,7 @@ recording + streaming conferences
 <p><strong>Important</strong></p>
 </div>
 <div class="callout-content">
-<p>Do NOT change <code>cacerts</code> - upgrade from jdk-11 to newer would “forget” the keystore</p>
+<p>Do NOT change JDK’s <code>lib/security/cacerts</code> - any later upgrade from jdk-11 would “forget” the keystore</p>
 </div>
 </div>
 </div>
@@ -880,7 +881,7 @@ recording + streaming conferences
 <div class="sourceCode" id="cb17"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1"></a><span class="ex">pkg_add</span> nginx</span>
 <span id="cb17-2"><a href="#cb17-2"></a><span class="ex">pkg_add</span> jitsi-meet</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Any TLS setup is mandatory or Chrome/Firefox/.. will refuse to let you use the camera+microphone.<br>
-Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily possible.</p>
+Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily possible and included in <code>./testing-config/nginx.conf</code>.</p>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -906,7 +907,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <span id="cb18-6"><a href="#cb18-6"></a>  add_header 'Access-Control-Allow-Origin' '*';</span>
 <span id="cb18-7"><a href="#cb18-7"></a>  alias /var/www/jitsi-meet/$1/$2; }</span>
 <span id="cb18-8"><a href="#cb18-8"></a>location /external_api.js { alias /var/www/jitsi-meet/libs/external_api.min.js; }</span>
-<span id="cb18-9"><a href="#cb18-9"></a>location = /http-bind {</span>
+<span id="cb18-9"><a href="#cb18-9"></a>location = /http-bind {   # BOSH</span>
 <span id="cb18-10"><a href="#cb18-10"></a>  proxy_pass      http://xmpp:5280/http-bind;</span>
 <span id="cb18-11"><a href="#cb18-11"></a>  proxy_set_header X-Forwarded-For $remote_addr;</span>
 <span id="cb18-12"><a href="#cb18-12"></a>  proxy_set_header Host $http_host; }</span>
@@ -933,19 +934,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <span id="cb19-12"><a href="#cb19-12"></a>    <span class="dt">stunServers</span><span class="op">:</span> [</span>
 <span id="cb19-13"><a href="#cb19-13"></a>      { <span class="dt">urls</span><span class="op">:</span> <span class="st">'stun:meet-jit-si-turnrelay.jitsi.net:443'</span> } ] }</span>
 <span id="cb19-14"><a href="#cb19-14"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-note callout-captioned callout-style-default">
-<div class="callout-body">
-<div class="callout-caption">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Note</strong></p>
-</div>
-<div class="callout-content">
 <p>TURN depends on NAT environment(s)</p>
-</div>
-</div>
-</div>
 </section>
 <section id="install-config-jicofo" class="slide level2">
 <h2>Install / Config jicofo</h2>
@@ -953,12 +942,13 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>pkg_add jicofo</code></li>
 <li>adapt <code>/etc/jicofo/jicofo.in.sh</code> if need be</li>
 </ul>
-<div class="sourceCode" id="cb20" data-code-line-numbers="1|2|3-4|5-6|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1"></a><span class="va">JICOFO_CONF</span><span class="op">=</span>/etc/jicofo/jicofo.conf</span>
+<div class="sourceCode" id="cb20" data-code-line-numbers="1|2|3-4|5-7|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1"></a><span class="va">JICOFO_CONF</span><span class="op">=</span>/etc/jicofo/jicofo.conf</span>
 <span id="cb20-2"><a href="#cb20-2"></a><span class="va">JICOFO_LOG_CONFIG</span><span class="op">=</span>/usr/local/share/jicofo/lib/logging.properties</span>
 <span id="cb20-3"><a href="#cb20-3"></a><span class="va">JICOFO_TRUSTSTORE</span><span class="op">=</span>/etc/ssl/jicofo-key.store</span>
 <span id="cb20-4"><a href="#cb20-4"></a><span class="va">JICOFO_TRUSTSTORE_PASSWORD</span><span class="op">=</span>jitsicool</span>
 <span id="cb20-5"><a href="#cb20-5"></a><span class="va">JICOFO_MAXMEM</span><span class="op">=</span>3G</span>
-<span id="cb20-6"><a href="#cb20-6"></a><span class="va">JICOFO_DHKEYSIZE</span><span class="op">=</span>2048</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-6"><a href="#cb20-6"></a><span class="va">JICOFO_DHKEYSIZE</span><span class="op">=</span>2048</span>
+<span id="cb20-7"><a href="#cb20-7"></a><span class="va">JAVA_SYS_PROPS</span><span class="op">=</span><span class="st">""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-tip callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -968,7 +958,8 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <p><strong>Tip</strong></p>
 </div>
 <div class="callout-content">
-<p>jicofo-key.store is generated from prosody certificate, see earlier slide</p>
+<p>jicofo-key.store is generated from prosody certificate, see prosody slide.</p>
+<p>you can enable an XMPP-packet-debug-log in logging.properties</p>
 </div>
 </div>
 </div>
@@ -978,7 +969,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <ul>
 <li><code>/etc/jicofo/jicofo.conf</code>: (shortened)</li>
 </ul>
-<div class="sourceCode" id="cb21" data-code-line-numbers="|2|3|4|8|14|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb21-1"><a href="#cb21-1"></a>jicofo { bridge {</span>
+<div class="sourceCode" id="cb21" data-code-line-numbers="|2|3,6|4|8|14|"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb21-1"><a href="#cb21-1"></a>jicofo { bridge {</span>
 <span id="cb21-2"><a href="#cb21-2"></a>  brewery<span class="op">-</span>jid <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jts.fips.de"</span></span>
 <span id="cb21-3"><a href="#cb21-3"></a>  xmpp<span class="op">-</span>connection<span class="op">-</span>name <span class="op">=</span> Client } <span class="co">// enum</span></span>
 <span id="cb21-4"><a href="#cb21-4"></a>  sctp { enabled <span class="op">=</span> <span class="kw">false</span> } </span>
@@ -1001,11 +992,6 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>/etc/rc.conf.local</code>:</li>
 </ul>
 <div class="sourceCode" id="cb22" data-code-line-numbers="|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1"></a><span class="va">jicofo_flags</span><span class="op">=</span><span class="st">"--host=jts.fips.de"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><code>/etc/syslog.conf</code></li>
-</ul>
-<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb23-1"><a href="#cb23-1"></a>!jicofo</span>
-<span id="cb23-2"><a href="#cb23-2"></a>*.*     /var/log/jicofo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-important callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -1019,24 +1005,29 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </div>
 </div>
 </div>
+<ul>
+<li><code>/etc/syslog.conf</code></li>
+</ul>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb23-1"><a href="#cb23-1"></a>!jicofo</span>
+<span id="cb23-2"><a href="#cb23-2"></a>*.*     /var/log/jicofo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>rcctl enable jicofo ; rcctl start jicofo</code></p>
 </section>
-<section id="install-config-jvb" class="slide level2">
-<h2>Install / Config jvb</h2>
+<section id="install-config-jvb-jvb.in.sh" class="slide level2">
+<h2>Install / Config jvb <code>jvb.in.sh</code></h2>
 <ul>
 <li><code>pkg_add jitsi-videobrige</code></li>
-<li>adapt <code>/etc/jvb/jvb.in.sh</code> if need be</li>
 </ul>
-<div class="sourceCode" id="cb24" data-code-line-numbers="1|2|3-4|5-7|8-10|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1"></a><span class="va">JVB_CONF</span><span class="op">=</span>/etc/jvb/jvb.conf</span>
+<div class="sourceCode" id="cb24" data-code-line-numbers="1|2|3-4|5-8|9-11|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1"></a><span class="va">JVB_CONF</span><span class="op">=</span>/etc/jvb/jvb.conf</span>
 <span id="cb24-2"><a href="#cb24-2"></a><span class="va">JVB_LOG_CONFIG</span><span class="op">=</span>/usr/local/share/jvb/lib/logging.properties</span>
 <span id="cb24-3"><a href="#cb24-3"></a><span class="va">JVB_TRUSTSTORE</span><span class="op">=</span>/etc/ssl/jvb-key.store</span>
 <span id="cb24-4"><a href="#cb24-4"></a><span class="va">JVB_TRUSTSTORE_PASSWORD</span><span class="op">=</span>jitsicool</span>
 <span id="cb24-5"><a href="#cb24-5"></a><span class="va">JVB_MAXMEM</span><span class="op">=</span>3G</span>
 <span id="cb24-6"><a href="#cb24-6"></a><span class="va">JVB_DHKEYSIZE</span><span class="op">=</span>2048</span>
 <span id="cb24-7"><a href="#cb24-7"></a><span class="va">JVB_GC_TYPE</span><span class="op">=</span>G1GC</span>
-<span id="cb24-8"><a href="#cb24-8"></a><span class="co"># reads /etc/jvb/sip-communicator.properties</span></span>
-<span id="cb24-9"><a href="#cb24-9"></a><span class="va">JVB_SC_HOME_LOCATION</span><span class="op">=</span><span class="st">'/etc'</span></span>
-<span id="cb24-10"><a href="#cb24-10"></a><span class="va">JVB_SC_HOME_NAME</span><span class="op">=</span><span class="st">'jvb'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-8"><a href="#cb24-8"></a><span class="va">JAVA_SYS_PROPS</span><span class="op">=</span><span class="st">""</span></span>
+<span id="cb24-9"><a href="#cb24-9"></a><span class="co"># reads /etc/jvb/sip-communicator.properties</span></span>
+<span id="cb24-10"><a href="#cb24-10"></a><span class="va">JVB_SC_HOME_LOCATION</span><span class="op">=</span><span class="st">'/etc'</span></span>
+<span id="cb24-11"><a href="#cb24-11"></a><span class="va">JVB_SC_HOME_NAME</span><span class="op">=</span><span class="st">'jvb'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-tip callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -1074,8 +1065,8 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <span id="cb25-19"><a href="#cb25-19"></a>  }</span>
 <span id="cb25-20"><a href="#cb25-20"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="jitsi-jvb" class="slide level2">
-<h2>Jitsi / jvb</h2>
+<section id="jitsi-jvb-bonusslide" class="slide level2">
+<h2>Jitsi / jvb <span style="color:#cc0000">(Bonusslide)</span></h2>
 <p><code>/etc/jvb/sip-communicator.properties</code>:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="cb26-1"><a href="#cb26-1"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_LOCAL_ADDRESS</span><span class="op">=</span><span class="fl">100.64.4.3</span></span>
 <span id="cb26-2"><a href="#cb26-2"></a>org<span class="op">.</span><span class="fu">ice4j</span><span class="op">.</span><span class="fu">ice</span><span class="op">.</span><span class="fu">harvest</span><span class="op">.</span><span class="fu">NAT_HARVESTER_PUBLIC_ADDRESS</span><span class="op">=</span><span class="fl">87.253.170.146</span></span>
@@ -1102,8 +1093,15 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <h2>Pitfalls / Hints OpenBSD</h2>
 <ul>
 <li><code>rc.conf.local</code>: jicofo_flags: IP instead DNS/hosts</li>
-<li>startup ordering (web, xmpp, jicofo, jvb); avoid retries</li>
+<li>startup ordering:
+<ul>
+<li>web</li>
+<li>xmpp</li>
+<li>jicofo</li>
+<li>jvb</li>
+</ul></li>
 </ul>
+<p>avoid retries with long wait times (health interval)</p>
 </section>
 <section id="pitfalls-hints-jitsi" class="slide level2">
 <h2>Pitfalls / Hints Jitsi</h2>
@@ -1112,7 +1110,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li>DNS: one and only one (or mess up xmpp fallback)</li>
 <li>not disabling sctp (jvb AND jicofo)</li>
 <li>(hidden) version bumps (“no longer component!”)</li>
-<li>jicofo has an XMPP-packetlogger (see `logging.properties)</li>
+<li>jicofo has an XMPP-packetlogger (see <code>logging.properties</code>)</li>
 <li>Patience, be really patient (at initial start)</li>
 <li>always check the <code>,</code> in config.js (JSON after all..)</li>
 </ul>
@@ -1121,7 +1119,8 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <h2>Prayers for a Livedemo</h2>
 <h3 id="fips.de">fips.de</h3>
 <p><a href="https://jts.fips.de/EBC"><code>https://jts.fips.de/EBC</code></a></p>
-<p>Infrastructure kindly provided by Mischa Peters from <a href="https://openbsd.amsterdam">openbsd.amsterdam</a></p>
+<p>.</p>
+<p>Infrastructure kindly provided by Mischa Peters from <img data-src="img/oams.png"></p>
 </section>
 <section id="status-openbsd" class="slide level2">
 <h2>Status OpenBSD</h2>
@@ -1151,9 +1150,9 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <h3 id="scale-cloudification">scale / Cloudification</h3>
 <ul>
 <li><code>nginx</code>: easy scale out; protect nginx-&gt;xmpp (new CPU sink with TLS)</li>
-<li><code>jvb</code>: ok; use statistics and only on IP only per instance</li>
-<li><code>xmpp</code>: harder; what parameter to split on the frontend/nginx. how to tell jicofo(s)</li>
-<li><code>jicofo</code>: unsure; not the workload horse, also</li>
+<li><code>jvb</code>: ok; use statistics and one IP only per JVM instance</li>
+<li><code>xmpp</code>: harder; what parameter to split on the frontend/nginx. how to tell jicofo?</li>
+<li><code>jicofo</code>: unsure or not feasible; not the workload horse, also</li>
 </ul>
 </section>
 <section id="outlook-others" class="slide level2">
@@ -1161,12 +1160,12 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <h3 id="jibri-jigasi-websockets">Jibri / Jigasi / websockets</h3>
 <ul>
 <li><code>jibri</code>: maybe linux only (chrome-headless, fb/ffmpeg rip); otherwise like <code>jvb</code></li>
-<li><code>jigasi</code>: feel free / just no SIP</li>
+<li><code>jigasi</code>: feel free / just no POTS/SIP dialin?</li>
 <li><code>xmpp/jvb</code>: might move from BOSH to websockets eventually (who takes the perf hit)</li>
 </ul>
 <h3 id="help">help</h3>
 <ul>
-<li>community.jitsi.org: it’s a rough place</li>
+<li>community.jitsi.org: it’s a rough place of quick-install</li>
 </ul>
 </section>
 <section id="questions-k-thx-bye" class="slide level2">
@@ -1303,7 +1302,7 @@ Jicofo 2022-09-16 14:45:24.260 INFO: [35] [type=bridge brewery=jvbbrewery] BaseB
         slideNumber: 'c/t',
 
         // 'all', 'print', or 'speaker'
-        showSlideNumber: 'all',
+        showSlideNumber: 'speaker',
 
         // Add the current slide number to the URL hash so that reloading the
         // page/copying the URL will return you to the same slide
