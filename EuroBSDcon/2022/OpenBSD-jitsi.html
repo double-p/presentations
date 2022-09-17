@@ -432,12 +432,13 @@
 <section id="riddles-openbsd" class="slide level2">
 <h2>Riddles OpenBSD</h2>
 <ul>
-<li>java + rcctl</li>
-<li>need Linux-VMs? yes/no/alpine?</li>
+<li>need Linux-VMs? no/yes:Alpine/NixOS</li>
 <li>vm.conf examples / hoowl-toooo scarce</li>
 <li>inter VM networking (“the switch is dead”)</li>
 <li>inside/outside networking (VMM as router)</li>
-<li>scale out (why VMs)</li>
+<li>scale out (VMM machines, bare-metal, cloud)</li>
+<li>java + rcctl</li>
+<li>just <code>pkg_add</code>?</li>
 </ul>
 </section>
 <section id="components-openbsd" class="slide level2">
@@ -540,16 +541,17 @@ recording + streaming conferences
 </section>
 <section id="vm-installation" class="slide level2">
 <h2>VM installation</h2>
-<div class="sourceCode" id="cb1" data-code-line-numbers="|4,8-9"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">mkdir</span> /home/vmm<span class="kw">;</span> <span class="bu">cd</span> /home/vmm</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="ex">vmctl</span> create <span class="at">-s</span> 5G web.qcow2</span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">ftp</span> https://cdn.openbsd.org/pub/OpenBSD/7.1/amd64/install71.iso</span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="ex">vmctl</span> start <span class="at">-m</span> 2G <span class="at">-L</span> <span class="at">-i</span> 1 <span class="at">-r</span> install71.iso <span class="at">-d</span> /home/vmm/web.qcow2 web</span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="ex">vmctl</span> console web</span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">## run the (I)nstaller, default options. only one 'a' slice on (w)hole disk</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">## halt -p (so new sshd_keys per VM)</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="ex">vmctl</span> stop web</span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="cf">for</span> vm <span class="kw">in</span> xmpp jicofo jvb <span class="kw">;</span> <span class="cf">do</span> <span class="fu">cp</span> web.qcow2 <span class="va">$vm</span>.qcow2<span class="kw">;</span> <span class="cf">done</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="bu">echo</span> <span class="st">'net.inet.ip.forwarding=1'</span> <span class="op">&gt;&gt;</span> /etc/sysctl.conf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1" data-code-line-numbers="|5,9-10|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="ex">rcctl</span> enable vmd<span class="kw">;</span> <span class="ex">rcctl</span> start vmd</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">mkdir</span> /home/vmm<span class="kw">;</span> <span class="bu">cd</span> /home/vmm</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="ex">vmctl</span> create <span class="at">-s</span> 5G web.qcow2</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">ftp</span> https://cdn.openbsd.org/pub/OpenBSD/7.1/amd64/install71.iso</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="ex">vmctl</span> start <span class="at">-m</span> 2G <span class="at">-L</span> <span class="at">-i</span> 1 <span class="at">-r</span> install71.iso <span class="at">-d</span> /home/vmm/web.qcow2 web</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="ex">vmctl</span> console web</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">## run the (I)nstaller, default options. only one 'a' slice on (w)hole disk</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">## halt -p (so new sshd_keys per VM)</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="ex">vmctl</span> stop web</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="cf">for</span> vm <span class="kw">in</span> xmpp jicofo jvb <span class="kw">;</span> <span class="cf">do</span> <span class="fu">cp</span> web.qcow2 <span class="va">$vm</span>.qcow2<span class="kw">;</span> <span class="cf">done</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="bu">echo</span> <span class="st">'net.inet.ip.forwarding=1'</span> <span class="op">&gt;&gt;</span> /etc/sysctl.conf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="vmm-etcvm.conf" class="slide level2">
 <h2>VMM <code>/etc/vm.conf</code></h2>

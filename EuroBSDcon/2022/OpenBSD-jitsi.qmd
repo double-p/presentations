@@ -50,12 +50,13 @@ format:
 - who/where/what/wtf - towel launcher
 
 ## Riddles OpenBSD
-- java + rcctl
-- need Linux-VMs? yes/no/alpine?
+- need Linux-VMs? no/yes:Alpine/NixOS
 - vm.conf examples / hoowl-toooo scarce
 - inter VM networking ("the switch is dead")
 - inside/outside networking (VMM as router)
-- scale out (why VMs)
+- scale out (VMM machines, bare-metal, cloud)
+- java + rcctl
+- just `pkg_add`?
 
 ## Components OpenBSD
 vmm(4) - virtual machine monitor:
@@ -119,7 +120,8 @@ flowchart LR
 - DONE
 
 ## VM installation
-```{.bash code-line-numbers="|4,8-9"}
+```{.bash code-line-numbers="|5,9-10|"}
+rcctl enable vmd; rcctl start vmd
 mkdir /home/vmm; cd /home/vmm
 vmctl create -s 5G web.qcow2
 ftp https://cdn.openbsd.org/pub/OpenBSD/7.1/amd64/install71.iso
