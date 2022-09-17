@@ -556,9 +556,9 @@ Ports / Packages [(Bonusslide)]{style="color:#cc0000"}
 
 ## Outlook others
 ### Jibri / Jigasi / websockets
-- `jibri`: maybe linux only (chrome-headless, fb/ffmpeg rip); otherwise like `jvb`
-- `jigasi`: feel free / just no POTS/SIP dialin?
 - `xmpp/jvb`: might move from BOSH to websockets eventually (who takes the perf hit)
+- `jibri`: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like `jvb`
+- `jigasi`: feel free / just no POTS/SIP dialin?
 
 ### help
 - community.jitsi.org: it's a rough place of quick-install
