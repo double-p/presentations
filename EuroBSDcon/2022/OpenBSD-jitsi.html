@@ -1147,8 +1147,8 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>www/jitsi-meta</code>: planned, include above and coherent configuration (all on localhost)</li>
 </ul>
 </section>
-<section id="outlook-scale" class="slide level2">
-<h2>Outlook scale</h2>
+<section id="outlook" class="slide level2">
+<h2>Outlook</h2>
 <h3 id="scale-cloudification">scale / Cloudification</h3>
 <ul>
 <li><code>nginx</code>: easy scale out; protect nginx-&gt;xmpp (new CPU sink with TLS)</li>
@@ -1157,10 +1157,11 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>jicofo</code>: unsure or not feasible; not the workload horse, also</li>
 </ul>
 </section>
-<section id="outlook-others" class="slide level2">
-<h2>Outlook others</h2>
-<h3 id="jibri-jigasi-websockets">Jibri / Jigasi / websockets</h3>
+<section id="outlook-c." class="slide level2">
+<h2>Outlook (c.)</h2>
+<h3 id="jitsi">Jitsi</h3>
 <ul>
+<li><code>srtp</code>: faster crypto (.so inline)</li>
 <li><code>xmpp/jvb</code>: might move from BOSH to websockets eventually (who takes the perf hit)</li>
 <li><code>jibri</code>: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like <code>jvb</code></li>
 <li><code>jigasi</code>: feel free / just no POTS/SIP dialin?</li>

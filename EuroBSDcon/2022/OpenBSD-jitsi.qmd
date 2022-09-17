@@ -547,15 +547,16 @@ Ports / Packages [(Bonusslide)]{style="color:#cc0000"}
 - `net/jitsi/meet`: [current/7.2](https://marc.info/?l=openbsd-ports-cvs&m=166307863805249&w=2)
 - `www/jitsi-meta`: planned, include above and coherent configuration (all on localhost)
 
-## Outlook scale
+## Outlook
 ### scale / Cloudification
 - `nginx`: easy scale out; protect nginx->xmpp (new CPU sink with TLS)
 - `jvb`: ok; use statistics and one IP only per JVM instance
 - `xmpp`: harder; what parameter to split on the frontend/nginx. how to tell jicofo?
 - `jicofo`: unsure or not feasible; not the workload horse, also 
 
-## Outlook others
-### Jibri / Jigasi / websockets
+## Outlook (c.)
+### Jitsi
+- `srtp`: faster crypto (.so inline)
 - `xmpp/jvb`: might move from BOSH to websockets eventually (who takes the perf hit)
 - `jibri`: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like `jvb`
 - `jigasi`: feel free / just no POTS/SIP dialin?
