@@ -126,26 +126,112 @@ A `core` (basic video conferencing) setup comprised by:
 To host the Jitsi components in a VM each, this uses the following architecture (see Figure 1).
 \begin{figure*}
     \centering
-    \includegraphics[width=18cm]{img/arch-openbsd.png}
+    \includegraphics[width=16cm]{img/arch-openbsd.png}
     \caption{\textsf{OpenBSD VMM architecture}}
 \end{figure*}
 \section{Communications}
 Communications between the components and the logical `publication` + `subscription` in Jitsi
-is as follows (needed in `pf.conf` later on).
+is as follows (needed in `pf.conf` later on) (see Figure 2+3).
 \begin{figure*}
     \centering
-    \includegraphics[width=18cm]{img/arch-tcp.png}
+    \includegraphics[width=16cm]{img/arch-tcp.png}
     \caption{\textsf{OpenBSD VMM architecture}}
 \end{figure*}
 \begin{figure*}
     \centering
-    \includegraphics[width=18cm]{img/arch-pubsub.png}
+    \includegraphics[width=16cm]{img/arch-pubsub.png}
     \caption{\textsf{OpenBSD VMM architecture}}
 \end{figure*}
 
 \section{Installation}
+The installation is structered in the following steps:
+\begin{itemize}
+\item create VM images
+\item construct /etc/vm.conf
+\item add hosts / DNS
+\item `nginx`: install, config, certs
+\item `prosody`: pkg install, config, certs, users
+\item `jicofo`: pkg install, config
+\item `jvb`: pkg install, config
+\end{itemize}
+\subsection{VM setup}
+To create an VM image being used in the following setup:
+\begin{minted}{bash}
+rcctl enable vmd; rcctl start vmd
+mkdir /home/vmm; cd /home/vmm
+vmctl create -s 5G web.qcow2
+ftp https://cdn.openbsd.org/pub/OpenBSD
+/7.1/amd64/install71.iso
+vmctl start -m 2G -L -i 1 -r install71.iso\
+-d /home/vmm/web.qcow2 web
+vmctl console web
+## run the (I)nstaller, default options.
+## only one 'a' slice on (w)hole disk
+## halt -p (so new sshd_keys per VM)
+vmctl stop web
+for vm in xmpp jicofo jvb ; do 
+cp web.qcow2 \${vm}.qcow2; done
+echo 'net.inet.ip.forwarding=1' >> \\
+/etc/sysctl.conf
+\end{minted}
+The VM definitions in `/etc/vm.conf` as follows. The "instance" tells `vmctl`
+to use "web"'s configuration as a template and only adapt changes like "disk"
+or "memory" to it.
+\begin{minted}{bash}
+vm "web" {
+  enable
+  memory 2G
+  disk "/home/vmm/web.qcow2" format qcow2
+  local interface { up }
+}
+vm "web" instance "xmpp" {
+  disk "/home/vmm/xmpp.qcow2" format qcow2
+}
+vm "web" instance "jicofo" {
+  memory 4G
+  disk "/home/vmm/jicofo.qcow2" format qcow2
+}
+vm "web" instance "jvb" {
+  memory 4G
+  disk "/home/vmm/jvb.qcow2" format qcow2
+}
+\end{minted}
+\subsection{DNS + /etc/hosts}
+DNS: ONE A-RR for jts.fips.de; but local hosts for jicofo (or split DNS).
+
+The following `/etc/hosts` needs to be on each VM and on the VMM host.
+Use these names in `/etc/myname`, too.
+\begin{minted}{bash}
+100.64.1.3    web
+100.64.2.3    xmpp jts.fips.de
+100.64.3.3    jicofo
+100.64.4.3    jvb
+\end{minted}
 \section{Firewalling}
+On each VM the following `pf.conf` is for good (admin) measure:
+\begin{minted}{bash}
+block return log
+pass out quick on egress proto { tcp udp } to any port { 123 53 80 443 }
+pass in quick on egress proto tcp from \$admin to port 22
+\end{minted}
 \subsection{VMM}
+Assumption that all traffic hits the VMM external IP-address (on egress) here:
+\begin{minted}{bash}
+pass in on egress proto tcp to any 
+  port { 80 443 } rdr-to web
+pass in on egress proto udp to any 
+  port { 10000 } rdr-to jvb
+pass in proto tcp from { jvb jicofo } 
+  to xmpp port 5222 # native
+pass in proto tcp from web to xmpp 
+  port 5280 # http/BOSH
+pass in on egress proto tcp to any 
+  port 5280 rdr-to xmpp # debug
+# DNS
+vms={ web xmpp jicofo jvb }
+pass in proto { udp tcp } from \$vms 
+  to any port domain rdr-to \$resolver
+\end{minted}
 \subsection{web/nginx}
 \subsection{prosody}
 \subsection{jicofo}
