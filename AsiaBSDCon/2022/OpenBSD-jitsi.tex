@@ -73,14 +73,61 @@ This documentation is to show a distributed install on OpenBSD using pre-package
 need-to-function (minimum) firewall settings (`pf.conf`).
 
 \section{Riddles}
+Both major players show obstacles that have to be overcome to gain a functioning installation.
 \subsection{Jitsi}
-\subsection{OpenBSD}
+A "full blown" Jitsi installation can consist over over a dozen components and all the
+necessary networking/firewalling configuration can be exhaustive. Any possible discovery
+magic is not documented.
 
+Some configuration snippets are undocumented and tend to make the understanding poorer
+not better. Worst example are necessary DNS settings and `nginx.conf.`
+
+The typical answer to be found on asking question is to use the official `all-in-one`
+Debian VM.
+
+\subsection{OpenBSD}
+This also leds to the question if it's possible to run a (core) Jitsi installation on
+OpenBSD only or if there's need be for Linux (VM).
+
+Also it's a bit difficult to find example-based documentation on VMM, e.g. for using
+VMM as the core router, too. (Combination `vm.conf`+`pf.conf`s).
+
+Can we scale the installation horizontally and how to use Java based applications
+with `rcctl`.
 \section{Components}
 \subsection{OpenBSD}
+In this example setup I make heavy use of `VMM` eco system on OpenBSD which consists of:
+\begin{itemize}
+\item `vmm(4) - virtual machine monitor:`
+    kernel driver isolating/providing the required resources for the VMs (“hypervisor”) 
+\item `vmd(8):`
+	userland daemon to interact with `vmm`
+\item `vmctl(8)`:
+	administrative tool to create, start/stop, .. VMs 
+\item `vm.conf(5)`:
+	persist VMs resource configuration
+\end{itemize}
 \subsection{Jitsi}
+A `core` (basic video conferencing) setup comprised by:
+\begin{itemize}
+\item `nginx(8)` web:
+	serving web assets and reverse proxy BOSH or websockets
+\item `prosody(8)` xmpp:
+	conference chat + internal components communication (esp. “PubSub” for health/discovery)
+\item `jicofo` JItsi COnference FOcus:
+	room+session handling in conferences (who’s talking to whom and where)
+\item `jvb` videobridge:
+	mediastream (WebRTC) handlings between participants (SFU)
+\item `jibri` JItsi BRoadcasting Infrastructure (optional):
+	recording + streaming conferences
+\end{itemize}
+
 \section{Architecture}
+XXX: insert image img/arch-openbsd.png
 \section{Communications}
+XXX: insert image img/arch-tcp.png
+XXX: insert image img/arch-pubsub.png
+
 \section{Installation}
 \section{Firewalling}
 \subsection{VMM}
