@@ -99,11 +99,11 @@ with `rcctl`.
 In this example setup I make heavy use of `VMM` eco system on OpenBSD which consists of:
 \begin{itemize}
 \item `vmm(4) - virtual machine monitor:`
-    kernel driver isolating/providing the required resources for the VMs (“hypervisor”) 
+    kernel driver isolating/providing the required resources for the VMs (“hypervisor”)
 \item `vmd(8):`
 	userland daemon to interact with `vmm`
 \item `vmctl(8)`:
-	administrative tool to create, start/stop, .. VMs 
+	administrative tool to create, start/stop, .. VMs
 \item `vm.conf(5)`:
 	persist VMs resource configuration
 \end{itemize}
@@ -123,10 +123,25 @@ A `core` (basic video conferencing) setup comprised by:
 \end{itemize}
 
 \section{Architecture}
-XXX: insert image img/arch-openbsd.png
+To host the Jitsi components in a VM each, this uses the following architecture (see Figure 1).
+\begin{figure*}
+    \centering
+    \includegraphics[width=18cm]{img/arch-openbsd.png}
+    \caption{\textsf{OpenBSD VMM architecture}}
+\end{figure*}
 \section{Communications}
-XXX: insert image img/arch-tcp.png
-XXX: insert image img/arch-pubsub.png
+Communications between the components and the logical `publication` + `subscription` in Jitsi
+is as follows (needed in `pf.conf` later on).
+\begin{figure*}
+    \centering
+    \includegraphics[width=18cm]{img/arch-tcp.png}
+    \caption{\textsf{OpenBSD VMM architecture}}
+\end{figure*}
+\begin{figure*}
+    \centering
+    \includegraphics[width=18cm]{img/arch-pubsub.png}
+    \caption{\textsf{OpenBSD VMM architecture}}
+\end{figure*}
 
 \section{Installation}
 \section{Firewalling}
