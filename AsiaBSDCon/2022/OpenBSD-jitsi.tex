@@ -1,0 +1,128 @@
+\renewcommand{\encodingdefault}{OT1}
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{minted}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Jitsi on OpenBSD\\
+{\Large Puffy presents video conferencing}
+}
+
+\author{\IEEEauthorblockN{Philipp Buehler}
+\IEEEauthorblockA{
+\textit{sysfive.com GmbH}\\
+Hamburg, Germany \\
+pb-openbsd@sysfive.com}
+
+}
+
+\maketitle
+
+\begin{abstract}
+This paper will cover all bits and bolts to fully understand the components
+at play, their intercommunications and how this knowledge can be used to create
+a Jitsi-on-OpenBSD setup that features a restricted (compartmentalized) setup using
+dedicated machines or -as shown- VMM based VMs, where each VM runs only one of the
+components.
+
+It'll be documented what's necessary to create a sensible pf.conf on each VM and how to
+add reverse proxy (relayd, haproxy) for distribution of workload.
+
+Also covering pitfalls/hints along underlying components and what to lookout for on 
+the client/browser side for interopability.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Jitsi, OpenBSD, VMM
+\end{IEEEkeywords}
+
+% XXX
+%\section{Examples}
+%Just some template code
+%\begin{minted}{c}
+%int main(){
+% printf("hello");
+%}
+%\end{minted}
+%\subsection{Units}
+%\begin{itemize}
+%\item Use either SI (MKS) or CGS as primary units. (SI units are encouraged.) English units may be used as secondary units (in parentheses). An exception would be the use of English units as identifiers in trade, such as ``3.5-inch disk drive''.
+%\item Use a zero before decimal points: ``0.25'', not ``.25''. Use ``cm\textsuperscript{3}'', not ``cc''.)
+%\end{itemize}
+% XXX
+
+\section{Introduction}
+Jitsi and OpenBSD are both not covered much as a documented setup. Installation documents
+for Jitsi are almost always about Linux OS (and there mostly Debian) and do not cover
+some internals. The reference documentation on the other hand can be very overwhelming.
+
+There is some FreeBSD ``all in one'' port (package) with no explanation and it cannot be
+used to install core components (only) on different nodes.
+
+This documentation is to show a distributed install on OpenBSD using pre-packages and
+need-to-function (minimum) firewall settings (`pf.conf`).
+
+\section{Riddles}
+\subsection{Jitsi}
+\subsection{OpenBSD}
+
+\section{Components}
+\subsection{OpenBSD}
+\subsection{Jitsi}
+\section{Architecture}
+\section{Communications}
+\section{Installation}
+\section{Firewalling}
+\subsection{VMM}
+\subsection{web/nginx}
+\subsection{prosody}
+\subsection{jicofo}
+\subsection{videobridge}
+\section{Prosody}
+\subsection{Users}
+\subsection{TLS}
+\section{nginx}
+\subsection{web}
+\subsection{misc}
+\section{webclient}
+\section{jicofo}
+\subsection{Parameters}
+\subsection{JVM}
+\section{videobridge}
+\subsection{Parameters}
+\subsection{JVM}
+\section{Pitfalls}
+\subsection{OpenBSD}
+\subsection{Jitsi}
+\section{Status}
+\section{Outlook}
+\section{Acknowledgments}
+
+
+
+
+
+
+
+\section{Availability}
+This paper, presentation slides and other directly related resources can be found on github:
+\url{https://github.com/double-p/presentations/AsiaBSDCon/2022/}
+
+
+\begin{thebibliography}{00}
+\bibitem{b1} OpenBSD project \url{https://www.openbsd.org/}
+\bibitem{b2} Jitsi \url{https://github.com/jitsi/}
+
+\end{thebibliography}
+
+\end{document}
