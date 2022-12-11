@@ -211,8 +211,10 @@ Use these names in `/etc/myname`, too.
 On each VM the following `pf.conf` is for good (admin) measure:
 \begin{minted}{bash}
 block return log
-pass out quick on egress proto { tcp udp } to any port { 123 53 80 443 }
-pass in quick on egress proto tcp from \$admin to port 22
+pass out quick on egress proto { tcp udp }
+  to any port { 123 53 80 443 }
+pass in quick on egress proto tcp 
+  from \$admin to port 22
 \end{minted}
 \subsection{VMM}
 Assumption that all traffic hits the VMM external IP-address (on egress) here:
@@ -233,10 +235,82 @@ pass in proto { udp tcp } from \$vms
   to any port domain rdr-to \$resolver
 \end{minted}
 \subsection{web/nginx}
+The webserver needs the basic ports and for the proxy connection to BOSH an outgoing to 5280/tcp.
+\begin{minted}{bash}
+pass in quick on egress proto tcp
+  to self port { 80 443 }
+pass out quick on egress proto tcp
+  to xmpp port 5280
+\end{minted}
 \subsection{prosody}
+The XMPP "native" only used from jicofo and jvb. The BOSH as above and if need be
+the dedicated auth via 5347/tcp (not covered here).
+\begin{minted}{bash}
+pass in proto tcp from { jicofo jvb }
+  to self port { 5222 }
+pass in proto tcp from web
+  to self port 5280
+pass in proto tcp from { \$admin }
+  to self port { 5280 5347} # debug
+\end{minted}
 \subsection{jicofo}
+Jicofo talks to prosody as above. The webclient connects to jicofo via 10000/udp. There
+is an administrative connection possible to 8080/tcp to establish e.g. monitoring with prometheus.
+for scale out the 10000/udp can be changed and would make use of a port range e.g. 
+‘10000:10050’ vertically or explicit rdr-to in VMM for horizontally.
+
+\begin{minted}{bash}
+pass out quick on egress proto 
+  tcp to xmpp port { 5222 5280 }
+pass in quick on egress proto 
+  udp to self port 10000
+pass in quick on egress proto 
+  tcp from \$monitor to self port 8080
+\end{minted}
 \subsection{videobridge}
+The videobridge only needs to reach out to prosody. The monitoring exporter on 8888/tcp
+seems to be broken (no values) as of this writing.
+\begin{minted}{bash}
+pass out quick on egress proto
+  tcp to xmpp port 5222
+pass in quick on egress proto
+  tcp from \$monitor to self port 8888
+\end{minted}
+
 \section{Prosody}
+To install prosody some simple steps are enough:
+\begin{minted}{bash}
+pkg_add unzip-- prosody
+prosodyctl install \
+ --server=https://modules.prosody.im/rocks/ \
+ mod_client_proxy
+prosodyctl install \
+ --server=https://modules.prosody.im/rocks/ \
+mod_roster_command
+\end{minted}
+The modules do not need further configuration in `prosody.cfg.lua`.
+`client\_proxy` gets loaded with "Component" configuration. `roster\_command` is CLI only.
+The configuration key bits in `/etc/prosody/prosody.cfg.lua` are:
+\begin{minted}{bash}
+http_interfaces = { "*", "::" }
+VirtualHost "jts.fips.de"
+    authentication = "anonymous";
+
+    modules_enabled = { "bosh";
+      "pubsub"; }
+    c2s_require_encryption = false
+
+VirtualHost "auth.jts.fips.de"
+    admins = { "focus@auth.jts.fips.de",
+     "jvb@auth.jts.fips.de" }
+
+    ssl = { key =
+     "/var/prosody/auth.jts.fips.de.key";
+        certificate =
+    "/var/prosody/auth.jts.fips.de.crt"; }
+
+    authentication = "internal_hashed"
+\end{minted}
 \subsection{Users}
 \subsection{TLS}
 \section{nginx}
