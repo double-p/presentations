@@ -430,6 +430,8 @@ The use of TURN servers depend on NAT environment(s), most often it is needed (e
 \section{jicofo}
 The installation is one package and the configuration is split into two files plus
 adaptions of the infra/systems configuration.
+\subsection{JVM / startup}
+
 \begin{minted}{bash}
 pkg_add jicofo
 cat << EOF > /etc/jicofo/jicofo.in.sh
@@ -448,6 +450,7 @@ EOF
 jicofo-key.store is generated from prosody certificate, see prosody in section `VIII/B`.
 One can enable an XMPP-packet-debug-log in logging.properties if need be.
 
+\subsection{Parameters}
 
 The main configuration for jicofo is `/etc/jicofo/jicofo.conf`:
 \begin{minted}{bash}
@@ -486,11 +489,75 @@ rcctl enable jicofo
 rcctl start jicofo
 \end{minted}
 
-\subsection{JVM / startup}
-\subsection{Parameters}
 \section{videobridge}
-\subsection{JVM}
+The installation is one package and the configuration is split into two files plus
+adaptions of the infra/systems configuration.
+\subsection{JVM / startup}
+
+\begin{minted}{bash}
+pkg_add jitsi-videobridge
+cat << EOF > /etc/jicofo/jvb.in.sh
+JVB_CONF=/etc/jvb/jvb.conf
+JVB_LOG_CONFIG=\
+ /usr/local/share/jvb/lib/logging.properties
+JVB_TRUSTSTORE=/etc/ssl/jvb-key.store
+JVB_TRUSTSTORE_PASSWORD=jitsicool
+JVB_MAXMEM=3G
+JVB_DHKEYSIZE=2048
+JVB_GC_TYPE=G1GC
+JAVA_SYS_PROPS=""
+
+#/etc/jvb/sip-communicator.properties
+JVB_SC_HOME_LOCATION='/etc'
+JVB_SC_HOME_NAME='jvb'
+EOF
+\end{minted}
+jvb-key.store is generated from prosody certificate as for jicofo. Can be same file 
+as /etc/jicofo/jicofo-key.store if both are on one VM.
 \subsection{Parameters}
+The main configuration file is `/etc/jvb/jvb.conf` as referenced above.
+\begin{minted}{bash}
+videobridge { apis {
+  xmpp-client {
+   configs {
+    ourprosody {
+     hostname = "xmpp"
+     domain = 
+      "auth.jts.fips.de" // realm
+     username = "jvb"
+     password = "CHANGE_jvb"
+     muc_jids = 
+      "JvbBrewery@internal.auth.jts.fips.de"
+     muc_nickname = "jvb-foo"
+     disable_certificate_verification =
+      true 
+    } } } }
+  sctp { enabled = false } // n/a on OpenBSD
+  ice { tcp {
+    enabled = false
+    port = 443
+   } udp {
+    port = 10000
+   }
+  }
+}
+\end{minted}
+The `JvbBrewery` part is a fixed string and cannot be replaced!
+
+A third party library needs its own configuration file in `/etc/jvb/sip-communicator.properties`
+as referenced in `jvb.in.sh`. The following must be written in three lines and are just
+split up due to format reasons.
+\begin{minted}{bash}
+org.ice4j.ice.harvest.\
+ NAT_HARVESTER_LOCAL_ADDRESS=100.64.4.3
+org.ice4j.ice.harvest.\
+ NAT_HARVESTER_PUBLIC_ADDRESS=87.253.170.146
+org.ice4j.ice.harvest.\
+ DISABLE_AWS_HARVESTER=true
+\end{minted}
+The LOCAL is the VMs internal address, the PUBLIC must be the one "presented" to the
+outside world (e.g. nat-to on egress).
+
 \section{Pitfalls}
 \subsection{OpenBSD}
 \subsection{Jitsi}
