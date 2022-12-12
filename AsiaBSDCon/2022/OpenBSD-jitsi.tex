@@ -72,6 +72,9 @@ used to install core components (only) on different nodes.
 This documentation is to show a distributed install on OpenBSD using pre-packages and
 need-to-function (minimum) firewall settings (`pf.conf`).
 
+The described configurations will enable a fully integrated video conferencing
+to be available at `https://jts.fips.de` - adapt the setting accordingly for your domain.
+
 \section{Riddles}
 Both major players show obstacles that have to be overcome to gain a functioning installation.
 \subsection{Jitsi}
@@ -310,9 +313,58 @@ VirtualHost "auth.jts.fips.de"
     "/var/prosody/auth.jts.fips.de.crt"; }
 
     authentication = "internal_hashed"
+    
+Component "conference.jts.fips.de" "muc"
+Component "jvb.jts.fips.de"
+    component_secret = "CHANGE_jvb"
+Component "focus.jts.fips.de" "client_proxy"
+    target_address = 
+      "focus@auth.jts.fips.de"
+Component "internal.auth.jts.fips.de" "muc"
+    muc_room_locking = false
+    muc_room_default_public_jids = true
 \end{minted}
+The additional `FQDN` are internally only and
+do NOT need any DNS configuration (like an
+HTTP `Host` header).
+
+It's possible that `jvb` follows the example of
+`focus` to change authentication from shared secret
+to a user (`target\_address`).
 \subsection{Users}
+The connection for `jvb` uses a shared secret as shown on the previous page.
+For further users in use here:
+\begin{minted}{bash}
+rcctl enable prosody
+rcctl start prosody
+prosodyctl register focus \
+  auth.jts.fips.de CHANGE_FOCUS
+prosodyctl mod_roster_command \ 
+  subscribe focus.jts.fips.de \
+  focus@auth.jts.fips.de
+\end{minted}
 \subsection{TLS}
+Besides WebRTC demanding to use `https` between browser and server side, we shall
+encrypt all internal traffic, too. For the prosody connections:
+\begin{minted}{bash}
+prosodyctl cert generate \
+  auth.jts.fips.de
+# fill in `openssl req` dialog
+
+cd /var/prosody
+yes | /usr/local/jdk-11/bin/keytool
+  -import -alias prosody -file \
+  auth.jts.fips.de.crt -keystore \
+  jicofo-key.store -storepass jitsicool
+  
+cp jicofo-key.store jvb-key.store 
+# copy to VM jicofo and jvb accordingly
+\end{minted}
+`keytool` comes with JDK, this task can also be done on jicofo or jvb VM - or copy
+over the resulting store-files to jicofo/jvb VM respectivly.
+Do NOT change JDK's `lib/security/cacerts` - any later upgrade from jdk-11
+would "forget" the changed keystore.
+
 \section{nginx}
 \subsection{web}
 \subsection{misc}
