@@ -366,15 +366,131 @@ Do NOT change JDK's `lib/security/cacerts` - any later upgrade from jdk-11
 would "forget" the changed keystore.
 
 \section{nginx}
+To install nginx and the jitsi web elements (javascript, images, ..) only two packages
+are needed:
+\begin{minted}{bash}
+pkg_add nginx
+pkg_add jitsi-meet
+\end{minted}
+Any TLS setup is mandatory or Chrome/Firefox/.. will refuse to let you
+use the camera and microphone.
+Using Let's Encrypt with `acme-client` for the TLS setup is easily possible and included
+in `./testing-config/nginx.conf` (see "Availability" section).
+
 \subsection{web}
-\subsection{misc}
-\section{webclient}
+The configuration for nginx is pretty straight forward:
+\begin{minted}{bash}
+server_name  jts.fips.de;
+root         /var/www/jitsi-meet;
+ssi on;
+ssi_types application/x-javascript
+  application/javascript;
+  
+location ~ ^/(libs|css|static|images|
+  fonts|lang|sounds|
+  connection_optimization)/(.*)\$ {
+  add_header 
+    'Access-Control-Allow-Origin' '*';
+  alias /var/www/jitsi-meet/$1/$2; }
+location /external_api.js { alias 
+  /var/www/jitsi-meet/libs/external_api.min.js; }
+location = /http-bind {   # BOSH
+  proxy_pass      http://xmpp:5280/http-bind;
+  proxy_set_header X-Forwarded-For 
+    \$remote_addr;
+  proxy_set_header Host \$http_host; }
+location ~ ^/([a-zA-Z0-9=\?]+)$ {
+  rewrite ^/(.*)$ / break; }
+\end{minted}
+If using Let's Encrypt, put the `.well-known` location first after `ssi` configuration.
+\subsection{jitsi-web}
+The configuration for the webclient goes to `/var/www/jitsi-meet/config.js`:
+\begin{minted}{bash}
+var config = {
+  hosts: {
+    domain: 'jts.fips.de',
+    muc: 'conference.jts.fips.de'
+  },
+  bosh: '//jts.fips.de/http-bind',
+  useTurnUdp: false, 
+  	enableWelcomePage: true,
+  prejoinConfig: {
+    enabled: true,
+    hideExtraJoinButtons: 
+      ['no-audio', 'by-phone'] },
+  p2p: {
+    stunServers: [
+    { urls: 
+     'stun:meet-jit-si-turnrelay.jitsi.net:443'
+    } ] }
+}
+\end{minted}
+The use of TURN servers depend on NAT environment(s), most often it is needed (esp. p2p).
+
 \section{jicofo}
+The installation is one package and the configuration is split into two files plus
+adaptions of the infra/systems configuration.
+\begin{minted}{bash}
+pkg_add jicofo
+cat << EOF > /etc/jicofo/jicofo.in.sh
+JICOFO_CONF=/etc/jicofo/jicofo.conf
+JICOFO_LOG_CONFIG=\
+ /usr/local/share/\
+ jicofo/lib/logging.properties
+JICOFO_TRUSTSTORE=\
+ /etc/ssl/jicofo-key.store
+JICOFO_TRUSTSTORE_PASSWORD=jitsicool
+JICOFO_MAXMEM=3G
+JICOFO_DHKEYSIZE=2048
+JAVA_SYS_PROPS=""
+EOF
+\end{minted}
+jicofo-key.store is generated from prosody certificate, see prosody in section `VIII/B`.
+One can enable an XMPP-packet-debug-log in logging.properties if need be.
+
+
+The main configuration for jicofo is `/etc/jicofo/jicofo.conf`:
+\begin{minted}{bash}
+jicofo { bridge {
+  brewery-jid = 
+    "JvbBrewery@internal.auth.jts.fips.de"
+  xmpp-connection-name = Client }
+  sctp { enabled = false }
+  xmpp {
+    client {
+      port = 5222
+      domain = "auth.jts.fips.de"
+      username = "focus"
+      password = "CHANGE_FOCUS"
+      use-tls = true
+    }
+    // trusted service domains. 
+    //  Logged in -> advance to bridges
+    trusted-domains = 
+      [ "auth.jts.fips.de" ]
+  }
+}
+\end{minted}
+For proper startup and reachability it's needed to add ``jicofo\_flags="--host=jts.fips.de"''
+to `/etc/rc.conf.local`. This needs to be present in `/etc/hosts` or in (split) DNS and the
+resolved IP address must point to the VM's local address! Since this is used as a matching
+string for "virtual host" one cannot use an IP address here!
+
+For proper logging add this to syslog configuration and then jicofo can be started
+\begin{minted}{bash}
+cat <<EOF >> /etc/syslog.conf
+!jicofo
+*.*     /var/log/jicofo
+EOF
+rcctl enable jicofo
+rcctl start jicofo
+\end{minted}
+
+\subsection{JVM / startup}
 \subsection{Parameters}
-\subsection{JVM}
 \section{videobridge}
-\subsection{Parameters}
 \subsection{JVM}
+\subsection{Parameters}
 \section{Pitfalls}
 \subsection{OpenBSD}
 \subsection{Jitsi}
