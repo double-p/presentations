@@ -558,17 +558,57 @@ org.ice4j.ice.harvest.\
 The LOCAL is the VMs internal address, the PUBLIC must be the one "presented" to the
 outside world (e.g. nat-to on egress).
 
-\section{Pitfalls}
+JVB does not need any `rc.conf` settings, but add this for logging and startup:
+\begin{minted}{bash}
+cat <<EOF >> /etc/syslog.conf
+!jvb
+*.*     /var/log/jvb
+EOF
+rcctl enable jvb
+rcctl start jvb
+\end{minted}
+
+\section{Pitfalls / Hints}
+There are some typical pitfalls that should be avoided eventually.
 \subsection{OpenBSD}
+\begin{itemize}
+\item `rc.conf`: using IP address instead of hostname/FQDN
+\item startup ordering: nginx, prosody, jicofo, jvb -- or wait times increase (pubsub)
+\end{itemize}
 \subsection{Jitsi}
+Jitsi can have some more subtle ones and some are just advisable.
+\begin{itemize}
+\item xmpp: host vs. virtualhost vs. domain
+\item DNS: one and only one (or mess up xmpp fallback)
+\item not disabling sctp (jvb AND jicofo)
+\item (hidden) version bumps ("no longer component!")
+\item jicofo has an XMPP-packetlogger (see `logging.properties`)
+\item patience, be really patient (at initial start)
+\item always check the `,` in config.js (JSON after all..)
+\end{itemize}
 \section{Status}
+It works! Most of the packages have landed in 7.2 already:
+\begin{itemize}
+\item `net/jitsi/meet`
+\item `net/jitsi/jicofo`
+\item `net/jitsi/videobridge`
+\item `net/jitsi/srtp`
+\item `net/jitsi/prosody-plugins`
+\end{itemize}
+A `meta` package to bundle all of the above is still in development/review.
+
 \section{Outlook}
+The jitsi component `jibri` for recording and/or streaming conferences can only run
+on Linux for now. Main work would be needed to realize that in an Alpine or NixOS VM or
+going the long way to get "chromedriver" running on OpenBSD.
+
+Another component might be `jigasi` for SIP/POTS, but unsure about demand and feasability.
+
 \section{Acknowledgments}
+I want to make a shoutout to `Jitsi` and `OpenBSD` of course. A sincere "THANK YOU" to
+Aisha Tammy spending lots of effort on making the packages and get them upstream.
 
-
-
-
-
+My employer to be thanked as well allowing so many hours working on this project.
 
 
 \section{Availability}
@@ -579,7 +619,34 @@ This paper, presentation slides and other directly related resources can be foun
 \begin{thebibliography}{00}
 \bibitem{b1} OpenBSD project \url{https://www.openbsd.org/}
 \bibitem{b2} Jitsi \url{https://github.com/jitsi/}
-
+\bibitem{b3} sysfive.com GmbH \url{https://www.sysfive.com/}
 \end{thebibliography}
 
+\section{Logfiles}
+Some typical logfiles pointing to "known" errors:
+\begin{minted}{bash}
+# wrong/missing keystore [in prosody logfile]:
+Sep 16 14:35:58 c2s60a86b47480  info    
+  Client connected
+Sep 16 14:35:58 c2s60a86b47480  info    
+  Client disconnected: sslv3 alert certificate unknown
+
+# wrong password [in prosody logfile]:
+Sep 16 14:36:20 c2s60b1aced0c0  info    
+  Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
+Sep 16 14:36:21 c2s60b1aced0c0  info    
+  Client disconnected: connection closed
+
+# all good [in prosody logfile]:
+Sep 16 14:37:00 c2s60a5b549900  info    
+  Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
+Sep 16 14:37:01 c2s60a5b549900  info    
+  Authenticated as focus@auth.jts.fips.de
+
+# on cannot use a jvb before this log [in jicofo logging]:
+Jicofo 2022-09-16 14:45:24.260 INFO: [35] 
+ [type=bridge brewery=jvbbrewery] 
+ BaseBrewery.addInstance#341: Added brewery 
+ instance: jvbbrewery@internal.auth.jts.fips.de/jvb
+\end{minted}
 \end{document}
