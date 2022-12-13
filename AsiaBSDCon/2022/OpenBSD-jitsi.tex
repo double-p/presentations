@@ -1,5 +1,5 @@
 \renewcommand{\encodingdefault}{OT1}
-\documentclass[conference]{IEEEtran}
+\documentclass[10pt,conference]{IEEEtran}
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
@@ -36,31 +36,16 @@ a Jitsi-on-OpenBSD setup that features a restricted (compartmentalized) setup us
 dedicated machines or -as shown- VMM based VMs, where each VM runs only one of the
 components.
 
-It'll be documented what's necessary to create a sensible pf.conf on each VM and how to
-add reverse proxy (relayd, haproxy) for distribution of workload.
+It'll be documented what's necessary to create a sensible pf.conf on the host, on each VM
+and how to add system and application specific startup parameters and configuration of
+each component.
 
-Also covering pitfalls/hints along underlying components and what to lookout for on 
-the client/browser side for interopability.
+
 \end{abstract}
 
 \begin{IEEEkeywords}
 Jitsi, OpenBSD, VMM
 \end{IEEEkeywords}
-
-% XXX
-%\section{Examples}
-%Just some template code
-%\begin{minted}{c}
-%int main(){
-% printf("hello");
-%}
-%\end{minted}
-%\subsection{Units}
-%\begin{itemize}
-%\item Use either SI (MKS) or CGS as primary units. (SI units are encouraged.) English units may be used as secondary units (in parentheses). An exception would be the use of English units as identifiers in trade, such as ``3.5-inch disk drive''.
-%\item Use a zero before decimal points: ``0.25'', not ``.25''. Use ``cm\textsuperscript{3}'', not ``cc''.)
-%\end{itemize}
-% XXX
 
 \section{Introduction}
 Jitsi and OpenBSD are both not covered much as a documented setup. Installation documents
@@ -68,63 +53,67 @@ for Jitsi are almost always about Linux OS (and there mostly Debian) and do not 
 some internals. The reference documentation on the other hand can be very overwhelming.
 
 There is some FreeBSD ``all in one'' port (package) with no explanation and it cannot be
-used to install core components (only) on different nodes.
+used to install only core components on different nodes.
 
-This documentation is to show a distributed install on OpenBSD using pre-packages and
-need-to-function (minimum) firewall settings (`pf.conf`).
+This documentation is to show a distributed install on OpenBSD nodes using newly developed
+native packages and need-to-function (minimum) firewall settings (`pf.conf`).
 
 The described configurations will enable a fully integrated video conferencing
-to be available at `https://jts.fips.de` - adapt the setting accordingly for your domain.
+to be available at `https://jts.fips.de` - adapt the shown settings accordingly for your domain.
 
 \section{Riddles}
 Both major players show obstacles that have to be overcome to gain a functioning installation.
+
 \subsection{Jitsi}
-A "full blown" Jitsi installation can consist over over a dozen components and all the
+A "full blown" Jitsi installation can consist of over over a dozen components and the
 necessary networking/firewalling configuration can be exhaustive. Any possible discovery
-magic is not documented.
+magic is not there but the documentation and examples could lead to suspect that.
 
 Some configuration snippets are undocumented and tend to make the understanding poorer
-not better. Worst example are necessary DNS settings and `nginx.conf.`
+not better. Worst example are necessary DNS settings, startup variable names and `nginx.conf`.
 
-The typical answer to be found on asking question is to use the official `all-in-one`
-Debian VM.
+The typical answer to be found when asking questions is to use the official `all-in-one`
+Debian VM or now `docker``.
 
 \subsection{OpenBSD}
 This also leds to the question if it's possible to run a (core) Jitsi installation on
-OpenBSD only or if there's need be for Linux (VM).
+OpenBSD only or if there's (technical) need be for Linux.
 
 Also it's a bit difficult to find example-based documentation on VMM, e.g. for using
-VMM as the core router, too. (Combination `vm.conf`+`pf.conf`s).
+VMM to provide the VMs and act as the core router, too (`vm.conf`). The networking needed
+has to be adapted in `pf.conf`.
 
 Can we scale the installation horizontally and how to use Java based applications
-with `rcctl`.
+with `rcctl`?
+
 \section{Components}
 \subsection{OpenBSD}
 In this example setup I make heavy use of `VMM` eco system on OpenBSD which consists of:
-\begin{itemize}
-\item `vmm(4) - virtual machine monitor:`
-    kernel driver isolating/providing the required resources for the VMs (“hypervisor”)
-\item `vmd(8):`
+\begin{description}
+\item[vmm(4) - virtual machine monitor] \hfill \\
+	kernel driver isolating/providing the required resources for the VMs (`hypervisor`)
+\item[vmd(8)] \hfill \\
 	userland daemon to interact with `vmm`
-\item `vmctl(8)`:
+\item[vmctl(8)]  \hfill \\
 	administrative tool to create, start/stop, .. VMs
-\item `vm.conf(5)`:
+\item[vm.conf(5)]  \hfill \\
 	persist VMs resource configuration
-\end{itemize}
+\end{description}
+
 \subsection{Jitsi}
-A `core` (basic video conferencing) setup comprised by:
-\begin{itemize}
-\item `nginx(8)` web:
+A core (basic video conferencing) setup comprised by:
+\begin{description}
+\item[nginx(8) web] \hfill \\
 	serving web assets and reverse proxy BOSH or websockets
-\item `prosody(8)` xmpp:
+\item[prosody(8) xmpp] \hfill \\
 	conference chat + internal components communication (esp. “PubSub” for health/discovery)
-\item `jicofo` JItsi COnference FOcus:
+\item[jicofo - JItsi COnference FOcus] \hfill \\
 	room+session handling in conferences (who’s talking to whom and where)
-\item `jvb` videobridge:
+\item[jvb - Jitsi videobridge] \hfill \\
 	mediastream (WebRTC) handlings between participants (SFU)
-\item `jibri` JItsi BRoadcasting Infrastructure (optional):
+\item[jibri - JItsi BRoadcasting Infrastructure (optional)] \hfill \\
 	recording + streaming conferences
-\end{itemize}
+\end{description}
 
 \section{Architecture}
 To host the Jitsi components in a VM each, this uses the following architecture (see Figure 1).
@@ -134,7 +123,7 @@ To host the Jitsi components in a VM each, this uses the following architecture 
     \caption{\textsf{OpenBSD VMM architecture}}
 \end{figure*}
 \section{Communications}
-Communications between the components and the logical `publication` + `subscription` in Jitsi
+Communication between the components and the logical `publication` + `subscription` in Jitsi
 is as follows (needed in `pf.conf` later on) (see Figure 2+3).
 \begin{figure*}
     \centering
@@ -158,29 +147,35 @@ The installation is structered in the following steps:
 \item `jicofo`: pkg install, config
 \item `jvb`: pkg install, config
 \end{itemize}
+
 \subsection{VM setup}
 To create an VM image being used in the following setup:
 \begin{minted}{bash}
-rcctl enable vmd; rcctl start vmd
+rcctl enable vmd
+rcctl start vmd
 mkdir /home/vmm; cd /home/vmm
 vmctl create -s 5G web.qcow2
-ftp https://cdn.openbsd.org/pub/OpenBSD
+ftp https://cdn.openbsd.org/pub/OpenBSD\
 /7.1/amd64/install71.iso
 vmctl start -m 2G -L -i 1 -r install71.iso\
 -d /home/vmm/web.qcow2 web
 vmctl console web
+
 ## run the (I)nstaller, default options.
 ## only one 'a' slice on (w)hole disk
 ## halt -p (so new sshd_keys per VM)
+
 vmctl stop web
-for vm in xmpp jicofo jvb ; do 
+for vm in xmpp jicofo jvb ; do
 cp web.qcow2 ${vm}.qcow2; done
 echo 'net.inet.ip.forwarding=1' >> \\
 /etc/sysctl.conf
 \end{minted}
-The VM definitions in `/etc/vm.conf` as follows. The "instance" tells `vmctl`
+
+The VM definitions in `/etc/vm.conf` are as follows. The "instance" keyword tells `vmctl`
 to use "web"'s configuration as a template and only adapt changes like "disk"
 or "memory" to it.
+
 \begin{minted}{bash}
 vm "web" {
   enable
@@ -200,55 +195,66 @@ vm "web" instance "jvb" {
   disk "/home/vmm/jvb.qcow2" format qcow2
 }
 \end{minted}
+
 \subsection{DNS + /etc/hosts}
-DNS: ONE A-RR for jts.fips.de; but local hosts for jicofo (or split DNS).
+DNS is only ONE A-RR for "jts.fips.de"; but local `/etc/hosts` for jicofo (or split DNS).
 
 The following `/etc/hosts` needs to be on each VM and on the VMM host.
 Use these names in `/etc/myname`, too.
+
 \begin{minted}{bash}
 100.64.1.3    web
 100.64.2.3    xmpp jts.fips.de
 100.64.3.3    jicofo
 100.64.4.3    jvb
 \end{minted}
+
 \section{Firewalling}
 On each VM the following `pf.conf` is for good (admin) measure:
+
 \begin{minted}{bash}
 block return log
 pass out quick on egress proto { tcp udp }
   to any port { 123 53 80 443 }
-pass in quick on egress proto tcp 
+pass in quick on egress proto tcp
   from $admin to port 22
 \end{minted}
+
 \subsection{VMM}
-Assumption that all traffic hits the VMM external IP-address (on egress) here:
+Assumption is that all traffic comes via the VMM external IP-address (on egress) here:
+
 \begin{minted}{bash}
-pass in on egress proto tcp to any 
+pass in on egress proto tcp to any
   port { 80 443 } rdr-to web
-pass in on egress proto udp to any 
+pass in on egress proto udp to any
   port { 10000 } rdr-to jvb
-pass in proto tcp from { jvb jicofo } 
+pass in proto tcp from { jvb jicofo }
   to xmpp port 5222 # native
-pass in proto tcp from web to xmpp 
+pass in proto tcp from web to xmpp
   port 5280 # http/BOSH
-pass in on egress proto tcp to any 
+pass in on egress proto tcp to any
   port 5280 rdr-to xmpp # debug
 # DNS
 vms={ web xmpp jicofo jvb }
-pass in proto { udp tcp } from $vms 
+pass in proto { udp tcp } from $vms
   to any port domain rdr-to $resolver
 \end{minted}
+
 \subsection{web/nginx}
-The webserver needs the basic ports and for the proxy connection to BOSH an outgoing to 5280/tcp.
+The webserver needs the basic ports and for the proxy connection to BOSH an outgoing
+to 5280/tcp.
+
 \begin{minted}{bash}
 pass in quick on egress proto tcp
   to self port { 80 443 }
 pass out quick on egress proto tcp
   to xmpp port 5280
 \end{minted}
+
 \subsection{prosody}
-The XMPP "native" only used from jicofo and jvb. The BOSH as above and if need be
+The XMPP "native" only used from jicofo and jvb. The BOSH like as above and if need be
 the dedicated auth via 5347/tcp (not covered here).
+
 \begin{minted}{bash}
 pass in proto tcp from { jicofo jvb }
   to self port { 5222 }
@@ -257,20 +263,23 @@ pass in proto tcp from web
 pass in proto tcp from { $admin }
   to self port { 5280 5347} # debug
 \end{minted}
+
 \subsection{jicofo}
 Jicofo talks to prosody as above. The webclient connects to jicofo via 10000/udp. There
-is an administrative connection possible to 8080/tcp to establish e.g. monitoring with prometheus.
-for scale out the 10000/udp can be changed and would make use of a port range e.g. 
-‘10000:10050’ vertically or explicit rdr-to in VMM for horizontally.
+is an administrative connection possible to 8080/tcp to establish e.g. monitoring with
+prometheus.
+To scale out the 10000/udp can be changed and would make use of a port range e.g. 
+"10000:10050" vertically or explicit "rdr-to"s in VMM for horizontally.
 
 \begin{minted}{bash}
-pass out quick on egress proto 
+pass out quick on egress proto
   tcp to xmpp port { 5222 5280 }
-pass in quick on egress proto 
+pass in quick on egress proto
   udp to self port 10000
-pass in quick on egress proto 
+pass in quick on egress proto
   tcp from $monitor to self port 8080
 \end{minted}
+
 \subsection{videobridge}
 The videobridge only needs to reach out to prosody. The monitoring exporter on 8888/tcp
 seems to be broken (no values) as of this writing.
@@ -282,17 +291,22 @@ pass in quick on egress proto
 \end{minted}
 
 \section{Prosody}
-To install prosody some simple steps are enough:
+To install prosody some simple steps are enough.
+
 \begin{minted}{bash}
 pkg_add unzip--
 pkg_add prosody
 pkg_add jitsi-prosody-plugins
 \end{minted}
+
 The `jitsi-prosody-plugins` does contain two needed plugins and some more for use
 cases not mentioned in this document. Need be is `mod_client_proxy` and `mod_roster_command`.
 The modules do not need further configuration in `prosody.cfg.lua`.
-`client_proxy` gets loaded from the "Component" configuration. `roster_command` is CLI only.
+`client_proxy` gets loaded from the "Component" configuration.
+For CLI use only is `roster_command`.
+
 The configuration key bits in `/etc/prosody/prosody.cfg.lua` are:
+
 \begin{minted}{bash}
 http_interfaces = { "*", "::" }
 VirtualHost "jts.fips.de"
@@ -312,68 +326,77 @@ VirtualHost "auth.jts.fips.de"
     "/var/prosody/auth.jts.fips.de.crt"; }
 
     authentication = "internal_hashed"
-    
+
 Component "conference.jts.fips.de" "muc"
 Component "jvb.jts.fips.de"
     component_secret = "CHANGE_jvb"
 Component "focus.jts.fips.de" "client_proxy"
-    target_address = 
+    target_address =
       "focus@auth.jts.fips.de"
 Component "internal.auth.jts.fips.de" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
 \end{minted}
-The additional `FQDN` are internally only and
-do NOT need any DNS configuration (like an
+
+The additional `FQDN` are prosody internal only and
+do NOT need any DNS configuration (works like an
 HTTP `Host` header).
 
 It's possible that `jvb` follows the example of
 `focus` to change authentication from shared secret
 to a user (`target_address`).
+
 \subsection{Users}
-The connection for `jvb` uses a shared secret as shown on the previous page.
-For further users in use here:
+The connection for `jvb` uses a shared secret as shown in the previous configuration.
+The further users in use here:
+
 \begin{minted}{bash}
 rcctl enable prosody
 rcctl start prosody
 prosodyctl register focus \
   auth.jts.fips.de CHANGE_FOCUS
-prosodyctl mod_roster_command \ 
+prosodyctl mod_roster_command \
   subscribe focus.jts.fips.de \
   focus@auth.jts.fips.de
 \end{minted}
+
 \subsection{TLS}
-Besides WebRTC demanding to use `https` between browser and server side, we shall
+Besides WebRTC demanding the use of `https` between browser and server side, we shall
 encrypt all internal traffic, too. For the prosody connections:
+
 \begin{minted}{bash}
 prosodyctl cert generate \
   auth.jts.fips.de
-# fill in `openssl req` dialog
+# fill in the shown `openssl req` dialog
 
 cd /var/prosody
 yes | /usr/local/jdk-11/bin/keytool
   -import -alias prosody -file \
   auth.jts.fips.de.crt -keystore \
   jicofo-key.store -storepass jitsicool
-  
-cp jicofo-key.store jvb-key.store 
+
+cp jicofo-key.store jvb-key.store
 # copy to VM jicofo and jvb accordingly
 \end{minted}
-`keytool` comes with JDK, this task can also be done on jicofo or jvb VM - or copy
-over the resulting store-files to jicofo/jvb VM respectivly.
-Do NOT change JDK's `lib/security/cacerts` - any later upgrade from jdk-11
-would "forget" the changed keystore.
+
+`keytool` comes with the JDK package and this task can also be done on jicofo or jvb VM
+- or copy over the resulting store-files to the jicofo/jvb VM respectivly.
+
+Do NOT change JDK's `lib/security/cacerts` - any later upgrade of JDK
+would overwrite the changed keystore and result in a loss of comms.
 
 \section{nginx}
 To install nginx and the jitsi web elements (javascript, images, ..) only two packages
 are needed:
+
 \begin{minted}{bash}
 pkg_add nginx
 pkg_add jitsi-meet
 \end{minted}
-Any TLS setup is mandatory or Chrome/Firefox/.. will refuse to let you
+
+A TLS setup is mandatory for brwoser/jvb or it will refuse to let you
 use the camera and microphone.
-Using Let's Encrypt with `acme-client` for the TLS setup is easily possible and included
+Using Let's Encrypt with `acme-client(1)` for the TLS setup is easily possible and included
 in `./testing-config/nginx.conf` (see "Availability" section).
 
 \subsection{web}
@@ -381,27 +404,33 @@ The configuration for nginx is pretty straight forward:
 \begin{minted}{bash}
 server_name  jts.fips.de;
 root         /var/www/jitsi-meet;
+
 ssi on;
 ssi_types application/x-javascript
   application/javascript;
-  
+
 location ~ ^/(libs|css|static|images|
   fonts|lang|sounds|
   connection_optimization)/(.*)$ {
-  add_header 
+  add_header
     'Access-Control-Allow-Origin' '*';
   alias /var/www/jitsi-meet/$1/$2; }
-location /external_api.js { alias 
+
+location /external_api.js { alias
   /var/www/jitsi-meet/libs/external_api.min.js; }
+
 location = /http-bind {   # BOSH
   proxy_pass      http://xmpp:5280/http-bind;
-  proxy_set_header X-Forwarded-For 
+  proxy_set_header X-Forwarded-For
     $remote_addr;
   proxy_set_header Host $http_host; }
+
 location ~ ^/([a-zA-Z0-9=\?]+)$ {
   rewrite ^/(.*)$ / break; }
 \end{minted}
-If using Let's Encrypt, put the `.well-known` location first after `ssi` configuration.
+
+If using Let's Encrypt, put the `.well-known` location first after `ssi` configuration block.
+
 \subsection{jitsi-web}
 The configuration for the webclient goes to `/var/www/jitsi-meet/config.js`:
 \begin{minted}{bash}
@@ -411,15 +440,15 @@ var config = {
     muc: 'conference.jts.fips.de'
   },
   bosh: '//jts.fips.de/http-bind',
-  useTurnUdp: false, 
+  useTurnUdp: false,
   	enableWelcomePage: true,
   prejoinConfig: {
     enabled: true,
-    hideExtraJoinButtons: 
+    hideExtraJoinButtons:
       ['no-audio', 'by-phone'] },
   p2p: {
     stunServers: [
-    { urls: 
+    { urls:
      'stun:meet-jit-si-turnrelay.jitsi.net:443'
     } ] }
 }
@@ -429,6 +458,7 @@ The use of TURN servers depend on NAT environment(s), most often it is needed (e
 \section{jicofo}
 The installation is one package and the configuration is split into two files plus
 adaptions of the infra/systems configuration.
+
 \subsection{JVM / startup}
 
 \begin{minted}{bash}
@@ -446,15 +476,16 @@ JICOFO_DHKEYSIZE=2048
 JAVA_SYS_PROPS=""
 EOF
 \end{minted}
+
 jicofo-key.store is generated from prosody certificate, see prosody in section `VIII/B`.
 One can enable an XMPP-packet-debug-log in logging.properties if need be.
 
 \subsection{Parameters}
-
 The main configuration for jicofo is `/etc/jicofo/jicofo.conf`:
+
 \begin{minted}{bash}
 jicofo { bridge {
-  brewery-jid = 
+  brewery-jid =
     "JvbBrewery@internal.auth.jts.fips.de"
   xmpp-connection-name = Client }
   sctp { enabled = false }
@@ -466,13 +497,14 @@ jicofo { bridge {
       password = "CHANGE_FOCUS"
       use-tls = true
     }
-    // trusted service domains. 
+    // trusted service domains.
     //  Logged in -> advance to bridges
-    trusted-domains = 
+    trusted-domains =
       [ "auth.jts.fips.de" ]
   }
 }
 \end{minted}
+
 For proper startup and reachability it's needed to add ``jicofo_flags="--host=jts.fips.de"''
 to `/etc/rc.conf.local`. This needs to be present in `/etc/hosts` or in (split) DNS and the
 resolved IP address must point to the VM's local address! Since this is used as a matching
@@ -517,7 +549,7 @@ JVB_SC_HOME_LOCATION='/etc'
 JVB_SC_HOME_NAME='jvb'
 EOF
 \end{minted}
-jvb-key.store is generated from prosody certificate as for jicofo. Can be same file 
+jvb-key.store is generated from prosody certificate as for jicofo. Can be same file
 as /etc/jicofo/jicofo-key.store if both are on one VM.
 \subsection{Parameters}
 The main configuration file is `/etc/jvb/jvb.conf` as referenced above.
@@ -527,15 +559,15 @@ videobridge { apis {
    configs {
     ourprosody {
      hostname = "xmpp"
-     domain = 
+     domain =
       "auth.jts.fips.de" // realm
      username = "jvb"
      password = "CHANGE_jvb"
-     muc_jids = 
+     muc_jids =
       "JvbBrewery@internal.auth.jts.fips.de"
      muc_nickname = "jvb-foo"
      disable_certificate_verification =
-      true 
+      true
     } } } }
   sctp { enabled = false } // n/a on OpenBSD
   ice { tcp {
@@ -575,11 +607,13 @@ rcctl start jvb
 
 \section{Pitfalls / Hints}
 There are some typical pitfalls that should be avoided eventually.
+
 \subsection{OpenBSD}
 \begin{itemize}
 \item `rc.conf`: using IP address instead of hostname/FQDN
 \item startup ordering: nginx, prosody, jicofo, jvb -- or wait times increase (pubsub)
 \end{itemize}
+
 \subsection{Jitsi}
 Jitsi can have some more subtle ones and some are just advisable.
 \begin{itemize}
@@ -591,6 +625,7 @@ Jitsi can have some more subtle ones and some are just advisable.
 \item patience, be really patient (at initial start)
 \item always check the `,` in config.js (JSON after all..)
 \end{itemize}
+
 \section{Status}
 It works! Most of the packages have landed in 7.2 already:
 \begin{itemize}
@@ -600,6 +635,7 @@ It works! Most of the packages have landed in 7.2 already:
 \item `net/jitsi/srtp`
 \item `net/jitsi/prosody-plugins`
 \end{itemize}
+
 A `meta` package to bundle all of the above is still in development/review.
 
 \section{Outlook}
@@ -631,31 +667,31 @@ This paper, presentation slides and other directly related resources can be foun
 Some typical logfiles pointing to "known" errors:
 \begin{minted}{bash}
 # wrong/missing keystore [in prosody logfile]:
-Sep 16 14:35:58 c2s60a86b47480  info    
+Sep 16 14:35:58 c2s60a86b47480  info
   Client connected
-Sep 16 14:35:58 c2s60a86b47480  info    
+Sep 16 14:35:58 c2s60a86b47480  info
   Client disconnected: sslv3 alert certificate unknown
 
 # wrong password [in prosody logfile]:
-Sep 16 14:36:20 c2s60b1aced0c0  info    
+Sep 16 14:36:20 c2s60b1aced0c0  info
   Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
-Sep 16 14:36:21 c2s60b1aced0c0  info    
+Sep 16 14:36:21 c2s60b1aced0c0  info
   Client disconnected: connection closed
 
 # all good [in prosody logfile]:
-Sep 16 14:37:00 c2s60a5b549900  info    
+Sep 16 14:37:00 c2s60a5b549900  info
   Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
-Sep 16 14:37:01 c2s60a5b549900  info    
+Sep 16 14:37:01 c2s60a5b549900  info
   Authenticated as focus@auth.jts.fips.de
 
 # on cannot use a jvb before this log [in jicofo logging]:
-Jicofo 2022-09-16 14:45:24.260 INFO: [35] 
- [type=bridge brewery=jvbbrewery] 
- BaseBrewery.addInstance#341: Added brewery 
+Jicofo 2022-09-16 14:45:24.260 INFO: [35]
+ [type=bridge brewery=jvbbrewery]
+ BaseBrewery.addInstance#341: Added brewery
  instance: jvbbrewery@internal.auth.jts.fips.de/jvb
- 
+
 # JVB loading SRTP lib (only active connections)
-INFO: [71] JitsiOpenSslProvider.<clinit>#52: 
+INFO: [71] JitsiOpenSslProvider.<clinit>#52:
  jitsisrtp successfully loaded for OpenSSL 1.1
 \end{minted}
 \end{document}
