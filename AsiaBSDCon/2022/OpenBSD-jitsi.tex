@@ -8,6 +8,7 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{underscore}
 \usepackage{hyperref}
 \usepackage{minted}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -173,7 +174,7 @@ vmctl console web
 ## halt -p (so new sshd_keys per VM)
 vmctl stop web
 for vm in xmpp jicofo jvb ; do 
-cp web.qcow2 \${vm}.qcow2; done
+cp web.qcow2 ${vm}.qcow2; done
 echo 'net.inet.ip.forwarding=1' >> \\
 /etc/sysctl.conf
 \end{minted}
@@ -217,7 +218,7 @@ block return log
 pass out quick on egress proto { tcp udp }
   to any port { 123 53 80 443 }
 pass in quick on egress proto tcp 
-  from \$admin to port 22
+  from $admin to port 22
 \end{minted}
 \subsection{VMM}
 Assumption that all traffic hits the VMM external IP-address (on egress) here:
@@ -234,8 +235,8 @@ pass in on egress proto tcp to any
   port 5280 rdr-to xmpp # debug
 # DNS
 vms={ web xmpp jicofo jvb }
-pass in proto { udp tcp } from \$vms 
-  to any port domain rdr-to \$resolver
+pass in proto { udp tcp } from $vms 
+  to any port domain rdr-to $resolver
 \end{minted}
 \subsection{web/nginx}
 The webserver needs the basic ports and for the proxy connection to BOSH an outgoing to 5280/tcp.
@@ -253,7 +254,7 @@ pass in proto tcp from { jicofo jvb }
   to self port { 5222 }
 pass in proto tcp from web
   to self port 5280
-pass in proto tcp from { \$admin }
+pass in proto tcp from { $admin }
   to self port { 5280 5347} # debug
 \end{minted}
 \subsection{jicofo}
@@ -268,7 +269,7 @@ pass out quick on egress proto
 pass in quick on egress proto 
   udp to self port 10000
 pass in quick on egress proto 
-  tcp from \$monitor to self port 8080
+  tcp from $monitor to self port 8080
 \end{minted}
 \subsection{videobridge}
 The videobridge only needs to reach out to prosody. The monitoring exporter on 8888/tcp
@@ -277,22 +278,20 @@ seems to be broken (no values) as of this writing.
 pass out quick on egress proto
   tcp to xmpp port 5222
 pass in quick on egress proto
-  tcp from \$monitor to self port 8888
+  tcp from $monitor to self port 8888
 \end{minted}
 
 \section{Prosody}
 To install prosody some simple steps are enough:
 \begin{minted}{bash}
-pkg_add unzip-- prosody
-prosodyctl install \
- --server=https://modules.prosody.im/rocks/ \
- mod_client_proxy
-prosodyctl install \
- --server=https://modules.prosody.im/rocks/ \
-mod_roster_command
+pkg_add unzip--
+pkg_add prosody
+pkg_add jitsi-prosody-plugins
 \end{minted}
+The `jitsi-prosody-plugins` does contain two needed plugins and some more for use
+cases not mentioned in this document. Need be is `mod_client_proxy` and `mod_roster_command`.
 The modules do not need further configuration in `prosody.cfg.lua`.
-`client\_proxy` gets loaded with "Component" configuration. `roster\_command` is CLI only.
+`client_proxy` gets loaded from the "Component" configuration. `roster_command` is CLI only.
 The configuration key bits in `/etc/prosody/prosody.cfg.lua` are:
 \begin{minted}{bash}
 http_interfaces = { "*", "::" }
@@ -330,7 +329,7 @@ HTTP `Host` header).
 
 It's possible that `jvb` follows the example of
 `focus` to change authentication from shared secret
-to a user (`target\_address`).
+to a user (`target_address`).
 \subsection{Users}
 The connection for `jvb` uses a shared secret as shown on the previous page.
 For further users in use here:
@@ -388,7 +387,7 @@ ssi_types application/x-javascript
   
 location ~ ^/(libs|css|static|images|
   fonts|lang|sounds|
-  connection_optimization)/(.*)\$ {
+  connection_optimization)/(.*)$ {
   add_header 
     'Access-Control-Allow-Origin' '*';
   alias /var/www/jitsi-meet/$1/$2; }
@@ -397,8 +396,8 @@ location /external_api.js { alias
 location = /http-bind {   # BOSH
   proxy_pass      http://xmpp:5280/http-bind;
   proxy_set_header X-Forwarded-For 
-    \$remote_addr;
-  proxy_set_header Host \$http_host; }
+    $remote_addr;
+  proxy_set_header Host $http_host; }
 location ~ ^/([a-zA-Z0-9=\?]+)$ {
   rewrite ^/(.*)$ / break; }
 \end{minted}
@@ -474,7 +473,7 @@ jicofo { bridge {
   }
 }
 \end{minted}
-For proper startup and reachability it's needed to add ``jicofo\_flags="--host=jts.fips.de"''
+For proper startup and reachability it's needed to add ``jicofo_flags="--host=jts.fips.de"''
 to `/etc/rc.conf.local`. This needs to be present in `/etc/hosts` or in (split) DNS and the
 resolved IP address must point to the VM's local address! Since this is used as a matching
 string for "virtual host" one cannot use an IP address here!
@@ -492,10 +491,16 @@ rcctl start jicofo
 \section{videobridge}
 The installation is one package and the configuration is split into two files plus
 adaptions of the infra/systems configuration.
+
+Installing `jitsi-srtp` is optional, but the speedup in encryption of WebRTC is substantial.
+There's no additional configuration needed, if present JVB will load the native library just by
+standard means (`ld.so(1)`).
+
 \subsection{JVM / startup}
 
 \begin{minted}{bash}
 pkg_add jitsi-videobridge
+pkg_add jitsi-srtp
 cat << EOF > /etc/jicofo/jvb.in.sh
 JVB_CONF=/etc/jvb/jvb.conf
 JVB_LOG_CONFIG=\
@@ -648,5 +653,9 @@ Jicofo 2022-09-16 14:45:24.260 INFO: [35]
  [type=bridge brewery=jvbbrewery] 
  BaseBrewery.addInstance#341: Added brewery 
  instance: jvbbrewery@internal.auth.jts.fips.de/jvb
+ 
+# JVB loading SRTP lib (only active connections)
+INFO: [71] JitsiOpenSslProvider.<clinit>#52: 
+ jitsisrtp successfully loaded for OpenSSL 1.1
 \end{minted}
 \end{document}
