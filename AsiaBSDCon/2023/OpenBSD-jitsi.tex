@@ -36,11 +36,15 @@ a Jitsi-on-OpenBSD setup that features a restricted (compartmentalized) setup us
 dedicated machines or -as shown- VMM based VMs, where each VM runs only one of the
 components.
 
+\bigskip
 It'll be documented what's necessary to create a sensible pf.conf on the host, on each VM
 and how to add system and application specific startup parameters and configuration of
 each component.
 
+\bigskip
+This paper refers to OpenBSD 7.3 - there is a bonus stage now, too.
 
+\bigskip
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -291,19 +295,19 @@ pass in quick on egress proto
 \end{minted}
 
 \section{Prosody}
-To install prosody some simple steps are enough.
+To install prosody two simple steps are enough.
 
 \begin{minted}{bash}
 pkg_add unzip--
-pkg_add prosody
 pkg_add jitsi-prosody-plugins
 \end{minted}
 
 The `jitsi-prosody-plugins` does contain two needed plugins and some more for use
 cases not mentioned in this document. Need be is `mod_client_proxy` and `mod_roster_command`.
+
 The modules do not need further configuration in `prosody.cfg.lua`.
 `client_proxy` gets loaded from the "Component" configuration.
-For CLI use only is `roster_command`.
+The `roster_command` is for CLI use only.
 
 The configuration key bits in `/etc/prosody/prosody.cfg.lua` are:
 
@@ -345,6 +349,10 @@ HTTP `Host` header).
 It's possible that `jvb` follows the example of
 `focus` to change authentication from shared secret
 to a user (`target_address`).
+
+An example for the above configuration will be installed
+in `/usr/local/share/examples/prosody/` if the `meta/jitsi`
+package is being installed.
 
 \subsection{Users}
 The connection for `jvb` uses a shared secret as shown in the previous configuration.
@@ -431,6 +439,9 @@ location ~ ^/([a-zA-Z0-9=\?]+)$ {
 
 If using Let's Encrypt, put the `.well-known` location first after `ssi` configuration block.
 
+A configuration snippet to be used in `/etc/nginx/conf.d` can be found in
+`/usr/local/share/doc/pkg-readmes` if the `meta/jitsi` package is being installed
+
 \subsection{jitsi-web}
 The configuration for the webclient goes to `/var/www/jitsi-meet/config.js`:
 \begin{minted}{bash}
@@ -455,6 +466,8 @@ var config = {
 \end{minted}
 The use of TURN servers depend on NAT environment(s), most often it is needed (esp. p2p).
 
+A `config.js.sample` and `interfaces_config.js.sample` is being installed by the package.
+
 \section{jicofo}
 The installation is one package and the configuration is split into two files plus
 adaptions of the infra/systems configuration.
@@ -463,7 +476,8 @@ adaptions of the infra/systems configuration.
 
 \begin{minted}{bash}
 pkg_add jicofo
-cat << EOF > /etc/jicofo/jicofo.in.sh
+
+/etc/jicofo/jicofo.in.sh:
 JICOFO_CONF=/etc/jicofo/jicofo.conf
 JICOFO_LOG_CONFIG=\
  /usr/local/share/\
@@ -474,7 +488,6 @@ JICOFO_TRUSTSTORE_PASSWORD=jitsicool
 JICOFO_MAXMEM=3G
 JICOFO_DHKEYSIZE=2048
 JAVA_SYS_PROPS=""
-EOF
 \end{minted}
 
 jicofo-key.store is generated from prosody certificate, see prosody in section `VIII/B`.
@@ -512,7 +525,7 @@ string for "virtual host" one cannot use an IP address here!
 
 For proper logging add this to syslog configuration and then jicofo can be started
 \begin{minted}{bash}
-cat <<EOF >> /etc/syslog.conf
+/etc/syslog.conf:
 !jicofo
 *.*     /var/log/jicofo
 EOF
@@ -533,7 +546,8 @@ standard means (`ld.so(1)`).
 \begin{minted}{bash}
 pkg_add jitsi-videobridge
 pkg_add jitsi-srtp
-cat << EOF > /etc/jicofo/jvb.in.sh
+
+/etc/jicofo/jvb.in.sh:
 JVB_CONF=/etc/jvb/jvb.conf
 JVB_LOG_CONFIG=\
  /usr/local/share/jvb/lib/logging.properties
@@ -544,10 +558,9 @@ JVB_DHKEYSIZE=2048
 JVB_GC_TYPE=G1GC
 JAVA_SYS_PROPS=""
 
-#/etc/jvb/sip-communicator.properties
+/etc/jvb/sip-communicator.properties:
 JVB_SC_HOME_LOCATION='/etc'
 JVB_SC_HOME_NAME='jvb'
-EOF
 \end{minted}
 jvb-key.store is generated from prosody certificate as for jicofo. Can be same file
 as /etc/jicofo/jicofo-key.store if both are on one VM.
@@ -627,16 +640,22 @@ Jitsi can have some more subtle ones and some are just advisable.
 \end{itemize}
 
 \section{Status}
-It works! Most of the packages have landed in 7.2 already:
+It works! Some of the packages have landed in 7.2 already:
 \begin{itemize}
 \item `net/jitsi/meet`
 \item `net/jitsi/jicofo`
 \item `net/jitsi/videobridge`
-\item `net/jitsi/srtp`
-\item `net/jitsi/prosody-plugins`
 \end{itemize}
 
-A `meta` package to bundle all of the above is still in development/review.
+Beginning with 7.3 there are also:
+\begin{itemize}
+\item `net/jitsi/srtp`
+\item `net/jitsi/prosody-plugins`
+\item `meta/jitsi`
+\end{itemize}
+
+A backport of these three is not difficult (see my talk at EuroBSDCon 2022
+for hints) - but 7.3 is already/soon out there!
 
 \section{Outlook}
 The jitsi component `jibri` for recording and/or streaming conferences can only run
@@ -654,7 +673,7 @@ My employer to be thanked as well allowing so many hours working on this project
 
 \section{Availability}
 This paper, presentation slides and other directly related resources can be found on github:
-\url{https://github.com/double-p/presentations/AsiaBSDCon/2022/}
+\url{https://github.com/double-p/presentations/AsiaBSDCon/2023/}
 
 
 \begin{thebibliography}{00}
