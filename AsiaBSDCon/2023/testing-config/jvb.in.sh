@@ -1,0 +1,9 @@
+JVB_CONF=/etc/jvb/jvb.conf
+JVB_LOG_CONFIG=/usr/local/share/jvb/lib/logging.properties
+JVB_TRUSTSTORE=/etc/ssl/jvb-key.store
+JVB_TRUSTSTORE_PASSWORD=jitsicool
+JVB_MAXMEM=3G
+JVB_DHKEYSIZE=2048
+JVB_GC_TYPE=G1GC
+JVB_SC_HOME_LOCATION='/etc'
+JVB_SC_HOME_NAME='jvb'

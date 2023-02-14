@@ -1,0 +1,53 @@
+ C4Deployment
+
+    title Puffy presents video conferencing / Jitsi on OpenBSD
+
+   Deployment_Node(comp, "Client (2-n)", "Browser, mobile App"){
+            Container(browser, "Web/JS Application", "", " javascript + webrtc ")
+    }
+
+    Rel(browser, meet, "Request", "HTTPS")
+    UpdateRelStyle(browser, meet, "blue", "blue", "-50", "-30")
+    Rel(browser, jitsi-vibri, "stream", "10000/udp")
+    UpdateRelStyle(browser, jitsi-vibri, "blue", "blue", "-220", $offsetY="-100")
+
+    Deployment_Node(obsd, "Hypervisor VMM (1-n)", "OpenBSD"){
+        Deployment_Node(webvm, "web (1-n)", "OpenBSD"){
+            Deployment_Node(nginx, "Webserver", "NGiNX"){
+                Container(meet, "jitsi-meet", "", "____________config.js, web-assets, rev-proxy _________")
+            }
+        }
+        Deployment_Node(xmppvm, "xmpp (1)", "OpenBSD"){
+            Deployment_Node(prosody, "Chat / Comms", "prosody"){
+                Container(xmpp, "Prosody", "", "__________ internal communication + chat ____________")
+            }
+        }
+        Deployment_Node(vibrivm, "vibri (1-n)", "OpenBSD"){
+            Deployment_Node(vibri, "Videobridge", "ver.2"){
+                Container(jitsi-vibri, "WebRTC", "", "___________ streams over UDP (or TCP) _____________")
+            }
+        }
+
+        Deployment_Node(jicofovm, "jicofo (1)", "OpenBSD"){
+            Deployment_Node(jitsicofo, "Conference", "focus"){
+                Container(jicofo, "Focus Server", "", "____________ 'presence' management  _______________")
+            }
+        }  
+    }
+
+    Rel(meet, xmpp, "BOSH / Chat", "5280/tcp")
+    UpdateRelStyle(meet, xmpp, "blue", "blue", "-20", "20")
+    Rel(jitsi-vibri, xmpp, "presence", "5222/tcp")
+    UpdateRelStyle(jitsi-vibri, xmpp, "blue", "blue", "-120", "-30")
+    Rel(jicofo, xmpp, "presence", "5222/tcp")
+    UpdateRelStyle(jicofo, xmpp, "blue", "blue", "20", "-30")
+
+
+    UpdateElementStyle(obsd, $borderColor="green")
+    UpdateElementStyle(webvm, $borderColor="red")
+    UpdateElementStyle(xmppvm, $borderColor="red")
+    UpdateElementStyle(jicofovm, $borderColor="red")
+    UpdateElementStyle(vibrivm, $borderColor="red")
+
+
+
