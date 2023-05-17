@@ -1,7 +1,7 @@
 ---
 title: "Puffy presents video conferencing / Jitsi on OpenBSD"
 author: "Philipp Bühler, sysfive.com GmbH"
-date: 'AsiaBSDCon - Tokyo - 2. April 2023'
+date: 'AsiaBSDCon - Tokyo - 1. April 2023'
 format:
   revealjs:
     theme: [league, style.scss]
@@ -13,7 +13,7 @@ format:
     transition: fade
     transition-speed: slow
     background-transition: convex
-    footer: "AsiaBSDCon 2023 - Tokyo - Jitsi/OpenBSD"
+    footer: "AsiaBSDCon 2023 - 東京/ Tokyo - Jitsi/OpenBSD"
     logo: img/sysfive.jpg
 ---
 ## What's ahead
@@ -632,7 +632,7 @@ example configuration samples!
 - community.jitsi.org: it's a rough place with lots of `quick-install`
 
 <!-- Page -->
-## Questions  / k-thx-bye
+## Questions & ありがとうございます
 :::: {.columns}
 ::: {.column width="30%"}
 ![](img/url.png)
