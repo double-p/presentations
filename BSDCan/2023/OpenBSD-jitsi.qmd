@@ -615,18 +615,19 @@ example configuration samples!
 
 <!-- Page -->
 ## Outlook (1/2)
+### Jitsi
+- authenticate-a-bit: see testing-config/...auth-first.conf
+- `xmpp/jvb`: might move from BOSH to websockets eventually (who takes the perf hit)
+- `jibri`: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like `jvb`
+- `jigasi`: feel free / just no POTS/SIP dialin?
+
+<!-- Page -->
+## Outlook (2/2)
 ### scale / Cloudification
 - `nginx`: easy scale out; protect nginx->xmpp (new CPU sink with TLS)
 - `jvb`: ok; use statistics and one IP only per JVM instance
 - `xmpp`: harder; what parameter to split on the frontend/nginx. how to tell jicofo?
 - `jicofo`: unsure or not feasible; not the workload horse, also 
-
-<!-- Page -->
-## Outlook (2/2)
-### Jitsi
-- `xmpp/jvb`: might move from BOSH to websockets eventually (who takes the perf hit)
-- `jibri`: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like `jvb`
-- `jigasi`: feel free / just no POTS/SIP dialin?
 
 ### help
 - community.jitsi.org: it's a rough place with lots of `quick-install`
