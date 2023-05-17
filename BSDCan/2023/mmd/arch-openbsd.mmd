@@ -1,0 +1,26 @@
+   C4Deployment
+
+
+    Deployment_Node(obsd, "Hypervisor VMM (0-n)", "OpenBSD"){
+        Deployment_Node(webvm, "web (1-n)", ""){
+                Container(meet, "OpenBSD 7.2+", "", "___ 1-2G RAM, <1G disk, some CPU ___")
+        }
+        Deployment_Node(xmppvm, "xmpp (1)", ""){
+                Container(xmpp, "OpenBSD 7.2+", "", "___ 1-2G RAM, <1G disk, some CPU ___")
+        }
+        Deployment_Node(vibrivm, "vibri (1-n)", ""){
+                Container(jitsi-vibri, "OpenBSD 7.2+", "", "__ 4G RAM, 1G disk, some more CPU __")
+        }
+
+        Deployment_Node(jicofovm, "jicofo (1)", ""){
+                Container(jicofo, "OpenBSD 7.2+", "", "__ 4G RAM, 1G disk, some more CPU __")
+        }
+    }
+
+    UpdateElementStyle(obsd, $borderColor="green")
+    UpdateElementStyle(webvm, $borderColor="red")
+    UpdateElementStyle(xmppvm, $borderColor="red")
+    UpdateElementStyle(jicofovm, $borderColor="red")
+    UpdateElementStyle(vibrivm, $borderColor="red")
+
+
