@@ -581,7 +581,7 @@ ice4j has not been migrated yet, thus not available in "new" JICO config format
 <!-- Page -->
 ## Prayers for a Livedemo
 ### fips.de
-[`https://jts.fips.de/ABC`](https://jts.fips.de/ABC)
+[`https://jitsi.eurobsdcon.org/BSDCan`](https://jitsi.eurobsdcon.org/BSDCan)
 
 - 
 - 

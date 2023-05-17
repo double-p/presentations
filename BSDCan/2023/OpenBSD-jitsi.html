@@ -393,7 +393,7 @@
 <section id="title-slide" class="center">
   <h1 class="title">Puffy presents video conferencing / Jitsi on OpenBSD</h1>
   <p class="author">Philipp Bühler, sysfive.com GmbH</p>
-  <p class="date">AsiaBSDCon - Tokyo - 1. April 2023</p>
+  <p class="date">BSDCan - Ottawa - May, 20th, 2023</p>
 </section>
 
 <section id="whats-ahead" class="slide level2">
@@ -418,8 +418,8 @@
 </div>
 <!-- Page -->
 </section>
-<section id="riddles-なぞなぞ-jitsi" class="slide level2">
-<h2>Riddles (なぞなぞ): Jitsi</h2>
+<section id="riddles-jitsi" class="slide level2">
+<h2>Riddles: Jitsi</h2>
 <ul>
 <li>so many components and than some</li>
 <li>even more communication, firewall nightmare?</li>
@@ -1201,8 +1201,8 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>net/jitsi/videobridge</code>: 7.2</li>
 <li><code>net/jitsi/jicofo</code>: 7.2</li>
 <li><code>net/jitsi/meet</code>: 7.2</li>
-<li><code>net/jitsi/prosody-plugins</code>: current/7.3</li>
-<li><code>net/jitsi/srtp</code>: current/7.3</li>
+<li><code>net/jitsi/prosody-plugins</code>: 7.3</li>
+<li><code>net/jitsi/srtp</code>: 7.3</li>
 </ul>
 <!-- Page -->
 </section>
@@ -1227,6 +1227,17 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </section>
 <section id="outlook-12" class="slide level2">
 <h2>Outlook (1/2)</h2>
+<h3 id="jitsi">Jitsi</h3>
+<ul>
+<li>authenticate-a-bit: see testing-config/…auth-first.conf</li>
+<li><code>xmpp/jvb</code>: might move from BOSH to websockets eventually (who takes the perf hit)</li>
+<li><code>jibri</code>: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like <code>jvb</code></li>
+<li><code>jigasi</code>: feel free / just no POTS/SIP dialin?</li>
+</ul>
+<!-- Page -->
+</section>
+<section id="outlook-22" class="slide level2">
+<h2>Outlook (2/2)</h2>
 <h3 id="scale-cloudification">scale / Cloudification</h3>
 <ul>
 <li><code>nginx</code>: easy scale out; protect nginx-&gt;xmpp (new CPU sink with TLS)</li>
@@ -1234,24 +1245,14 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <li><code>xmpp</code>: harder; what parameter to split on the frontend/nginx. how to tell jicofo?</li>
 <li><code>jicofo</code>: unsure or not feasible; not the workload horse, also</li>
 </ul>
-<!-- Page -->
-</section>
-<section id="outlook-22" class="slide level2">
-<h2>Outlook (2/2)</h2>
-<h3 id="jitsi">Jitsi</h3>
-<ul>
-<li><code>xmpp/jvb</code>: might move from BOSH to websockets eventually (who takes the perf hit)</li>
-<li><code>jibri</code>: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like <code>jvb</code></li>
-<li><code>jigasi</code>: feel free / just no POTS/SIP dialin?</li>
-</ul>
 <h3 id="help">help</h3>
 <ul>
 <li>community.jitsi.org: it’s a rough place with lots of <code>quick-install</code></li>
 </ul>
 <!-- Page -->
 </section>
-<section id="questions-ありがとうございます" class="slide level2">
-<h2>Questions &amp; ありがとうございます</h2>
+<section id="questions-cheers" class="slide level2">
+<h2>Questions &amp; Cheers</h2>
 <div class="columns">
 <div class="column" style="width:30%;">
 <p><img data-src="img/url.png"></p>
@@ -1280,7 +1281,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </div>
 <div class="callout-content">
 <p>Created with <code>Quarto / revealjs</code><br>
-<a href="https://github.com/double-p/presentations/tree/master/AsiaBSDCon/2023/">presentation (+testing-config)</a> <code>https://is.gd/UWrPxU</code></p>
+<a href="https://github.com/double-p/presentations/tree/master/BSDCan/2023/">presentation (+testing-config)</a> <code>https://is.gd/UWrPxU</code></p>
 </div>
 </div>
 </div>
@@ -1328,7 +1329,7 @@ Sep 16 14:37:01 c2s60a5b549900  info    Authenticated as focus@auth.jts.fips.de
 Jicofo 2022-09-16 14:45:24.260 INFO: [35] [type=bridge brewery=jvbbrewery] BaseBrewery.addInstance#341: Added brewery instance: jvbbrewery@internal.auth.jts.fips.de/jvb</code></pre>
 
 <img src="img/sysfive.jpg" class="slide-logo r-stretch"><div class="footer footer-default">
-<p>AsiaBSDCon 2023 - 東京/ Tokyo - Jitsi/OpenBSD</p>
+<p>BSDCan 2023 - Oddawah - Jitsi/OpenBSD</p>
 </div>
 </section>
     </div>
