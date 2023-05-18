@@ -141,8 +141,8 @@ flowchart LR
 rcctl enable vmd; rcctl start vmd
 mkdir /home/vmm; cd /home/vmm
 vmctl create -s 10G web.qcow2
-ftp https://cdn.openbsd.org/pub/OpenBSD/7.2/amd64/install72.iso
-vmctl start -m 2G -L -i 1 -r install72.iso -d /home/vmm/web.qcow2 web
+ftp https://cdn.openbsd.org/pub/OpenBSD/7.3/amd64/install73.iso
+vmctl start -m 2G -L -i 1 -r install73.iso -d /home/vmm/web.qcow2 web
 vmctl console web
 ## run the (I)nstaller, default options. only one 'a' slice on (w)hole disk
 ## halt -p (so new sshd_keys per VM)
@@ -176,12 +176,12 @@ vm "web" instance "jvb" {
 <!-- Page -->
 ## Installation: DNS / `/etc/hosts`
 :::{.callout-note}
-DNS: ONE A-RR for jts.fips.de; but local `hosts` for jicofo (or split DNS)
+DNS: ONE A-RR for jitsi.fips.de; but local `hosts` for jicofo (or split DNS)
 :::
 
 ```{.python code-line-numbers="2"}
 100.64.1.3    web
-100.64.2.3    xmpp jts.fips.de
+100.64.2.3    xmpp jitsi.fips.de
 100.64.3.3    jicofo
 100.64.4.3    jvb
 ```
@@ -283,6 +283,7 @@ prosody package is a dependency to that.
 ```{.bash}
 pkg_add unzip--
 pkg_add jitsi-prosody-plugins
+prosodyctl install --server=https://modules.prosody.im/rocks/ mod_roster_command
 ```
 :::{.callout-note}
 The plugins do not need further configuration in prosody.cfg.lua:
@@ -296,15 +297,15 @@ The roster_command is for CLI only.
 - `/etc/prosody/prosody.cfg.lua`: (shortened)
 ```{.lua code-line-numbers="1,4|2,7|9,10"}
 http_interfaces = { "*", "::" }
-VirtualHost "jts.fips.de"
+VirtualHost "jitsi.fips.de"
     authentication = "anonymous";
     modules_enabled = { "bosh"; "pubsub"; }
     c2s_require_encryption = false
 
-VirtualHost "auth.jts.fips.de"
-    admins = { "focus@auth.jts.fips.de", "jvb@auth.jts.fips.de" }
-    ssl = { key = "/var/prosody/auth.jts.fips.de.key";
-            certificate = "/var/prosody/auth.jts.fips.de.crt"; }
+VirtualHost "auth.jitsi.fips.de"
+    admins = { "focus@auth.jitsi.fips.de", "jvb@auth.jitsi.fips.de" }
+    ssl = { key = "/var/prosody/auth.jitsi.fips.de.key";
+            certificate = "/var/prosody/auth.jitsi.fips.de.crt"; }
     authentication = "internal_hashed"
 ```
 :::{.callout-note}
@@ -315,14 +316,14 @@ VirtualHost "auth.jts.fips.de"
 ## Configuration: prosody (xmpp) (2/2)
 - `/etc/prosody/prosody.cfg.lua`: (shortened)
 ```{.lua code-line-numbers="1|2,4|5,6|7,8"}
-Component "conference.jts.fips.de" "muc"
-Component "internal.auth.jts.fips.de" "muc"
+Component "conference.jitsi.fips.de" "muc"
+Component "internal.auth.jitsi.fips.de" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
-Component "jvb.jts.fips.de"
+Component "jvb.jitsi.fips.de"
     component_secret = "CHANGE_jvb"
-Component "focus.jts.fips.de" "client_proxy"
-    target_address = "focus@auth.jts.fips.de"
+Component "focus.jitsi.fips.de" "client_proxy"
+    target_address = "focus@auth.jitsi.fips.de"
 ```
 
 :::{.callout-note}
@@ -343,8 +344,8 @@ The connection for `jvb` uses a shared secret as shown on the previous page.
 
 `jicofo` "focus" user:
 ```{.bash}
-prosodyctl register focus auth.jts.fips.de CHANGE_FOCUS
-prosodyctl mod_roster_command subscribe focus.jts.fips.de focus@auth.jts.fips.de
+prosodyctl register focus auth.jitsi.fips.de CHANGE_FOCUS
+prosodyctl mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de
 ```
 
 :::{.callout-note}
@@ -357,10 +358,10 @@ No "@" in the `prosodyctl register` arguments.
 ## Configuration: TLS certificates
 ```{.bash code-line-numbers="2,4-5"}
 # fill in `openssl req` dialog when calling this:
-prosodyctl cert generate auth.jts.fips.de # result: ./auth.jts.fips.de.crt
+prosodyctl cert generate auth.jitsi.fips.de # result: ./auth.jitsi.fips.de.crt
 cd /var/prosody
 yes | /usr/local/jdk-11/bin/keytool -import -alias prosody -file \
-  auth.jts.fips.de.crt -keystore jicofo-key.store -storepass jitsicool
+  auth.jitsi.fips.de.crt -keystore jicofo-key.store -storepass jitsicool
 cp jicofo-key.store jvb-key.store # scp to jicofo; same for jvb accordingly
 ```
 :::{.callout-note}
@@ -393,7 +394,7 @@ the only needed jitsi-meet configuration is config.js, see below
 ## Configuration: nginx.conf
 `/etc/nginx/nginx.conf`
 ```{.nginx code-line-numbers="1|2|3-4|5-7|8|9-12|13-14"}
-server_name  jts.fips.de; # in DNS, public interface
+server_name  jitsi.fips.de; # in DNS, public interface
 root         /var/www/jitsi-meet; # pkg_add populated
 ssi on;
 ssi_types application/x-javascript application/javascript;
@@ -416,10 +417,10 @@ If using LE, put the `.well-known` location first (above L5)
 ```{.javascript code-line-numbers="3-4|6|7|8,10|13"}
 var config = {
   hosts: {
-    domain: 'jts.fips.de', // DNS, public
-    muc: 'conference.jts.fips.de' // no DNS
+    domain: 'jitsi.fips.de', // DNS, public
+    muc: 'conference.jitsi.fips.de' // no DNS
   },
-  bosh: '//jts.fips.de/http-bind',
+  bosh: '//jitsi.fips.de/http-bind',
   useTurnUdp: false, enableWelcomePage: true,
   prejoinConfig: {
     enabled: true,
@@ -456,19 +457,19 @@ you can enable an XMPP-packet-debug-log in logging.properties
 - `/etc/jicofo/jicofo.conf`: (pkg_add, shortened)
 ```{.javascript code-line-numbers="2|3,6|4|8-10|14|"}
 jicofo { bridge {
-  brewery-jid = "JvbBrewery@internal.auth.jts.fips.de"
+  brewery-jid = "JvbBrewery@internal.auth.jitsi.fips.de"
   xmpp-connection-name = Client } // enum
   sctp { enabled = false } // n/a on OpenBSD
   xmpp {
     client {
       port = 5222
-      domain = "auth.jts.fips.de"
+      domain = "auth.jitsi.fips.de"
       username = "focus"
       password = "CHANGE_FOCUS"
       use-tls = true
     }
     // trusted service domains. Logged in -> advance to bridges
-    trusted-domains = [ "auth.jts.fips.de" ]
+    trusted-domains = [ "auth.jitsi.fips.de" ]
   }
 }
 ```
@@ -477,7 +478,7 @@ jicofo { bridge {
 ## Configuration: jicofo (2/2)
 - `/etc/rc.conf.local`:
 ```{.bash}
-rcctl set jicofo flags "--host=jts.fips.de"
+rcctl set jicofo flags "--host=jitsi.fips.de"
 ```
 
 :::{.callout-important}
@@ -519,10 +520,10 @@ videobridge { apis {
    configs {
     ourprosody {
      hostname = "xmpp" // internal
-     domain = "auth.jts.fips.de" // 'realm', no DNS
+     domain = "auth.jitsi.fips.de" // 'realm', no DNS
      username = "jvb"
      password = "CHANGE_jvb" // Component secret
-     muc_jids = "JvbBrewery@internal.auth.jts.fips.de"
+     muc_jids = "JvbBrewery@internal.auth.jitsi.fips.de"
      muc_nickname = "jvb-abc2023"
      disable_certificate_verification = true } } } }
   sctp { enabled = false } // n/a on OpenBSD
@@ -583,8 +584,7 @@ ice4j has not been migrated yet, thus not available in "new" JICO config format
 ### fips.de
 [`https://jitsi.eurobsdcon.org/BSDCan`](https://jitsi.eurobsdcon.org/BSDCan)
 
-- 
-- 
+- authentication config snippets are in github/.../testing-config/
 
 Infrastructure kindly provided by sysfive.com GmbH
 ![](img/sysfive.jpg)
@@ -616,6 +616,7 @@ example configuration samples!
 <!-- Page -->
 ## Outlook (1/2)
 ### Jitsi
+- fix jitsi-prosody-plugins
 - authenticate-a-bit: see testing-config/...auth-first.conf
 - `xmpp/jvb`: might move from BOSH to websockets eventually (who takes the perf hit)
 - `jibri`: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like `jvb`
@@ -695,11 +696,11 @@ Sep 16 14:36:21 c2s60b1aced0c0  info    Client disconnected: connection closed
 
 all good:
 Sep 16 14:37:00 c2s60a5b549900  info    Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
-Sep 16 14:37:01 c2s60a5b549900  info    Authenticated as focus@auth.jts.fips.de
+Sep 16 14:37:01 c2s60a5b549900  info    Authenticated as focus@auth.jitsi.fips.de
 
 ```
 .
 ```
 cant use bridge before (might take; "presence-interval = 120s")
-Jicofo 2022-09-16 14:45:24.260 INFO: [35] [type=bridge brewery=jvbbrewery] BaseBrewery.addInstance#341: Added brewery instance: jvbbrewery@internal.auth.jts.fips.de/jvb
+Jicofo 2022-09-16 14:45:24.260 INFO: [35] [type=bridge brewery=jvbbrewery] BaseBrewery.addInstance#341: Added brewery instance: jvbbrewery@internal.auth.jitsi.fips.de/jvb
 ```
