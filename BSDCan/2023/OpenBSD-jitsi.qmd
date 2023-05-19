@@ -196,7 +196,7 @@ adapt `/etc/myname` in each VM accordingly
 Not needed for jitsi itself, rather common admin care
 :::
 ```{.python code-line-numbers="|"}
-block return log
+block return log # OUTBOUND IS BAD, TOO, M'KAY?!
 pass out quick on egress proto { tcp udp } to any port { 123 53 80 443 }
 pass in quick on egress proto tcp from $admin to port 22
 ```
@@ -283,7 +283,6 @@ prosody package is a dependency to that.
 ```{.bash}
 pkg_add unzip--
 pkg_add jitsi-prosody-plugins
-prosodyctl install --server=https://modules.prosody.im/rocks/ mod_roster_command
 ```
 :::{.callout-note}
 The plugins do not need further configuration in prosody.cfg.lua:
@@ -344,7 +343,10 @@ The connection for `jvb` uses a shared secret as shown on the previous page.
 
 `jicofo` "focus" user:
 ```{.bash}
+prosodyctl install --server=https://modules.prosody.im/rocks/ mod_client_proxy
+prosodyctl install --server=https://modules.prosody.im/rocks/ mod_roster_command
 prosodyctl register focus auth.jitsi.fips.de CHANGE_FOCUS
+prosodyctl register jvb auth.jitsi.fips.de CHANGE_JVB
 prosodyctl mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de
 ```
 
@@ -455,13 +457,14 @@ you can enable an XMPP-packet-debug-log in logging.properties
 <!-- Page -->
 ## Configuration: jicofo (1/2)
 - `/etc/jicofo/jicofo.conf`: (pkg_add, shortened)
-```{.javascript code-line-numbers="2|3,6|4|8-10|14|"}
+```{.javascript code-line-numbers="2|3,6|4|7,8|9-11|15|"}
 jicofo { bridge {
   brewery-jid = "JvbBrewery@internal.auth.jitsi.fips.de"
   xmpp-connection-name = Client } // enum
   sctp { enabled = false } // n/a on OpenBSD
   xmpp {
     client {
+      hostname = xmpp
       port = 5222
       domain = "auth.jitsi.fips.de"
       username = "focus"
@@ -470,15 +473,14 @@ jicofo { bridge {
     }
     // trusted service domains. Logged in -> advance to bridges
     trusted-domains = [ "auth.jitsi.fips.de" ]
-  }
-}
+  } }
 ```
 
 <!-- Page -->
 ## Configuration: jicofo (2/2)
 - `/etc/rc.conf.local`:
 ```{.bash}
-rcctl set jicofo flags "--host=jitsi.fips.de"
+rcctl enable jicofo; rcctl set jicofo flags "--host=jitsi.fips.de"
 ```
 
 :::{.callout-important}
@@ -490,7 +492,7 @@ Needs `/etc/hosts` or split-DNS. Used for network connect AND virtualhost
 !jicofo
 *.*     /var/log/jicofo
 ```
-`rcctl enable jicofo ; rcctl start jicofo`
+`rcctl restart syslogd; rcctl start jicofo`
 
 <!-- Page -->
 ## Installation / Configuration: videobridge (1/3)
@@ -524,7 +526,7 @@ videobridge { apis {
      username = "jvb"
      password = "CHANGE_jvb" // Component secret
      muc_jids = "JvbBrewery@internal.auth.jitsi.fips.de"
-     muc_nickname = "jvb-abc2023"
+     muc_nickname = "jvb-bc2023"
      disable_certificate_verification = true } } } }
   sctp { enabled = false } // n/a on OpenBSD
   ice { tcp {
@@ -555,7 +557,7 @@ ice4j has not been migrated yet, thus not available in "new" JICO config format
 *.*     /var/log/jvb
 ```
 
-`rcctl enable jvb ; rcctl start jvb`
+`rcctl restart syslogd; rcctl enable jvb ; rcctl start jvb`
 
 <!-- Page -->
 ## Pitfalls / Hints: OpenBSD
@@ -616,8 +618,8 @@ example configuration samples!
 <!-- Page -->
 ## Outlook (1/2)
 ### Jitsi
-- fix jitsi-prosody-plugins
 - authenticate-a-bit: see testing-config/...auth-first.conf
+- fix jitsi-plugins (loading path messes up!)
 - `xmpp/jvb`: might move from BOSH to websockets eventually (who takes the perf hit)
 - `jibri`: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like `jvb`
 - `jigasi`: feel free / just no POTS/SIP dialin?
@@ -697,6 +699,9 @@ Sep 16 14:36:21 c2s60b1aced0c0  info    Client disconnected: connection closed
 all good:
 Sep 16 14:37:00 c2s60a5b549900  info    Stream encrypted (TLSv1.3 with TLS_AES_256_GCM_SHA384)
 Sep 16 14:37:01 c2s60a5b549900  info    Authenticated as focus@auth.jitsi.fips.de
+
+jvb/jicofo log; wrong password (rerun prosodyctl register)
+org.jivesoftware.smack.sasl.SASLErrorException: SASLError using SCRAM-SHA-1: not-authorized
 
 ```
 .

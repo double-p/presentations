@@ -34,12 +34,23 @@ log = {
 -- ### MAIN
 
 VirtualHost "jitsi.fips.de"
-    authentication = "anonymous";
+    -- authentication = "anonymous";
     modules_enabled = {
         "bosh";
         "pubsub";
     }
     c2s_require_encryption = false
+    authentication = "internal_hashed"
+
+VirtualHost "public.jitsi.fips.de"
+    authentication = "anonymous"
+    modules_enabled = {
+            "bosh";
+            "pubsub";
+            "ping";
+    }
+    c2s_require_encryption = false
+
 
 VirtualHost "auth.jitsi.fips.de"
     ssl = {
@@ -50,11 +61,12 @@ VirtualHost "auth.jitsi.fips.de"
 
 Component "conference.jitsi.fips.de" "muc"
 Component "jvb.jitsi.fips.de"
-    -- component_secret = "CRED_JVB"
+    -- component_secret = "jitsicool1jvb"
 Component "focus.jitsi.fips.de" "client_proxy"
     target_address = "focus@auth.jitsi.fips.de"
-    -- component_secret = "CRED_JICOFO"
+    -- component_secret = "jitsicool1focus"
 Component "internal.auth.jitsi.fips.de" "muc"
+    component_secret = "jitsiinternal1"
     storage = "memory"
     modules_enabled = {
       "ping";
