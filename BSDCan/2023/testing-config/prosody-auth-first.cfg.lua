@@ -3,8 +3,6 @@ prosody_group = "_prosody"
 
 pidfile = "/var/prosody/prosody.pid"
 
-plugin_paths = { "/usr/local/share/jitsi-prosody-plugins" }
-
 modules_enabled = {
                 "disco"; -- Service discovery
                 "roster"; -- Allow users to have a roster. Recommended ;)

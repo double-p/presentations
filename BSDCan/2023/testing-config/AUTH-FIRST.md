@@ -12,6 +12,15 @@ Authentication means can be more advanced (e.g. system/PAM, LDAP, ..)
 but for this demonstration we just create users within prosody.
 Therefor this command creates an account with the given password:
 ````
-prosodyctl ...
+prosodyctl register demouser jitsi.fips.de demo1passwd
 ````
 
+The config.js needs an additional entry for a hosts setting like:
+````
+    hosts: {
+        domain: 'jitsi.fips.de',
+        anonymousdomain: 'public.jitsi.fips.de',
+        muc: 'conference.jitsi.fips.de',
+    },
+````
+And again, no DNS for public.jitsi.fips.de, this is just an "realm".
