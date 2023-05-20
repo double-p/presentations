@@ -998,17 +998,17 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <div class="sourceCode" id="cb19" data-code-line-numbers="3-4|6|7|8,10|13"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">var</span> config <span class="op">=</span> {</span>
 <span id="cb19-2"><a href="#cb19-2"></a>  <span class="dt">hosts</span><span class="op">:</span> {</span>
 <span id="cb19-3"><a href="#cb19-3"></a>    <span class="dt">domain</span><span class="op">:</span> <span class="st">'jitsi.fips.de'</span><span class="op">,</span> <span class="co">// DNS, public</span></span>
-<span id="cb19-4"><a href="#cb19-4"></a>    <span class="dt">muc</span><span class="op">:</span> <span class="st">'conference.jitsi.fips.de'</span> <span class="co">// no DNS</span></span>
-<span id="cb19-5"><a href="#cb19-5"></a>  }<span class="op">,</span></span>
-<span id="cb19-6"><a href="#cb19-6"></a>  <span class="dt">bosh</span><span class="op">:</span> <span class="st">'//jitsi.fips.de/http-bind'</span><span class="op">,</span></span>
-<span id="cb19-7"><a href="#cb19-7"></a>  <span class="dt">useTurnUdp</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">enableWelcomePage</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
-<span id="cb19-8"><a href="#cb19-8"></a>  <span class="dt">prejoinConfig</span><span class="op">:</span> {</span>
-<span id="cb19-9"><a href="#cb19-9"></a>    <span class="dt">enabled</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
-<span id="cb19-10"><a href="#cb19-10"></a>    <span class="dt">hideExtraJoinButtons</span><span class="op">:</span> [<span class="st">'no-audio'</span><span class="op">,</span> <span class="st">'by-phone'</span>] }<span class="op">,</span></span>
-<span id="cb19-11"><a href="#cb19-11"></a>  <span class="dt">p2p</span><span class="op">:</span> {</span>
-<span id="cb19-12"><a href="#cb19-12"></a>    <span class="dt">stunServers</span><span class="op">:</span> [</span>
-<span id="cb19-13"><a href="#cb19-13"></a>      { <span class="dt">urls</span><span class="op">:</span> <span class="st">'stun:meet-jit-si-turnrelay.jitsi.net:443'</span> } ] }</span>
-<span id="cb19-14"><a href="#cb19-14"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-4"><a href="#cb19-4"></a>    <span class="co">// anonymousdomain: 'jitsi.fips.de', // DNS, public</span></span>
+<span id="cb19-5"><a href="#cb19-5"></a>    <span class="dt">muc</span><span class="op">:</span> <span class="st">'conference.jitsi.fips.de'</span> <span class="co">// no DNS</span></span>
+<span id="cb19-6"><a href="#cb19-6"></a>  }<span class="op">,</span></span>
+<span id="cb19-7"><a href="#cb19-7"></a>  <span class="dt">bosh</span><span class="op">:</span> <span class="st">'//jitsi.fips.de/http-bind'</span><span class="op">,</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a>  <span class="dt">useTurnUdp</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">enableWelcomePage</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb19-9"><a href="#cb19-9"></a>  <span class="dt">prejoinConfig</span><span class="op">:</span> {</span>
+<span id="cb19-10"><a href="#cb19-10"></a>    <span class="dt">enabled</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb19-11"><a href="#cb19-11"></a>    <span class="dt">hideExtraJoinButtons</span><span class="op">:</span> [<span class="st">'no-audio'</span><span class="op">,</span> <span class="st">'by-phone'</span>] }<span class="op">,</span></span>
+<span id="cb19-12"><a href="#cb19-12"></a>  <span class="dt">p2p</span><span class="op">:</span> {</span>
+<span id="cb19-13"><a href="#cb19-13"></a>    <span class="dt">stunServers</span><span class="op">:</span> [</span>
+<span id="cb19-14"><a href="#cb19-14"></a>      { <span class="dt">urls</span><span class="op">:</span> <span class="st">'stun:meet-jit-si-turnrelay.jitsi.net:443'</span> } ] } }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>TURN+STUN depends on NAT environment(s) of clients/server.</p>
 <!-- Page -->
 </section>
@@ -1121,7 +1121,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <span id="cb25-3"><a href="#cb25-3"></a>   configs {</span>
 <span id="cb25-4"><a href="#cb25-4"></a>    ourprosody {</span>
 <span id="cb25-5"><a href="#cb25-5"></a>     hostname <span class="op">=</span> <span class="st">"xmpp"</span> <span class="co">// internal</span></span>
-<span id="cb25-6"><a href="#cb25-6"></a>     domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span> <span class="co">// 'realm', no DNS</span></span>
+<span id="cb25-6"><a href="#cb25-6"></a>     domain <span class="op">=</span> <span class="st">"auth.jitsi.fips.de"</span> <span class="co">// 'realm', hosts</span></span>
 <span id="cb25-7"><a href="#cb25-7"></a>     username <span class="op">=</span> <span class="st">"jvb"</span></span>
 <span id="cb25-8"><a href="#cb25-8"></a>     password <span class="op">=</span> <span class="st">"CHANGE_jvb"</span> <span class="co">// Component secret</span></span>
 <span id="cb25-9"><a href="#cb25-9"></a>     muc_jids <span class="op">=</span> <span class="st">"JvbBrewery@internal.auth.jitsi.fips.de"</span></span>

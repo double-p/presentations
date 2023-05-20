@@ -438,6 +438,7 @@ If using LE, put the `.well-known` location first (above L5)
 var config = {
   hosts: {
     domain: 'jitsi.fips.de', // DNS, public
+    // anonymousdomain: 'jitsi.fips.de', // DNS, public
     muc: 'conference.jitsi.fips.de' // no DNS
   },
   bosh: '//jitsi.fips.de/http-bind',
@@ -447,8 +448,7 @@ var config = {
     hideExtraJoinButtons: ['no-audio', 'by-phone'] },
   p2p: {
     stunServers: [
-      { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' } ] }
-}
+      { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' } ] } }
 ```
 TURN+STUN depends on NAT environment(s) of clients/server.
 
@@ -540,7 +540,7 @@ videobridge { apis {
    configs {
     ourprosody {
      hostname = "xmpp" // internal
-     domain = "auth.jitsi.fips.de" // 'realm', no DNS
+     domain = "auth.jitsi.fips.de" // 'realm', hosts
      username = "jvb"
      password = "CHANGE_jvb" // Component secret
      muc_jids = "JvbBrewery@internal.auth.jitsi.fips.de"
