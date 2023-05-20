@@ -418,16 +418,23 @@
 </div>
 <!-- Page -->
 </section>
-<section id="riddles-jitsi" class="slide level2">
-<h2>Riddles: Jitsi</h2>
+<section id="riddles-jitsi-12" class="slide level2">
+<h2>Riddles: Jitsi (1/2)</h2>
 <ul>
 <li>so many components and than some</li>
 <li>even more communication, firewall nightmare?</li>
 <li>help? -&gt; “quick install!”, “one-debian VM”</li>
 <li>default all localhost - “discovery magic”?</li>
-<li><code>location ~ ^/([^/?&amp;:'"]+)/(.*)$</code></li>
 <li>java, uuuh, even two versions of ’em!?</li>
 <li>how many entries in DNS again?</li>
+</ul>
+<!-- Page -->
+</section>
+<section id="riddles-jitsi-22" class="slide level2">
+<h2>Riddles: Jitsi (2/2)</h2>
+<ul>
+<li><code>location ~ ^/([^/?&amp;:'"]+)/(.*)$</code></li>
+<li><code>[JitsiMeetJS.ts] &lt;Object.getGlobalOnErrorHandler&gt;:  UnhandledError: Failed to get a successful response, giving up. Script: null Line: null Column: null StackTrace:  Error: Failed to get a successful response, giving up.</code></li>
 <li>who/where/what/wtf - towel launcher / giving up</li>
 </ul>
 <!-- Page -->
@@ -441,8 +448,20 @@
 <li>inside/outside networking (VMM as router)</li>
 <li>scale out (VMM machines, bare-metal, cloud)</li>
 <li>java + <code>rcctl</code> (JVM-options)?</li>
-<li>can’t we just <code>pkg_add</code>?</li>
+<li>can’t we just <code>pkg_add</code> and be done?</li>
 </ul>
+<!-- Page -->
+</section>
+<section id="surprise-livedemo" class="slide level2">
+<h2>SURPRISE LIVEDEMO</h2>
+<h3 id="fips.de">fips.de</h3>
+<p><a href="https://jitsi.fips.de/23"><code>https://jitsi.fips.de/23</code></a></p>
+<h3 id="please-mute-audio-input">PLEASE MUTE audio input</h3>
+<h3 id="please-mute-audio-output">PLEASE MUTE audio output</h3>
+<ul>
+<li>authentication config snippets are in github/…/testing-config/</li>
+</ul>
+<p>Infrastructure kindly provided by sysfive.com GmbH <img data-src="img/sysfive.jpg"></p>
 <!-- Page -->
 </section>
 <section id="components-openbsd" class="slide level2">
@@ -611,7 +630,7 @@ recording + streaming conferences (uncovered)
 </div>
 </div>
 <div class="sourceCode" id="cb3" data-code-line-numbers="2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="fl">100.64.1.3</span>    web</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="fl">100.64.2.3</span>    xmpp jitsi.fips.de</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="fl">100.64.2.3</span>    xmpp jitsi.fips.de auth.jitsi.fips.de</span>
 <span id="cb3-3"><a href="#cb3-3"></a><span class="fl">100.64.3.3</span>    jicofo</span>
 <span id="cb3-4"><a href="#cb3-4"></a><span class="fl">100.64.4.3</span>    jvb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
@@ -681,8 +700,8 @@ recording + streaming conferences (uncovered)
 <span id="cb6-2"><a href="#cb6-2"></a><span class="cf">pass</span> <span class="kw">in</span> proto { udp tcp } <span class="im">from</span> $vms to <span class="bu">any</span> port domain rdr<span class="op">-</span>to $resolver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <!-- Page -->
 </section>
-<section id="etcpf.conf-jitsi-meet-nginx" class="slide level2">
-<h2><code>/etc/pf.conf</code> jitsi-meet / nginx</h2>
+<section id="etcpf.conf-web-nginx" class="slide level2">
+<h2><code>/etc/pf.conf</code> web / nginx</h2>
 <div class="sourceCode" id="cb7" data-code-line-numbers="1|2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="cf">pass</span> <span class="kw">in</span> quick on egress proto tcp to <span class="va">self</span> port { <span class="dv">80</span> <span class="dv">443</span> }</span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="cf">pass</span> out quick on egress proto tcp to xmpp port <span class="dv">5280</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
@@ -707,7 +726,7 @@ recording + streaming conferences (uncovered)
 <p><strong>Important</strong></p>
 </div>
 <div class="callout-content">
-<p>HTTPS is NOT optional (browser requirement WebRTC)</p>
+<p>HTTPS is NOT optional (browser requirement WebRTC); 80/tcp for LE</p>
 </div>
 </div>
 </div>
@@ -736,7 +755,7 @@ recording + streaming conferences (uncovered)
 <section id="etcpf.conf-jvb-videobridge" class="slide level2">
 <h2><code>/etc/pf.conf</code> jvb / videobridge</h2>
 <div class="sourceCode" id="cb9" data-code-line-numbers="1|2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="cf">pass</span> out quick on egress proto tcp to xmpp port <span class="dv">5222</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="cf">pass</span> <span class="kw">in</span> quick on egress proto udp to <span class="va">self</span> port <span class="dv">10000</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="cf">pass</span> <span class="kw">in</span> quick on egress proto udp to <span class="va">self</span> port <span class="dv">10000</span> <span class="co"># jvb.conf</span></span>
 <span id="cb9-3"><a href="#cb9-3"></a><span class="cf">pass</span> <span class="kw">in</span> quick on egress proto tcp <span class="im">from</span> $monitor to <span class="va">self</span> port <span class="dv">8080</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
@@ -747,7 +766,7 @@ recording + streaming conferences (uncovered)
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>for scale out the 10000/udp can be changed and would make use of a port range e.g.&nbsp;‘10000:10050’ vertically or explicit rdr-to for horizontal scaling (rules in VMM pf.conf, too!)</p>
+<p>for scale out the 10000/udp can be changed and would make use of a port range e.g.&nbsp;‘10000:10050’ vertically or explicit rdr-to for horizontal scaling (rules in VMM pf.conf, too!). Also useful for restrictive networks like ….</p>
 </div>
 </div>
 </div>
@@ -779,7 +798,7 @@ recording + streaming conferences (uncovered)
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>jicofo has a REST API on 8888/tcp for health/metrics (prometheus) - BROKEN?</p>
+<p>jicofo has a REST API on 8888/tcp for metrics - NOT prometheus</p>
 </div>
 </div>
 </div>
@@ -789,7 +808,7 @@ recording + streaming conferences (uncovered)
 <h2>Installation: prosody (xmpp)</h2>
 <p>Besides the package itself, we need some additional plugins. The prosody package is a dependency to that.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="ex">pkg_add</span> unzip--</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="ex">pkg_add</span> jitsi-prosody-plugins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="ex">pkg_add</span> jitsi-prosody-plugins <span class="co"># Not worky r/n</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -847,7 +866,7 @@ recording + streaming conferences (uncovered)
 <span id="cb13-3"><a href="#cb13-3"></a>    muc_room_locking <span class="op">=</span> <span class="kw">false</span></span>
 <span id="cb13-4"><a href="#cb13-4"></a>    muc_room_default_public_jids <span class="op">=</span> <span class="kw">true</span></span>
 <span id="cb13-5"><a href="#cb13-5"></a>Component <span class="st">"jvb.jitsi.fips.de"</span></span>
-<span id="cb13-6"><a href="#cb13-6"></a>    component_secret <span class="op">=</span> <span class="st">"CHANGE_jvb"</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>    <span class="co">-- component_secret = "CHANGE_jvb" -- 7.2</span></span>
 <span id="cb13-7"><a href="#cb13-7"></a>Component <span class="st">"focus.jitsi.fips.de"</span> <span class="st">"client_proxy"</span></span>
 <span id="cb13-8"><a href="#cb13-8"></a>    target_address <span class="op">=</span> <span class="st">"focus@auth.jitsi.fips.de"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
@@ -860,7 +879,7 @@ recording + streaming conferences (uncovered)
 </div>
 <div class="callout-content">
 <p>No extra DNS needed! Like “Host:” HTTP-Header.</p>
-<p><code>jvb</code> might switch to <code>focus</code> authentication in the future, too</p>
+<p><code>jvb</code> switching to <code>focus</code> authentication now</p>
 <p>Full config example in <code>./testing-config/prosody.cfg.lua</code>.</p>
 </div>
 </div>
@@ -870,11 +889,13 @@ recording + streaming conferences (uncovered)
 <section id="configuration-prosody-users" class="slide level2">
 <h2>Configuration: prosody users</h2>
 <div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="ex">rcctl</span> enable prosody <span class="kw">;</span> <span class="ex">rcctl</span> start prosody</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The connection for <code>jvb</code> uses a shared secret as shown on the previous page.</p>
+<p>7.2: The connection for <code>jvb</code> uses a shared secret as shown on the previous page.</p>
 <p><code>jicofo</code> “focus” user:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prosodyctl</span> register focus auth.jitsi.fips.de CHANGE_FOCUS</span>
-<span id="cb15-2"><a href="#cb15-2"></a><span class="ex">prosodyctl</span> register jvb auth.jitsi.fips.de CHANGE_JVB</span>
-<span id="cb15-3"><a href="#cb15-3"></a><span class="ex">prosodyctl</span> mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prosodyctl</span> install <span class="at">--server</span><span class="op">=</span>https://modules.prosody.im/rocks/ mod_client_proxy</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="ex">prosodyctl</span> install <span class="at">--server</span><span class="op">=</span>https://modules.prosody.im/rocks/ mod_roster_command</span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="ex">prosodyctl</span> register focus auth.jitsi.fips.de CHANGE_FOCUS</span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="ex">prosodyctl</span> register jvb auth.jitsi.fips.de CHANGE_JVB</span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="ex">prosodyctl</span> mod_roster_command subscribe focus.jitsi.fips.de focus@auth.jitsi.fips.de</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
@@ -1171,16 +1192,6 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 </ul>
 <!-- Page -->
 </section>
-<section id="prayers-for-a-livedemo" class="slide level2">
-<h2>Prayers for a Livedemo</h2>
-<h3 id="fips.de">fips.de</h3>
-<p><a href="https://jitsi.eurobsdcon.org/BSDCan"><code>https://jitsi.eurobsdcon.org/BSDCan</code></a></p>
-<ul>
-<li>authentication config snippets are in github/…/testing-config/</li>
-</ul>
-<p>Infrastructure kindly provided by sysfive.com GmbH <img data-src="img/sysfive.jpg"></p>
-<!-- Page -->
-</section>
 <section id="status-12" class="slide level2">
 <h2>Status (1/2)</h2>
 <div class="callout callout-important callout-captioned callout-style-default">
@@ -1230,6 +1241,7 @@ Using Let’s Encrypt with <code>acme-client</code> for the TLS setup is easily 
 <h3 id="jitsi">Jitsi</h3>
 <ul>
 <li>authenticate-a-bit: see testing-config/…auth-first.conf</li>
+<li>fix jitsi-plugins (loading path messes up!)</li>
 <li><code>xmpp/jvb</code>: might move from BOSH to websockets eventually (who takes the perf hit)</li>
 <li><code>jibri</code>: likely linux only (chrome-headless/-driver, x-fb+ffmpeg rip), nixos?; comms like <code>jvb</code></li>
 <li><code>jigasi</code>: feel free / just no POTS/SIP dialin?</li>
@@ -1332,7 +1344,7 @@ org.jivesoftware.smack.sasl.SASLErrorException: SASLError using SCRAM-SHA-1: not
 Jicofo 2022-09-16 14:45:24.260 INFO: [35] [type=bridge brewery=jvbbrewery] BaseBrewery.addInstance#341: Added brewery instance: jvbbrewery@internal.auth.jitsi.fips.de/jvb</code></pre>
 
 <img src="img/sysfive.jpg" class="slide-logo r-stretch"><div class="footer footer-default">
-<p>BSDCan 2023 - Oddawah - Jitsi/OpenBSD</p>
+<p>BSDCan 2023 - Oddawaah - Jitsi/OpenBSD</p>
 </div>
 </section>
     </div>

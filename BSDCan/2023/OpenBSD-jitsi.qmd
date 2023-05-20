@@ -13,7 +13,7 @@ format:
     transition: fade
     transition-speed: slow
     background-transition: convex
-    footer: "BSDCan 2023 - Oddawah - Jitsi/OpenBSD"
+    footer: "BSDCan 2023 - Oddawaah - Jitsi/OpenBSD"
     logo: img/sysfive.jpg
 ---
 ## What's ahead
@@ -40,14 +40,18 @@ format:
 ::::
 
 <!-- Page -->
-## Riddles: Jitsi
+## Riddles: Jitsi (1/2)
 - so many components and than some
 - even more communication, firewall nightmare?
 - help? -> "quick install!", "one-debian VM"
 - default all localhost - "discovery magic"?
-- `location ~ ^/([^/?&:'"]+)/(.*)$`
 - java, uuuh, even two versions of 'em!?
 - how many entries in DNS again?
+
+<!-- Page -->
+## Riddles: Jitsi (2/2)
+- `location ~ ^/([^/?&:'"]+)/(.*)$`
+- `[JitsiMeetJS.ts] <Object.getGlobalOnErrorHandler>:  UnhandledError: Failed to get a successful response, giving up. Script: null Line: null Column: null StackTrace:  Error: Failed to get a successful response, giving up.`
 - who/where/what/wtf - towel launcher / giving up
 
 <!-- Page -->
@@ -58,7 +62,20 @@ format:
 - inside/outside networking (VMM as router)
 - scale out (VMM machines, bare-metal, cloud)
 - java + `rcctl` (JVM-options)?
-- can't we just `pkg_add`?
+- can't we just `pkg_add` and be done?
+
+<!-- Page -->
+## SURPRISE LIVEDEMO
+### fips.de
+[`https://jitsi.fips.de/23`](https://jitsi.fips.de/23)
+
+### PLEASE MUTE audio input
+### PLEASE MUTE audio output
+
+- authentication config snippets are in github/.../testing-config/
+
+Infrastructure kindly provided by sysfive.com GmbH
+![](img/sysfive.jpg)
 
 <!-- Page -->
 ## Components: OpenBSD
@@ -181,7 +198,7 @@ DNS: ONE A-RR for jitsi.fips.de; but local `hosts` for jicofo (or split DNS)
 
 ```{.python code-line-numbers="2"}
 100.64.1.3    web
-100.64.2.3    xmpp jitsi.fips.de
+100.64.2.3    xmpp jitsi.fips.de auth.jitsi.fips.de
 100.64.3.3    jicofo
 100.64.4.3    jvb
 ```
@@ -225,7 +242,7 @@ pass in proto { udp tcp } from $vms to any port domain rdr-to $resolver
 ```
 
 <!-- Page -->
-## `/etc/pf.conf` jitsi-meet / nginx
+## `/etc/pf.conf` web / nginx
 ```{.python code-line-numbers="1|2"}
 pass in quick on egress proto tcp to self port { 80 443 }
 pass out quick on egress proto tcp to xmpp port 5280
@@ -235,7 +252,7 @@ BOSH or XMPP-websocket both run via 5280/tcp
 :::
 
 :::{.callout-important}
-HTTPS is NOT optional (browser requirement WebRTC)
+HTTPS is NOT optional (browser requirement WebRTC); 80/tcp for LE
 :::
 
 <!-- Page -->
@@ -253,14 +270,15 @@ pass in proto tcp from { $admin } to self port { 5280 5347 } # debug
 ## `/etc/pf.conf` jvb / videobridge
 ```{.python code-line-numbers="1|2"}
 pass out quick on egress proto tcp to xmpp port 5222
-pass in quick on egress proto udp to self port 10000
+pass in quick on egress proto udp to self port 10000 # jvb.conf
 pass in quick on egress proto tcp from $monitor to self port 8080
 
 ```
 :::{.callout-note}
 for scale out the 10000/udp can be changed and would make
 use of a port range e.g. '10000:10050' vertically or explicit rdr-to
-for horizontal scaling (rules in VMM pf.conf, too!)
+for horizontal scaling (rules in VMM pf.conf, too!). Also useful
+for restrictive networks like ....
 :::
 :::{.callout-note}
 jvb has a REST API on 8080/tcp for health/metrics (prometheus)
@@ -273,7 +291,7 @@ pass out quick on egress proto tcp to xmpp port 5222
 pass in quick on egress proto tcp from $monitor to self port 8888
 ```
 :::{.callout-note}
-jicofo has a REST API on 8888/tcp for health/metrics (prometheus) - BROKEN?
+jicofo has a REST API on 8888/tcp for metrics - NOT prometheus
 :::
 
 <!-- Page -->
@@ -282,7 +300,7 @@ Besides the package itself, we need some additional plugins. The
 prosody package is a dependency to that.
 ```{.bash}
 pkg_add unzip--
-pkg_add jitsi-prosody-plugins
+pkg_add jitsi-prosody-plugins # Not worky r/n
 ```
 :::{.callout-note}
 The plugins do not need further configuration in prosody.cfg.lua:
@@ -320,7 +338,7 @@ Component "internal.auth.jitsi.fips.de" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
 Component "jvb.jitsi.fips.de"
-    component_secret = "CHANGE_jvb"
+    -- component_secret = "CHANGE_jvb" -- 7.2
 Component "focus.jitsi.fips.de" "client_proxy"
     target_address = "focus@auth.jitsi.fips.de"
 ```
@@ -328,7 +346,7 @@ Component "focus.jitsi.fips.de" "client_proxy"
 :::{.callout-note}
 No extra DNS needed! Like "Host:" HTTP-Header.  
 
-`jvb` might switch to `focus` authentication in the future, too
+`jvb` switching to `focus` authentication now
 
 Full config example in `./testing-config/prosody.cfg.lua`.
 :::
@@ -339,7 +357,7 @@ Full config example in `./testing-config/prosody.cfg.lua`.
 rcctl enable prosody ; rcctl start prosody
 ```
 
-The connection for `jvb` uses a shared secret as shown on the previous page.
+7.2: The connection for `jvb` uses a shared secret as shown on the previous page.
 
 `jicofo` "focus" user:
 ```{.bash}
@@ -580,16 +598,6 @@ ice4j has not been migrated yet, thus not available in "new" JICO config format
 - jicofo has an XMPP-packetlogger (see `logging.properties`)
 - Patience, be really patient (at initial start)
 - always check the `,` in config.js (JSON after all..)
-
-<!-- Page -->
-## Prayers for a Livedemo
-### fips.de
-[`https://jitsi.eurobsdcon.org/BSDCan`](https://jitsi.eurobsdcon.org/BSDCan)
-
-- authentication config snippets are in github/.../testing-config/
-
-Infrastructure kindly provided by sysfive.com GmbH
-![](img/sysfive.jpg)
 
 <!-- Page -->
 ## Status (1/2)
