@@ -1,0 +1,370 @@
+---
+title: "20+ Years of EuroBSDCon + Foundation"
+author: "Philipp Bühler - EuroBSDCon Foundation"
+date: 'EuroBSDCon - Coimbra - September 2023'
+format:
+  revealjs:
+    theme: [beige, style.scss]
+    menu: true
+    slide-number: true
+    preview-links: auto
+    show-slide-number: speaker
+    slide-tone: false
+    transition: fade
+    transition-speed: slow
+    background-transition: convex
+    footer: "EuroBSDCon 2023 - Coimbra - 20+ Years"
+---
+
+## Overview
+:::: {.columns}
+::: {.column width="50%"}
+
+### 20 years (and a bit)
+### 18 conferences
+### 15 countries
+### maybe 3000 attendees
+### XX talks + tutorials
+:::
+::: {.column width="50%"}
+![](img/country/empty.png)
+smtp: board@eurobsdcon.org
+mastodon/twitter: EuroBSDCon
+:::
+::::
+
+## 2001 - UK
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/ukbgmap.png)
+
+- Thistle Hotel, Brighton
+- 9.-11. November
+:::
+::::
+
+## 2002 - Netherlands
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+
+- been there, first talk!
+:::
+::: {.column width="50%"}
+![](img/country/nlamsmap.png)
+
+- Mercure Hotel, Amsterdam
+- 15.-17. November
+:::
+::::
+
+## 2003 - Base on moon?
+:::: {.columns}
+::: {.column width="50%"}
+- cannot talk about this
+- 0 talks 
+
+:::
+::: {.column width="50%"}
+![](img/country/alienmap.png)
+
+- Moonbase, Yurop
+- 31. November
+
+:::
+::::
+
+## 2004 - Germany
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/dekamap.png)
+
+- Queens Hotel, Karlsruhe
+- 29.-31. October
+:::
+::::
+
+## 2005 - Switzerland
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/chbsmap.png)
+
+- University of Basel, Basel
+- 25-27. November
+:::
+::::
+
+## 2006 - Italy
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/itmlmap.png)
+
+- Novotel Milano Linate Aeroporto, Milan
+- 10.-12. November
+:::
+::::
+
+## 2007 - Denmark
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/dkcpmap.png)
+
+- Symbion Science Park, Copenhagen
+- 14.-15. September
+:::
+::::
+
+## 2008 - France
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/frsbmap.png)
+
+- University of Strasbourg, Strasbourg
+- 18.-19. October
+:::
+::::
+
+## 2009 - UK
+:::: {.columns}
+::: {.column width="50%"}
+- again!
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/ukcbmap.png)
+
+- University of Cambridge, Cambridge
+- 18.-20. September
+:::
+::::
+
+## 2010 - Germany
+:::: {.columns}
+::: {.column width="50%"}
+- AGAIN AGAIN
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/dekamap.png)
+
+- Queens Hotel, Karlsruhe
+- 29.-31. October
+:::
+::::
+
+## 2011 - Netherlands
+:::: {.columns}
+::: {.column width="50%"}
+- again!
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/nlmamap.png)
+
+- Meeting Plaza, Maarssen
+- 6.-9. October
+:::
+::::
+
+## 2012 - Poland
+:::: {.columns}
+::: {.column width="50%"}
+- XX first year Foundation backing
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/plwamap.png)
+
+- Univeristy of Technology, Warsaw
+- 18.-21. October
+:::
+::::
+
+## 2013 - Malta
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/mtmap.png)
+
+- Hilton Conference Centre, St. Julian's
+- 28.-29. September
+:::
+::::
+
+## 2014 - Bulgaria
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/bgmap.png)
+
+- Inter Expo Center, Sofia
+- 25.-28. September
+:::
+::::
+
+## 2015 - Sweden
+:::: {.columns}
+::: {.column width="50%"}
+- back with talk on
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/semap.png)
+
+- Stockholm University, Stockholm
+- 1.-4. October
+:::
+::::
+
+## 2016 - Serbia
+:::: {.columns}
+::: {.column width="50%"}
+- "funny" tutorial
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/bgmap.png)
+
+- Radisson Blu, Belgrade
+- 22.-25. September
+:::
+::::
+
+## 2017 - France
+:::: {.columns}
+::: {.column width="50%"}
+- record attendees (?)
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/frprmap.png)
+
+- Espace Saint Martin, Paris
+- 21.-24. September
+:::
+::::
+
+## 2018 - Romania
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/romap.png)
+
+- University Politehnica, Bucharest
+- 20.-23. September
+:::
+::::
+
+## 2019 - Norway
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/nomap.png)
+
+- Scandic Hotel, Lillehammer 
+- 19.-22. September
+:::
+::::
+
+## 2020 - Online/BSDCan
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/camap.png)
+
+- Online (Ottawa, CA)
+- 3.-6. June
+:::
+::::
+
+## 2021 - Online "Vienna"
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/atintmap.png)
+
+- Indaahneeet, Vienna
+- 17.-19. September
+:::
+::::
+
+## 2022 - Vienna
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/atmap.png)
+
+- Technical University, Vienna
+- 15.-18. September
+:::
+::::
+
+## 2023 - Coimbra
+:::: {.columns}
+::: {.column width="50%"}
+- website GONE
+- X talks 
+:::
+::: {.column width="50%"}
+![](img/country/ptmap.png)
+
+- Universidade de Coimbra, Coimbra
+- 14.-17. September
+:::
+::::
+
+## 2024 - Guesswork
+![](img/country/allmap.png)
