@@ -1,0 +1,32 @@
+---
+title: "OpenFest + Lightning Talks"
+author: "EuroBSDCon"
+date: 'Coimbra - September 2023'
+format:
+  revealjs:
+    theme: [beige, style.scss]
+    menu: true
+    slide-number: true
+    preview-links: auto
+    show-slide-number: speaker
+    slide-tone: false
+    transition: fade
+    transition-speed: slow
+    background-transition: convex
+    footer: "EuroBSDCon 2023 - Coimbra - Lightning Talks"
+---
+
+## Each 10 Minutes + 2 Min Q+A
+
+## Shteryana Shopova
+- Announce / CfP: OpenFest, Sofia/BG
+
+### Matthieu Herrb
+- Towards running a Wayland Compositor on OpenBSD
+
+### Luca Pizzamiglio
+- Subpackages in FreeBSD
+
+### Mohammad Noureldin
+- Let’s See How Many Mini Routers We Can Run OpenBSD On!
+

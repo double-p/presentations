@@ -23,8 +23,8 @@ format:
 ### 20 years (and a bit)
 ### 18 conferences
 ### 15 countries
-### maybe 3000 attendees
-### XX talks + tutorials
+### around 3000 attendees
+### 577 talks + 105 tutorials
 :::
 ::: {.column width="50%"}
 ![](img/country/empty.png)
@@ -36,8 +36,12 @@ mastodon/twitter: EuroBSDCon
 ## 2001 - UK
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2001.png)
+
+- Paul Richards, Nik Clayton, Neil Ford, Josef Karthauser, Brian Somers
+- -100+? attendees
+- 14 talks / 4 tutorials
+
 :::
 ::: {.column width="50%"}
 ![](img/country/ukbgmap.png)
@@ -47,34 +51,74 @@ mastodon/twitter: EuroBSDCon
 :::
 ::::
 
+## 2001 - UK (pics)
+:::: {.columns}
+::: {.column width="50%"}
+![](img/oldies/2001/quiz-show.9.big.jpeg)
+:::
+::: {.column width="50%"}
+![](img/oldies/2001/terminal-room-4.big.jpeg)
+:::
+::::
+
 ## 2002 - Netherlands
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2002.png)
 
-- been there, first talk!
+- 250+ attendees
+- 18 talks / 4 tutorials
+- "Best Paper"
+- been there with first talk
+
 :::
 ::: {.column width="50%"}
 ![](img/country/nlamsmap.png)
+
 
 - Mercure Hotel, Amsterdam
 - 15.-17. November
 :::
 ::::
 
+## 2002 - Netherlands (pics)
+:::: {.columns}
+::: {.column width="50%"}
+![](img/oldies/2002/beauty.jpg)
+:::
+::: {.column width="50%"}
+![](img/oldies/2002/holzschuhe.jpg)
+:::
+::::
+
+"power meets beauty" + best paper +  beer-license
+
+## 2002 - Netherlands (pics)
+:::: {.columns}
+::: {.column width="50%"}
+![](img/oldies/2002/phk-ship.jpg)
+:::
+::: {.column width="50%"}
+![](img/oldies/2002/wim.jpg)
+:::
+::::
+
 ## 2003 - Base on moon?
 :::: {.columns}
 ::: {.column width="50%"}
-- cannot talk about this
-- 0 talks 
+- in 2002 they thought it was aliens next
+- .
+- .
+- .
+- no, but "every each year too much!"
 
 :::
 ::: {.column width="50%"}
 ![](img/country/alienmap.png)
 
 - Moonbase, Yurop
-- 31. November
+
+- 30.-31. November
 
 :::
 ::::
@@ -82,8 +126,11 @@ mastodon/twitter: EuroBSDCon
 ## 2004 - Germany
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2004.png)
+
+- rename 'BSDCon Europe' to 'EuroBSDCon'
+- 26 talks / no tutorials(?)
+- conference poster - lost?
 :::
 ::: {.column width="50%"}
 ![](img/country/dekamap.png)
@@ -96,8 +143,11 @@ mastodon/twitter: EuroBSDCon
 ## 2005 - Switzerland
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2005.png)
+
+- 226 attendees 
+- 27 countries
+- 20 talks / 4 tutorials
 :::
 ::: {.column width="50%"}
 ![](img/country/chbsmap.png)
@@ -107,11 +157,25 @@ mastodon/twitter: EuroBSDCon
 :::
 ::::
 
+## 2005 - Switzerland (pics)
+:::: {.columns}
+::: {.column width="50%"}
+![](img/oldies/2005/henning_mickey.jpg)
+:::
+::: {.column width="50%"}
+![](img/oldies/2005/phk.jpg)
+:::
+::::
+
 ## 2006 - Italy
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2006.png)
+
+- 21 talks / 4 tutorials (first PF tutorial)
+- first time "spouses program"
+- first time south of alps
+
 :::
 ::: {.column width="50%"}
 ![](img/country/itmlmap.png)
@@ -124,8 +188,11 @@ mastodon/twitter: EuroBSDCon
 ## 2007 - Denmark
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2007.png)
+
+- 20 talks / 5 tutorials
+- first Kirk double(?)
+- XXX INPUT
 :::
 ::: {.column width="50%"}
 ![](img/country/dkcpmap.png)
@@ -138,8 +205,11 @@ mastodon/twitter: EuroBSDCon
 ## 2008 - France
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2008.png)
+
+- 21 talks  / 6 tutorials
+- "upload pics to flickr" ...
+- first BSD(C)A certification
 :::
 ::: {.column width="50%"}
 ![](img/country/frsbmap.png)
@@ -152,9 +222,10 @@ mastodon/twitter: EuroBSDCon
 ## 2009 - UK
 :::: {.columns}
 ::: {.column width="50%"}
+![](img/mascots/2009.jpg)
+
 - again!
-- website GONE
-- X talks 
+- 30 talks / 3 tutorials
 :::
 ::: {.column width="50%"}
 ![](img/country/ukcbmap.png)
@@ -167,9 +238,11 @@ mastodon/twitter: EuroBSDCon
 ## 2010 - Germany
 :::: {.columns}
 ::: {.column width="50%"}
-- AGAIN AGAIN
-- website GONE
-- X talks 
+![](img/mascots/2010.png)
+
+- AGAIN, AGAIN
+- but why change after success
+- 22 talks / 4 tutorials
 :::
 ::: {.column width="50%"}
 ![](img/country/dekamap.png)
@@ -179,12 +252,25 @@ mastodon/twitter: EuroBSDCon
 :::
 ::::
 
+## 2010 - Germany (pics)
+:::: {.columns}
+::: {.column width="50%"}
+![](img/oldies/2010/buffet.jpg)
+:::
+::: {.column width="50%"}
+![](img/oldies/2010/pres.jpg)
+:::
+::::
+
 ## 2011 - Netherlands
 :::: {.columns}
 ::: {.column width="50%"}
-- again!
-- website GONE
-- X talks 
+![](img/mascots/2011.png)
+
+- again - new location
+- 28 talks / 6 tutorials
+- foundation forming, coming back
+to this later
 :::
 ::: {.column width="50%"}
 ![](img/country/nlmamap.png)
@@ -197,9 +283,12 @@ mastodon/twitter: EuroBSDCon
 ## 2012 - Poland
 :::: {.columns}
 ::: {.column width="50%"}
-- XX first year Foundation backing
-- website GONE
-- X talks 
+![](img/mascots/2012.png)
+
+- first year with Foundation backing
+- 24 talks / 6 tutorials
+- Dan talks about conf orga
+- kinky social event
 :::
 ::: {.column width="50%"}
 ![](img/country/plwamap.png)
@@ -212,8 +301,11 @@ mastodon/twitter: EuroBSDCon
 ## 2013 - Malta
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2013.png)
+
+- 46 talks - double up!
+- 11 tutorials
+- Y2038 talk
 :::
 ::: {.column width="50%"}
 ![](img/country/mtmap.png)
@@ -226,8 +318,12 @@ mastodon/twitter: EuroBSDCon
 ## 2014 - Bulgaria
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2014.png)
+
+- 37 talks / 7 tutorials
+- "raffle" (first?)
+- GROFF / first devsummit
+- first livestream (??)
 :::
 ::: {.column width="50%"}
 ![](img/country/bgmap.png)
@@ -240,9 +336,11 @@ mastodon/twitter: EuroBSDCon
 ## 2015 - Sweden
 :::: {.columns}
 ::: {.column width="50%"}
-- back with talk on
-- website GONE
-- X talks 
+![](img/mascots/2015.png)
+
+- 29 talks / 4 tutorials
+- BSD(C)A Certificaiton is back
+- I resurface - attendee side
 :::
 ::: {.column width="50%"}
 ![](img/country/semap.png)
@@ -255,9 +353,11 @@ mastodon/twitter: EuroBSDCon
 ## 2016 - Serbia
 :::: {.columns}
 ::: {.column width="50%"}
-- "funny" tutorial
-- website GONE
-- X talks 
+![](img/mascots/2016.png)
+
+- 29 talks / 4 tutorials
+- 174 att, 27 countries
+- my funny tutorial - BYOL!
 :::
 ::: {.column width="50%"}
 ![](img/country/bgmap.png)
@@ -270,9 +370,11 @@ mastodon/twitter: EuroBSDCon
 ## 2017 - France
 :::: {.columns}
 ::: {.column width="50%"}
-- record attendees (?)
-- website GONE
-- X talks 
+![](img/mascots/2017.png)
+
+- 312 att / 32 countries
+- 32 talks / 7 tutorials
+- Expensive clothes..
 :::
 ::: {.column width="50%"}
 ![](img/country/frprmap.png)
@@ -285,8 +387,10 @@ mastodon/twitter: EuroBSDCon
 ## 2018 - Romania
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2018.png)
+
+- 181 att / 37 countries
+- 32 talks / 6 tutorials
 :::
 ::: {.column width="50%"}
 ![](img/country/romap.png)
@@ -299,8 +403,11 @@ mastodon/twitter: EuroBSDCon
 ## 2019 - Norway
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2019.png)
+
+- 214 attendees
+- 37 talks / 6 tutorials
+- Expensive beer..
 :::
 ::: {.column width="50%"}
 ![](img/country/nomap.png)
@@ -313,8 +420,10 @@ mastodon/twitter: EuroBSDCon
 ## 2020 - Online/BSDCan
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+
+- was announced/planned for Vienna
+- pointless to have the same
+talks online again - and such
 :::
 ::: {.column width="50%"}
 ![](img/country/camap.png)
@@ -327,8 +436,11 @@ mastodon/twitter: EuroBSDCon
 ## 2021 - Online "Vienna"
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2020.png)
+
+- 530 "attendees"
+- 25 talks 
+- no BSDCan
 :::
 ::: {.column width="50%"}
 ![](img/country/atintmap.png)
@@ -338,11 +450,17 @@ mastodon/twitter: EuroBSDCon
 :::
 ::::
 
+## 2021 - Online (Pics)
+![](img/oldies/2021-masks.png)
+
 ## 2022 - Vienna
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2022.jpg)
+
+- 169 attendees
+- 35 talks / 5 tutorials
+- Schnitzel+Strudel
 :::
 ::: {.column width="50%"}
 ![](img/country/atmap.png)
@@ -355,8 +473,10 @@ mastodon/twitter: EuroBSDCon
 ## 2023 - Coimbra
 :::: {.columns}
 ::: {.column width="50%"}
-- website GONE
-- X talks 
+![](img/mascots/2023.png)
+
+- X attendees (hah)
+- 31 talks / 9 tutorials
 :::
 ::: {.column width="50%"}
 ![](img/country/ptmap.png)
@@ -366,5 +486,18 @@ mastodon/twitter: EuroBSDCon
 :::
 ::::
 
-## 2024 - Guesswork
+## EuroBSDCon Foundation since Dec 28, 2011
+
+### providing future conferences with:
+
+- financial backing/responsibility
+- registration and payment (likely new one around)
+- provide online infrastructure
+- sponsoring via established contacts
+- advise based on previous experience
+- help with visa matters / travel
+- Paul Schenkeveld travel grant 
+
+## 2024 - Guesswork, come back Closing Talk
 ![](img/country/allmap.png)
+
